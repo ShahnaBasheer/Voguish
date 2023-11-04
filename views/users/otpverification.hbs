@@ -1,0 +1,32 @@
+<div class="otpverify d-flex justify-content-center my-5 align-items-center">
+    <div class="card p-2 text-center">
+        <h6>Please enter the one time password <br> to verify your account</h6>
+        <div> <span>A code has been sent to</span> <small>{{email}}</small> </div>
+        <form action="/otp-verification" method="POST">
+            <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">      
+               <input class="m-2 text-center form-control rounded" type="text" 
+                   name="txt1" id="first" maxlength="1" required/>
+               <input class="m-2 text-center form-control rounded" type="text" 
+                   name="txt2" id="second" maxlength="1 required"/> 
+               <input class="m-2 text-center form-control rounded" type="text" 
+                   name="txt3" id="third" maxlength="1" required/> 
+               <input class="m-2 text-center form-control rounded" type="text" 
+                   name="txt4" id="fourth" maxlength="1 required"/>
+               <input class="m-2 text-center form-control rounded" type="text" 
+                   name="txt5" id="fifth" maxlength="1" required/> 
+               <input class="m-2 text-center form-control rounded" type="text" 
+                   name="txt6" id="sixth" maxlength="1" required/>
+            </div>
+            <input type="hidden" value={{email}} name="email">
+            <p id="timer"></p>
+            <div class="mt-4"> 
+                <button class="btn btn-danger px-4 validate" type="submit">Validate</button> 
+            </div>
+        </form>
+        <p id="resendmessage"></p>
+        <p class="text-primary fw-bold" id="message">{{message}}</p>
+         <p id="resendCode"> Didn't get the otp?
+            <a href="/resend-otp-code" class="text-primary fw-bold text-decoration-none" 
+              data-email="{{email}}" id="resend"> Resend code?</a></p>
+    </div>
+</div>

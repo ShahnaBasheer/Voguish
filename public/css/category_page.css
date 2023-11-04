@@ -1,0 +1,195 @@
+
+body {
+  background-color: #F5F5F5;
+}
+/* Shop page */
+.section-title::after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 0;
+  top: 50%;
+  left: 0;
+  border-top: 2px dashed #1e1e1e;
+  z-index: -1;
+}
+.product-item { transition: .5s; }
+.product-item:hover { box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.06); }
+.product-item:hover .product-action a.btn:first-child {
+  opacity: 1;
+  margin-top: 0;
+  transition: .3s 0s;
+}
+.product-item:hover .product-action a.btn:nth-child(2) {
+  opacity: 1;
+  margin-top: 0;
+  transition: .3s .05s;
+}
+
+.product-item .product-img img { transition: .5s; }
+.product-item:hover .product-img img { transform: scale(1.1); }
+.product-item .btn:hover { 
+  color: white !important; 
+}
+.product-action {
+  position: absolute;
+  display: flex; 
+  flex-direction: column;
+  top: 0;
+  transition: .5s;
+}
+
+.product-action a.btn i{ font-size: 0.9rem; }
+.product-content{ background-color: white;}
+.product-content > * { padding: .1rem; }
+
+.product-brand {
+   margin: 2px; 
+   overflow: hidden;
+   text-overflow: ellipsis;
+   text-wrap: nowrap;
+  }
+
+  h6.product-brand a{
+    color: #000000;/* rgb(239, 47, 47)*/
+    text-decoration: none;
+    font-weight: bold;
+    font-size: .95rem;
+ }
+ 
+.product-title {
+   margin-bottom: 2px; 
+   font-size: .9rem;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   text-wrap: nowrap;
+   padding: 0rem .9rem;
+}
+.product-price {
+   font-size: 16px; 
+   font-weight: 700;
+   margin-bottom: 10px; 
+}
+
+.product-img {
+  position: relative;
+  background-color: white;
+  height: 270px;
+}
+.product-img .product-links{
+  position : absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  opacity: 0;
+  transition: 0.3s;
+  width: 100%; 
+}
+
+.product-img .product-links a{
+  color: #ffffff;/* #3d3c3c */
+  border:none;
+  text-align: center;
+  font-size: 0.8rem;
+  flex: auto;
+  padding: .2rem 0rem;
+}
+.product-img:hover .product-links{ opacity : 1; }
+.product-links a:hover{ 
+  background-color:  #c94545;
+  color: #fff;
+}
+.product-price .price { color: rgb(239, 47, 47); /* #f25b6a,#31adeb #3578d5*/}
+.product-price .mrp { color: #949494; }
+.product-price .discount { color: rgb(7, 144, 7); }
+.fa-star{ color: #FFD333 !important; }
+/* Main body */
+
+@media (min-width: 768px) {
+  .col-lg-2{
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+  .col-lg-10 {
+    flex: 0 0 75%;
+    max-width: 75%;
+  }
+}
+@media (min-width: 992px) {
+  .col-lg-2{
+    flex: 0 0 23%;
+    max-width: 23%;
+  }
+  .col-lg-10 {
+    flex: 0 0 77%;
+    max-width: 77%;
+  }
+}
+
+.custom-control {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.custom-control-inline {
+  display: inline-flex;
+  margin-right: 1rem;
+}
+
+.custom-control-input {
+  position: absolute;
+  left: 0;
+  z-index: -1;
+  width: 1rem;
+  height: 1.25rem;
+  opacity: 0;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: #fff;
+  border-color: black;
+  background-color: black;
+}
+
+.custom-control-label {
+  position: relative;
+  margin-bottom: 0;
+  vertical-align: top;
+}
+
+.custom-control-label::before {
+  position: absolute;
+  top: 0.25rem;
+  left: -1.5rem;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  content: "";
+  background-color: #fff;
+  border: #adb5bd solid 1px;
+}
+
+.custom-control-label::after {
+  position: absolute;
+  top: 0.25rem;
+  left: -1.5rem;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  content: "";
+  background: no-repeat 50% / 50% 50%;
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
+}
+
+.custom-control-label::before{
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.badge{ color: rgb(94, 94, 94);}

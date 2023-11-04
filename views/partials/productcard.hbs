@@ -1,0 +1,29 @@
+    <div class="product-item bg-light mb-4">
+          <div class="product-img position-relative overflow-hidden">
+              <a href="/product/{{this._id}}" class="d-block">
+                <img class="img-fluid w-100" src="uploads/{{this.images.img-1}}" alt="">
+              </a>
+              <div class="product-links">
+                  <a href="#"><i class="fa fa-heart"></i></a>
+                  <a href="/cart/addtocart/{{this.slug}}" class="border-start">
+                      <i class="fa fa-shopping-cart"></i></a>
+              </div>
+          </div>
+          <a href="/product/{{this._id}}" class="d-block pro-link">
+              <div class="product-content py-1 text-center"> 
+                  <h6 class="product-brand"><a href="#">
+                      {{this.brand.brand}}</a></h6>
+                  <p class="product-title">{{this.title}}</p>
+                  <div class="product-price">
+                      <span class="price">₹{{this.price}}</span>
+                      <small class="ps-1 pe-2 mrp text-decoration-line-through">₹{{this.mrp}}</small>
+                      <span class="discount">₹{{this.discount}}% Off</span>
+                  </div>
+                  <div>
+                    {{#each this.sizes}}
+                        <small>{{@key}},</small>
+                    {{/each}}
+                  </div>
+              </div>
+          </a>
+    </div>

@@ -1,0 +1,40 @@
+    
+    <div class="container">
+        <p id="addressMessage" class="text-danger"></p>
+        <div class="row">
+            {{#each userprofile.addresses}}
+                <div class="col-12">
+                    <div class="horizontal-box">
+                        {{#compareIds @root/userprofile.defaultAddress._id this._id}}
+                            <p class="text-primary fw-bolder">Default</p>
+                        {{/compareIds}}
+                        <div class="settings-icon">
+                            <button class="btn btn-link" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                            <div class="dropdown-menu settings-dropdown" aria-labelledby="dropdownMenuButton1">
+                                <a class="dropdown-item" data-bs-toggle="collapse" data-bs-target="#address-{{@index}}">Edit</a>
+                                <a class="dropdown-item delete-address" href="#" data-id="{{this._id}}">Delete</a>
+                                <a href="#" class="dropdown-item default-address" data-id="{{this._id}}">Make Default</a>
+                            </div>    
+                        </div>
+                       
+                        <h6>{{this.firstname}} {{this.lastname}}</h6>
+                        <div>{{this.address}},{{this.city}},{{this.state}},{{this.landmark}}-
+                            <span class="fw-bold">{{this.zipCode}}</span></div>
+                        <div>Mobile: {{this.phone}}</div>
+                        
+                        <!-- Collapsible address form -->
+                        <div class="collapse py-3" id="address-{{@index}}">
+                            <div class="bg-light p-5 mb-5">
+                                <form method="POST" action="/profile/edit-address" class="addressForm">
+                                   {{> editAddressForm}}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+    

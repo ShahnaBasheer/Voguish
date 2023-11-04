@@ -1,0 +1,35 @@
+
+<div id="adminlogin">
+		<div class="container mt-5">
+			<div class="row justify-content-center">
+				<div class="col-lg-5 col-md-8 col-10">
+					<div class="wrap">
+			      	<div class="d-flex heading">
+			      		<div class="w-100">
+			      			<h3 class="text-center py-3 text-white">Sign In</h3>
+			      		</div>
+			      	</div>
+              <p class="text-primary">{{successMessage}}</p>
+							 {{#if flash.alert}}
+                    <div class="alert alert-warning">
+                    {{flash.alert}}
+                    </div>
+                {{/if}}
+							<form action="/admin/login" class="signin-form px-5 pb-5 pt-3" method="POST">
+			      		  <div class="form-group mb-3">
+			      		  	<label class="label" for="email">Email Address</label>
+			      		  	<input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+			      		  </div>
+		              <div class="form-group mb-3">
+		              	<label class="label" for="password">Password</label>
+		                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+		              </div>
+		              <div class="form-group">
+		              	<button type="submit" class="form-control btn btn-primary submit px-3">Sign In</button>
+		              </div>
+		          </form>
+		      </div>
+				</div>
+			</div>
+		</div>
+	</div>

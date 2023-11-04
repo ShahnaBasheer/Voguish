@@ -1,0 +1,247 @@
+<div class="app-wrapper">
+    <div class="row mx-3 my-5">
+        <!-- Column -->
+        <div class="col-lg-12 py-5">
+            <div class="card py-4">
+                <div class="card-body mx-3">
+                    <form action="/admin/add-product" method="POST" enctype="multipart/form-data" id="productForm">
+                        <div class="form-body">
+                            <h4 class="card-title pb-3">ALL PRODUCTS</h4>
+                            <hr>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="title">Product Title</label>
+                                        <input type="text" id="title" class="form-control" name="title" placeholder="product title" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="gender">Gender</label>
+                                        <select class="form-select" placeholder="Choose Gender" id="gender" name="gender" required>
+                                            <option value=>Select gender</option>
+                                            <option value="women">Women</option>
+                                            <option value="men">Men</option>
+                                            <option value="girls">Girls</option>
+                                            <option value="boys">Boys</option>
+                                        </select>
+                                    </div>                                
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="category">Category</label>
+                                        <select class="form-select" placeholder="Choose a Category" id="category" name="category" required>
+                                            <option value=>Select a Category</option>
+                                            {{#each categories}}
+                                                <option value={{this._id}}>
+                                                  {{this.category}}</option>
+                                            {{/each}}
+  
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="brand">Brand</label>
+                                        <select class="form-select" placeholder="Choose a brand" id="brand" name="brand" required>
+                                            <option value=>Select a brand</option>
+                                            {{#each brands}}
+                                                <option value={{this._id}}>
+                                                  {{this.brand}}</option>
+                                            {{/each}}
+  
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Discount</label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="fa-solid fa-percent"></i></span>
+                                            <input type="text" class="form-control" placeholder="discount"
+                                                aria-describedby="basic-addon1" name="discount" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">MRP</label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon2">
+                                                <i class="fa-solid fa-money-bill"></i>
+                                            </span>
+                                            <input type="text" class="form-control" placeholder="MRP Price"
+                                                aria-describedby="basic-addon2" name="mrp" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 class="py-3">Select Size and Set Stock Counts</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div class="d-flex flex-wrap flex-md-nowrap mb-5" id="size">
+                                        <div class="d-flex">
+                                            <label for="sizes" class="pe-4 form-label">Select Size </label>
+                                            <select class="form-select" id="sizes">
+                                                <option value=></option>
+                                                <option value="XS">XS</option>
+                                                <option value="S">S</option>
+                                                <option value="M">M</option>
+                                                <option value="L">L</option>
+                                                <option value="XL">XL</option>
+                                                <option value="2XL">2XL</option>
+                                                <option value="3XL">3XL</option>
+                                                
+                                                <!-- Add more size options as needed -->
+                                            </select>
+                                        </div>
+                                        <div class="input-group mt-sm-0 mt-4" id="addsizebtn">
+                                           <input type="text" class="form-control" placeholder="Add Size" id="newSizeInput">
+                                           <button class="btn btn-primary" type="button" id="addsize">Add</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="sizeTable" style="display: none;">
+                                        <h4>Stock Counts</h4>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Size Name</th>
+                                                    <th>Color & Stock</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="sizeTableBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="sizeDataInput" name="sizeData">
+                            <h5 class="card-title mb-3">Product Description</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div class="form-floating">
+                                         <textarea class="form-control" placeholder="description" 
+                                            name="description" id="description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <h5 class="card-title mb-3">Upload Image</h5>
+                                <div class="col-6 mb-3 d-md-flex">
+                                    <div class="imgSelect">
+                                        <div class="imagePreview" class="pe-5"></div>
+                                        <div class="product-img pt-4">
+                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
+                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i>
+                                                 <span class="fs-6"> Select Front Image</span></p>
+                                                <input type="file" class="upload" name="img-1" required>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3 d-md-flex">
+                                    <div class="imgSelect">
+                                        <div class="imagePreview" class="pe-5"></div>
+                                        <div class="product-img pt-4">
+                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
+                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i> select other Image</p>
+                                                <input type="file" class="upload" name="img-2" required>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3 d-md-flex">
+                                    <div class="imgSelect">
+                                        <div class="imagePreview" class="pe-5"></div>
+                                        <div class="product-img pt-4">
+                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
+                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i> select other Image</p>
+                                                <input type="file" class="upload" name="img-3" required>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3 d-md-flex">
+                                    <div class="imgSelect">
+                                        <div class="imagePreview" class="pe-5"></div>
+                                        <div class="product-img pt-4">
+                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
+                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i> select other Image</p>
+                                                <input type="file" class="upload" name="img-4">
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 class="card-title mb-3">General Info</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="material" placeholder="Material"></td>
+                                            <td><input type="text" class="form-control" name="type" placeholder="Type"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="occassion" placeholder="Occassion"></td>
+                                            <td><input type="text" class="form-control" name="pattern" placeholder="Pattern"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="neckline" placeholder="Neckline Type"></td>
+                                            <td><input type="text" class="form-control" name="sleeve" placeholder="Sleeve Type"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="fit" placeholder="Fit"></td>
+                                            <td><input type="text" class="form-control" name="closure" placeholder="Closure"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="typeOfWork" placeholder="Type Of Work"></td>
+                                            <td><input type="text" class="form-control" name="legStyle" placeholder="Leg Style"> </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="riseStyle" placeholder="RiseStyle"></td>
+                                            <td><input type="text" class="form-control" name="padding" placeholder="Padding"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="coverage" placeholder="Coverage"></td>
+                                            <td><input type="text" class="form-control" name="wiring" placeholder="Wiring"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" name="packContains" placeholder="Packa Contains"></td>
+                                            <td>
+                                                <div class="form-floating">
+                                                    <textarea class="form-control" name="careInstructions" id="floatingTextarea"></textarea>
+                                                    <label for="floatingTextarea">Care Instructions</label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                            <div class="form-actions mt-4">
+                                <button type="submit" class="btn btn-success text-white"><i class="fa fa-check"></i> Save</button>
+                                <button type="button" class="btn btn-dark">Cancel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Column -->
+        </div>
+    </div>
+</div>
+                    
+<!--
+     <div class="col-md-6">
+        <div class="form-group">
+            <label class="form-label" for="colors">Colors</label>
+            <input type="text" id="colors" class="form-control text-lowercase"
+                placeholder="colors" name="colors" required>
+        </div>
+    </div>
+-->

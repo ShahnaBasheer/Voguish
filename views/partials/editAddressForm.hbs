@@ -1,0 +1,63 @@
+        
+        
+ 
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label>First Name</label>
+                <input class="form-control" type="text" name="firstname" value="{{this.firstname}}" required>
+                <span class="validation-message firstname-message"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Last Name</label>
+                <input class="form-control" type="text" name="lastname" value="{{this.lastname}}" placeholder="" required>
+                <span class="validation-message lastname-message"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Mobile No</label>
+                <input class="form-control" type="tel" name="phone" pattern="[0-9]{10}" 
+                   placeholder="" required value="{{this.phone}}">
+                <span class="validation-message phone-message"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>ZIP Code</label>
+                <input class="form-control" type="text" name="zipCode" placeholder=""
+                   value="{{this.zipCode}}" required>
+                <span class="validation-message zipCode-message"></span>
+            </div>
+            <div class="col-12 form-group">
+                <label class="d-block">Address(Area and Street)</label>
+                <textarea name="address" rows="4" cols="50" required>{{this.address}}"</textarea>
+                <span class="validation-message address-message"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>City</label>
+                <input class="form-control" type="text" name="city" placeholder="" value="{{this.city}}" required>
+                <span class="validation-message city-message"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>State</label>
+                <select class="custom-select" name="state" required>
+                    <option selected>Kerala</option>
+                    <option>Tamilnadu</option>
+                    <option>Karntaka</option>
+                </select>
+                <span class="validation-message state-message"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Landmark (optional)</label>
+                <input class="form-control" type="text" name="landmark" value="{{this.landmark}}" placeholder="">
+                <span class="validation-message landmark-message"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Alternative Phone (optional)</label>
+                <input class="form-control" type="tel" name="alternativePhone" 
+                   placeholder="" value="{{this.alternativePhone}}" pattern="[0-9]{10}">
+                <span class="validation-message alternativePhone-message"></span>
+            </div>
+            <input type="hidden" value="{{this._id}}" name="id">
+            <div class="col-12 form-group">
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </div>
+        </div>
+    
+                       

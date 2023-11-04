@@ -1,0 +1,190 @@
+
+  /* Links */
+  #sign a {
+    transition: .3s all ease;
+    color: #000000; /* Primary color */
+  }
+  #sign a:hover,#login a:focus {
+    text-decoration: none !important;
+    outline: none !important;
+    box-shadow: none;
+  }
+  
+  /* Headings */
+  #sign h3, #adminlogin h3 {
+    line-height: 1.5;
+    font-weight: 400;
+    font-family: 'Lato', Arial, sans-serif;
+    color: #000; /* Black color */
+  }
+  
+  /* Sections */
+  #sign, #adminlogin {
+    padding: 2em 0;
+  }
+  #sign .ftco-no-pt {
+    padding-top: 0;
+  }
+  #sign .ftco-no-pb {
+    padding-bottom: 0;
+  }
+  #adminlogin .heading{
+     background-color: #c94545;
+  }
+  /* Heading Section */
+  #sign .heading-section {
+    font-size: 28px;
+    color: #000; /* Black color */
+  }
+  
+  /* Wrap */
+  #sign .wrap, #adminlogin .wrap {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  }
+  
+  #sign .text-wrap {
+    width: 40%;
+  }
+  #sign .sign-wrap{
+    width: 60%;
+  }
+  @media (max-width: 768px) {
+    #sign .text-wrap, #sign .sign-wrap {
+      width: 100%;
+    }
+  }
+  
+  /* Text Wrap */
+  #sign .text-wrap {
+    background-color: #c94545;
+    color: #fff; /* White color */
+  }
+  
+  #sign .text-wrap .text h2 {
+    font-weight: 900;
+    color: #fff; /* White color */
+  }
+  
+  /* Login Wrap */
+  #sign .sign-wrap {
+    position: relative;
+    background: #fff; /* White color */
+  }
+  #sign .sign-wrap h3{
+    font-weight: 300;
+  }
+  
+  /* Form Group */
+  #sign .form-group {
+    position: relative;
+  }
+  
+  #sign .form-group .label, #adminlogin .form-group .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #000; /* Black color */
+    font-weight: 700;
+  }
+  #sign .form-group a {
+    color: #ccc; /* Lightened black color */
+  }
+  
+  /* Form Control */
+  #sign .form-control, #adminlogin .form-control{
+    height: 48px;
+    background: rgba(0, 0, 0, .05);
+    color: #000; /* Black color */
+    font-size: 16px;
+    border-radius: 50px;
+    box-shadow: none;
+    border: 1px solid transparent;
+    padding-left: 20px;
+    padding-right: 20px;
+    transition: all 0.3s;
+  }
+
+  #sign .form-control:focus,
+  #sign .form-control:active {
+    outline: none !important;
+    box-shadow: none;
+    background: rgba(0, 0, 0, .07);
+    border-color: transparent;
+
+  }
+  
+  /* Social Media */
+  #sign .social-media {
+    position: relative;
+    width: 100%;
+  }
+  
+  #sign .social-media .social-icon {
+    display: block;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, .05);
+    font-size: 16px;
+    margin-right: 5px;
+    border-radius: 50%;
+    text-decoration:  none;
+  }
+  #sign .social-media .social-icon span {
+    color: #424242; /* Lightened black color */
+  }
+  #sign .social-media .social-icon:hover,
+  #sign .social-media .social-icon:focus {
+    background: #000000; /* Primary color */
+  }
+  #sign .social-media .social-icon:hover span,
+  #sign .social-media .social-icon:focus span {
+    color: #fff; /* White color */
+  }
+  
+  /* Checkbox Style */
+  #sign .checkbox-wrap {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    user-select: none;
+  }
+  #sign .checkbox-wrap input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  #sign .checkbox-wrap .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  #sign .checkbox-wrap input:checked ~ .checkmark:after {
+    display: block;
+    content: "\f14a";
+    font-family: "FontAwesome";
+    color: rgba(0, 0, 0, .2);
+  }
+  
+  #sign .checkbox-primary input:checked ~ .checkmark:after {
+    color: #c94545; /* Primary color */
+  }
+  
+  /* Button */
+  #sign button[type="submit"], #adminlogin button[type="submit"]{
+     background-color: #2E2F2F;
+     color: white;
+  }
+  #sign button[type="submit"]:hover, #adminlogin button[type="submit"]:hover{
+     background-color: #000000 ;
+  } 
+
+  
