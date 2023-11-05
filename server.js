@@ -5,13 +5,11 @@ const dbConnect = require('./config/dbConnect');
 const exphbs = require('express-handlebars');
 const logger = require('morgan');
 const { notFound, errorHandler } = require('./middlewares/errorHandlers');
-const { authMiddleware } = require('./middlewares/authMiddlewares');
 const { removeGMT, isEqualTo, roleEquals, calculate,
       inc, loop, calculateTotal, uniqueColors, compareIds } = require('./helpers');
 const session = require('express-session');
 const flash = require('express-flash');
 const cors = require('cors');
-const sharp = require('sharp');
 const dotenv = require('dotenv').config();
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -55,6 +53,8 @@ app.use('/admin',adminRouter);
 // Custom Handlebars Helper
 app.use(notFound);
 app.use(errorHandler);
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);

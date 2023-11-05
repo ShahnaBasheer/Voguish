@@ -6,6 +6,8 @@ const sendEmail = require('./utils/sendMail');
 const User = require('./models/userModel');
 const Cart = require('./models/cartModel');
 
+
+
 const createUniqueSlug = async (title) => {
   try{
       let slug = slugify(title)
@@ -32,11 +34,17 @@ const otpEmailSend = async (req,userCreate,oldEmail) => {
       const text = `Your OTP for email verification is: ${otp}`;
       if(userCreate){
          await User.create(req.body);
-      }else{
+      }else if(userCreate == "profile_setting"){
         await sendEmail(oldEmail, subject, text);
+      }else{
+          await User.updateOne(
+            { email:req.body.email },
+            { $set: { otp, otpTimestamp: new Date() } }
+          );
       }
       await sendEmail(req.body.email, subject, text);
   }catch(error){
+      console.log("problem with sending email")
       console.log(error);
   }
 };
@@ -74,6 +82,7 @@ const cartQty = async (user) => {
     }
     return qty;
 }
+
 
 module.exports = { createUniqueSlug, otpEmailSend,
        generateOrderId, findCart, cartQty }

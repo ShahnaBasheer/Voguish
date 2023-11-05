@@ -38,7 +38,7 @@ const editProfile = asyncHandler( async (req,res) => {
         if(email){
           if(user.email !== email){
               if(await isEmailValid(email)){
-                await otpEmailSend(req, false, user.email);
+                await otpEmailSend(req, "profile_setting", user.email);
                 return res.status(200).json({oldemail:email,newemail:user.email,email:true});
               }else{
                 return res.status(409).json({emailText:"Email is Invalid or Already Exist"});
@@ -89,6 +89,8 @@ const editAddress = asyncHandler(async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 });
+
+
 const deleteAddress = asyncHandler(async (req, res) => {
   try {
       const addressId = req.params.id;

@@ -35,37 +35,41 @@ const orderDetails = asyncHandler( async (req,res) => {
 });
     
 
-const createOrders = asyncHandler( async (req,res) => {
+const createOrders = asyncHandler(async (req, res) => {
     try {
         const cart = await Cart.findOne({ user: req.user?._id });
         const orderItems = []; // Array to store the order items
-        let totalPrice = 0; 
+        let totalPrice = 0;
+        
         for (const item of cart.items) {
-            const cartitem = await CartItem.findById(item.cartItem).populate('product');
-            const itemTotalPrice = cartitem.product.price * item.quantity;
-            console.log(cartitem,cartitem.id)
-            orderItems.push({
-              item: cartitem.id,
-              quantity: item.quantity,
-              price: itemTotalPrice,
-            });
-          
-            totalPrice += itemTotalPrice;
-          }
-          console.log(orderItems)
-          req.body.user = req.user;
-          req.body.orderItems = orderItems;
-          req.body.totalAmount = totalPrice;
-          req.body.orderId = generateOrderId();
-        let order = await  Orders.create(req.body);
-        if(order){
-            
+          const cartitem = await CartItem.findById(item.cartItem).populate('product');
+          const itemTotalPrice = cartitem.product.price * item.quantity;
+          orderItems.push({
+            item: cartitem.id,
+            quantity: item.quantity,
+            price: itemTotalPrice,
+          });
+    
+          totalPrice += itemTotalPrice;
         }
-        res.render('users/orderConfirmation',{user:req.user})
+    
+        // Create the order
+        req.body.user = req.user;
+        req.body.orderItems = orderItems;
+        req.body.totalAmount = totalPrice;
+        req.body.orderId = generateOrderId();
+        let order = await Orders.create(req.body);
+        // Remove items from the cart
+        await Cart.findOneAndUpdate({ user: req.user?._id }, { $set: { items: [] } });
+    
+        if (order)res.render('users/orderConfirmation', { user: req.user });
+        else res.status(500).json({ error: 'Failed to create order' });
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+  
 module.exports = { getOrders, orderDetails, createOrders }

@@ -5,16 +5,19 @@ const asyncHandler = require('express-async-handler');
 const validateMongodbId = require('../utils/validateMongodbId');
 const { isValidEmail } = require('../utils/validateEmail');
 const { validatePhoneNumber } = require('../utils/validatePhone');
-const sendEmail = require('../utils/sendMail');
-const otpGenerator = require('otp-generator');
 const { otpEmailSend } = require('../helperfns');
+const sendEmail = require('../utils/sendMail');
 
 
 //Create new user from signup form
 const createUser = asyncHandler(async (req,res) => {
     const { email} = req.body;
-    // Save the generated OTP to the user's document in the database
+    const user = await User.find({email});
     try {
+        if(user){
+            if(!user.isVerified) await User.deleteOne({ email});
+            else return res.redirect('/signup');
+        }
         await otpEmailSend(req, true);
         res.render('users/otpverification',{email,bodyjs:'js/otp.js'});
     } catch (error) {
@@ -22,14 +25,37 @@ const createUser = asyncHandler(async (req,res) => {
     }
 });
 
+ 
+const resendOtpCode = asyncHandler(async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (req.rateLimit.remaining < 0) {
+            res.status(429).json({ message: 'Too many OTP requests. Try again later.' });
+        }
+
+        const user = await User.findOne({ email });
+        if (user && !user.isVerified) {
+             await otpEmailSend(req, false, email);
+             res.status(200).json({ message: 'OTP resent successfully' });
+        } else {
+          res.status(404).json({ message: 'User not found or already verified' });
+        }
+    } catch (error) {
+        console.error('Error sending OTP:', error);
+        res.status(500).json({ error: 'Failed to resend OTP. Please try again.' });
+    }
+});
+  
+  
+
 //OTP verification
 const otpVerification = asyncHandler( async (req,res) => {
     const {txt1,txt2,txt3,txt4,txt5,txt6,email} = req.body;
     const otp = [txt1, txt2, txt3, txt4, txt5, txt6].join(''); 
     const user = await User.findOne({ email, otp });
-
     try{    
-        if (user && user.otpTimestamp) {
+        if (user && user?.otpTimestamp) {
             const currentTime = new Date();
             const otpTimestamp = new Date(user.otpTimestamp);
             const timeDifferenceInMinutes = (currentTime - otpTimestamp) / (1000 * 60);
@@ -40,8 +66,9 @@ const otpVerification = asyncHandler( async (req,res) => {
                 const text = `Dear ${user.firstname} ${user.lastname},\n
                 Welcome to VOGUISH!\n We are thrilled to have you on board.Thank you for choosing us as your go-to destination for all your shopping needs.\n
                 At VOGUISH, we offer a wide range of products,from the latest fashion trends.With our curated selection and exceptional customer service, we are committed to making your shopping experience delightful and hassle-free`;
-
+  
                 await sendEmail(email, subject, text);
+                await User.updateOne({ email }, { $set: { isVerified: true } });
                 const successMessage = 'You have successfully signed up! Please Login here';
                 res.redirect(`/login?success=${encodeURIComponent(successMessage)}`);
             } else {
@@ -51,49 +78,19 @@ const otpVerification = asyncHandler( async (req,res) => {
             res.render('users/otpverification', { email, bodyjs: 'js/otp.js', message: 'Invalid OTP!' });
         }
     } catch (error) {
+        console.log(error)
         res.status(500).json({ success: false, message: 'Internal Server Error.' });
     }
-});
-
-// resend otp code
-const resendOtpCode = asyncHandler(async (req, res) => {
-    const { email } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        if (user) {
-            if (user.otpAttempts < 2) {
-                const otp = otpGenerator.generate(6, { specialChars: false });
-                const subject = "OTP Verification";
-                const text = `Your OTP for email verification is: ${otp}`;
-                
-                await sendEmail(email, subject, text);
-                await User.updateOne({ email }, { $set: { otp, otpAttempts: user.otpAttempts + 1, otpTimestamp: new Date() } });
-                
-                res.status(200).json({ message: "OTP resent successfully" });
-            } else {
-                res.status(400).json({ message: 'otp limit exceeds!' }); // 400 Bad Request
-            }
-        } else {
-            res.status(404).json({ message: 'User not found' }); // 404 Not Found
-        }
-    } catch (error) {
-        console.error("Error sending OTP:", error);
-        res.status(500).json({ error: "Failed to resend OTP. Please try again." });
-    }
-});
-
+  });
 
 //login user from login form
 const loginUser = asyncHandler(async (req, res) =>{
     const { email,password } = req.body;
     try{
         const findUser = await User.findOne({ email });
-
-        if(findUser?.isBlocked){
-            return res.redirect('/account-blocked');
-        }
+        if(findUser?.isBlocked) return res.redirect('/account-blocked');
     
-        if(findUser && await findUser?.comparePassword(password) && findUser?.role =='user'){
+        if(findUser && await findUser?.comparePassword(password) && findUser?.role =='user' && findUser.isVerified){
             console.log("hjghhii")
             const accessToken = generateToken(findUser?.id);
             const refreshToken = generateRefreshToken(findUser?.id);
@@ -102,13 +99,12 @@ const loginUser = asyncHandler(async (req, res) =>{
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
                 secure: true,
-                maxAge: 1 * 60 * 1000,
+                maxAge: 15 * 60 * 1000,
             });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
-                //maxAge: 3 * 24 * 60 * 60 * 1000, 
-                maxAge: 3 * 60 * 1000,
+                maxAge: 3 * 24 * 60 * 60 * 1000, 
             });
             res.redirect('/');
         }else{
@@ -118,7 +114,6 @@ const loginUser = asyncHandler(async (req, res) =>{
     }catch(error){
         console.log(error);
     }
-    
 });
 
 
@@ -257,15 +252,15 @@ const adminLogin = asyncHandler( async (req,res) => {
             res.cookie("adminaccesstoken", accessToken, {
                 httpOnly: true,
                 secure: true, // Set to true if served over HTTPS
-                maxAge:  30 * 60 * 1000,
-                //sameSite: 'Lax' ,
+                maxAge:  15 * 60 * 1000,
+                sameSite: 'Lax' ,
             });
 
             res.cookie("adminrefreshtoken", refreshToken, {
                 httpOnly: true,
                 secure: true, 
-                maxAge: 3 * 24 * 60 * 60 * 1000,
-                //sameSite: 'Lax',
+                maxAge: 2 * 24 * 60 * 60 * 1000,
+                sameSite: 'Lax',
             });
             return res.redirect('dashboard'); 
         } else {
@@ -308,9 +303,9 @@ module.exports = {
     logout, 
     emailCheck,
     phoneCheck,
-    otpVerification,
     adminLogin,
     adminLogout,
+    otpVerification,
     resendOtpCode,
 }
 

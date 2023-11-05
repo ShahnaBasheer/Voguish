@@ -24,8 +24,7 @@ const getHomePage = asyncHandler(async (req,res) => {
         res.render('users/home',{user,newarrivals,totalQty,
            bodycss:'css/nav_footer.css',maincss:'css/home.css'});
    } catch(error){
-       console.log(error)
-       
+       console.log(error) 
    }
 });
 

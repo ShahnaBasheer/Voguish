@@ -35,7 +35,6 @@ for (let i = 0; i < inputs.length; i++) {
     });
 }
 
-
 resendLink.addEventListener('click', async function(event) {
     event.preventDefault();
     otpmessage.textContent = '';
@@ -48,27 +47,29 @@ resendLink.addEventListener('click', async function(event) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ email: email }) 
         });
-
+        
         if (response.ok) {
+            // OTP resent successfully
             const responseData = await response.json();
-            console.log('Resend code success:', responseData);
-            resendmessage.textContent = 'Resend code link sent!'; // Update the message in the UI
+            resendmessage.textContent = responseData.message;
             setTimer();
-        } else if (response.status === 400) {
+        } else if (response.status === 404) {
+            console.log(response)
             // OTP limit exceeded, handle this case
             clearInterval(timerInterval);
             window.location.href = '/signup';
-        } else {
+        } else if (response.status === 429) {
+            // Handle 429 status code (Too Many Requests)
             clearInterval(timerInterval);
             timer.textContent = '';
-            resendmessage.textContent = 'Failed to resend code. Please try again.'; // Update the message in the UI for errors
+            resendmessage.textContent = 'Too many OTP requests. Try again later.';
         }
     } catch (error) {
         // Handle network errors, fetch API errors, etc.
         clearInterval(timerInterval);
         timer.textContent = '';
         console.error('Error:', error);
-        resendmessage.textContent = 'Failed to resend code. Please check your internet connection.'; // Update the message in the UI for errors
+        resendmessage.textContent = 'Failed to resend code. Please check your internet connection.';
     }
 });
 

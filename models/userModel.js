@@ -57,13 +57,13 @@ const userSchema = new mongoose.Schema({
     otpTimestamp: {
         type: Number,
     },
-    otpAttempts: {
-        type: Number,
-        default : 0,
-    },
     isVerified: {
         type: Boolean,
         default: false,
+    },
+    phoneVerified: {
+        type: Boolean,
+        default: false, 
     },
     },{ timestamps: true },
 );

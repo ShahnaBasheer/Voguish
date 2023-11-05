@@ -1,8 +1,7 @@
 const express = require('express');
 const { createUser, loginUser, logout,
-        emailCheck, phoneCheck, otpVerification,
-        resendOtpCode } = require('../controllers/userController');
-const { removeEmptyStrings } = require('../middlewares/otherMiddlewares');
+        emailCheck, phoneCheck, resendOtpCode,
+        otpVerification } = require('../controllers/userController');
 const { getProfilePage, editProfile, addNewAddress,
         editAddress, deleteAddress, defaultAddress } = require('../controllers/profileController');
 const { getWomenPage, getMenPage, getKidsPage,
@@ -14,6 +13,7 @@ const { getCartPage, addToCart, checkSize, removeCartItem,
         quantityPlus, quantityMinus, getCheckoutPage } = require('../controllers/cartController');
 const { createOrders } = require('../controllers/ordersController');
 const { authMiddleware, isUser, isLoggedInUser} = require('../middlewares/authMiddlewares');
+const { removeEmptyStrings, limiter } = require('../middlewares/otherMiddlewares');
 const router = express.Router();
 const nocache = require('nocache');
 
@@ -29,7 +29,7 @@ router.get('/check-email',nocache(), emailCheck);
 router.get('/check-phone',nocache(), phoneCheck);
 router.post('/otp-verification',nocache(), otpVerification);
 router.get('/otp-verification',nocache(), otpVerify);
-router.post('/resend-otp',nocache(), resendOtpCode);
+router.post('/resend-otp',nocache(), limiter, resendOtpCode);
 router.get('/women',nocache(), authMiddleware, isUser, getWomenPage);
 router.get('/men',nocache(), authMiddleware, isUser, getMenPage);
 router.get('/kids',nocache(), authMiddleware, isUser, getKidsPage);

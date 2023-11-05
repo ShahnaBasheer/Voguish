@@ -7,7 +7,7 @@ async function isValidEmail(email) {
     if (!validator.isEmail(email)) {
         return "Invalid email format";
     }
-    const existingUser = await User.findOne({ email }).exec();
+    const existingUser = await User.findOne({ email , isVerified: true }).exec();
     if (existingUser) {
         return "Email already exists";
     }
@@ -16,7 +16,7 @@ async function isValidEmail(email) {
 
 async function isEmailValid(email){
     if (validator.isEmail(email)) {
-        if(!await User.findOne({ email }).exec()) return true;
+        if(!await User.findOne({ email , isVerified: true}).exec()) return true;
     }
     return false;
 }

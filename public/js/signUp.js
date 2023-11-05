@@ -4,7 +4,7 @@ const emailError = document.getElementById('email-error');
 const phoneError = document.getElementById('phone-error');
 
 
-emailInput.addEventListener('blur', async function(event) {
+emailInput?.addEventListener('blur', async function(event) {
     const email = emailInput.value;
     if (email) {
         const response = await fetch(`/check-email?email=${email}`);
@@ -19,7 +19,7 @@ emailInput.addEventListener('blur', async function(event) {
     }
 });
 
-phoneInput.addEventListener('blur', async function(event) {
+phoneInput?.addEventListener('blur', async function(event) {
     const phone = phoneInput.value;
     if (phone) {
         const response = await fetch(`/check-phone?phone=${phone}`);

@@ -1,13 +1,10 @@
 const Product = require('../models/productModel');
 const Brand = require('../models/brandModel');
-const CartItem = require('../models/cartItemModel');
-const Cart = require('../models/cartModel');
 const Category = require('../models/categoryModel');
 const { createUniqueSlug } = require('../helperfns')
 const asyncHandler = require('express-async-handler');
-const sharp = require('sharp');
-const { exit } = require('process');
 const fs = require('fs').promises;
+const { findCart, cartQty } = require('../helperfns');
 
 
 //get a product
@@ -25,8 +22,9 @@ const getProduct = asyncHandler(async (req,res) => {
     const { id } = req.params;
     try{
         const product = await Product.findById(id).populate('brand').lean();
+        const user = req.user,totalQty = await cartQty(user);
         res.render('users/product_details',
-        {bodycss:'/css/product_details.css',product,user:req.user,
+        {bodycss:'/css/product_details.css',product,user,totalQty,
         bodyjs: '/js/product_details.js'})
     } catch(error) {
         throw new Error(error);
