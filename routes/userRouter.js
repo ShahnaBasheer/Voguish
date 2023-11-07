@@ -3,7 +3,8 @@ const { createUser, loginUser, logout,
         emailCheck, phoneCheck, resendOtpCode,
         otpVerification } = require('../controllers/userController');
 const { getProfilePage, editProfile, addNewAddress,
-        editAddress, deleteAddress, defaultAddress } = require('../controllers/profileController');
+        editAddress, deleteAddress, defaultAddress,
+        getAddressPage } = require('../controllers/profileController');
 const { getWomenPage, getMenPage, getKidsPage,
         getGirlsPage, getBoysPage,getLoginPage,
         getHomePage, getSignupPage, getBlocked,
@@ -11,7 +12,10 @@ const { getWomenPage, getMenPage, getKidsPage,
 const { getProduct }  = require('../controllers/productController');
 const { getCartPage, addToCart, checkSize, removeCartItem,
         quantityPlus, quantityMinus, getCheckoutPage } = require('../controllers/cartController');
-const { createOrders } = require('../controllers/ordersController');
+const { createOrders, getOrdersPage } = require('../controllers/ordersController');
+const { addToWishList, getWishList, deleteWishList,
+        moveToCart } = require('../controllers/wishListController');
+const { getReviewsPage } = require('../controllers/reviewsController');
 const { authMiddleware, isUser, isLoggedInUser} = require('../middlewares/authMiddlewares');
 const { removeEmptyStrings, limiter } = require('../middlewares/otherMiddlewares');
 const router = express.Router();
@@ -47,13 +51,18 @@ router.get('/checkout',nocache(), authMiddleware, isUser, getCheckoutPage);
 router.post('/checkout/orders/',nocache(), authMiddleware, isUser, removeEmptyStrings, createOrders);
 router.get('/contact',nocache(), authMiddleware, isUser, getContactPage);
 router.get('/profile',nocache(), authMiddleware, isUser, getProfilePage);
+router.get('/profile/address',nocache(), authMiddleware, isUser, getAddressPage);
 router.post('/profile/edit',nocache(), authMiddleware, isUser, editProfile);
 router.post('/profile/add-address',nocache(), authMiddleware, isUser, removeEmptyStrings, addNewAddress);
 router.post('/profile/edit-address',nocache(), authMiddleware, isUser, removeEmptyStrings, editAddress);
 router.delete('/profile/delete-address/:id',nocache(), authMiddleware, isUser, deleteAddress);
 router.post('/profile/default-address',nocache(), authMiddleware, isUser, removeEmptyStrings, defaultAddress);
-
-
+router.get('/wishlist', nocache(), authMiddleware, isUser, getWishList);
+router.get('/wishlist/add-to-wishlist/:slug', nocache(), authMiddleware, isUser, addToWishList)
+router.get('/wishList/delete-item/:slug', nocache(), authMiddleware, isUser, deleteWishList);
+router.get('/wishList/moveToCart/:slug', nocache(), authMiddleware, isUser, moveToCart);
+router.get('/orders', nocache(), authMiddleware, isUser, getOrdersPage);
+router.get('/profile/reviews', nocache(), authMiddleware, isUser, getReviewsPage);
 
 
 module.exports = router;

@@ -1,0 +1,32 @@
+<section class="py-5">
+    <div class="container">
+        <div class="row ">
+               {{> profileSideBar}}
+            <div class="col-md-9">
+                <div class="shadow rounded bg-white p-5" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                    <h4 class="font-italic mb-4">Addresses</h4>
+                    <!--<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#shipping-address">
+                        Add new Adress</button>-->
+                    <div class="p-3 card-child mt-4 py-4" data-bs-toggle="collapse" data-bs-target="#shipping-address">
+                        <div class="d-flex flex-row align-items-center">
+                            <span class="circle-3">
+                                <i class="fa fa-plus"></i>
+                            </span>
+                            <div class="d-flex flex-column ms-3 mt-1">
+                                <h6 class="fw-bold text-primary">Add New Address</h6> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapse py-3" id="shipping-address">
+                        <div class="bg-light p-5 mb-5">
+                            <form method="POST" action="/profile/add-address" class="addressForm">
+                               {{> addressForm}}
+                            </form>
+                        </div>
+                    </div>
+                    {{> addresses}}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -25,7 +25,6 @@
                                           <th>Email</th>
                                           <th>Phone</th>
                                           <th>Addresses</th>
-                                          <th>Wishlist</th>
                                           <th>isBlocked</th>
                                           <th>Created At</th>
                                           <th>Updated At</th>
@@ -47,11 +46,8 @@
                                                 {{inc @index}}. {{this.address}}
                                               </div>
                                             {{/each}}
-
                                           </td>
-                                          <td>{{this.wishlist}}</td>
                                           <td>  
-                                            
                                               <div class="form-check form-switch"> 
                                                   <input class="form-check-input flexSwitchCheck" type="checkbox"
                                                       {{#if this.isBlocked }} checked
@@ -62,7 +58,6 @@
                                                       {{ else }} {{/if}}
                                                   <span></span>
                                               </div>
-                                             
                                           </td>
                                           <td>{{removeGMT this.createdAt}}</td>
                                           <td>{{removeGMT this.updatedAt}}</td>

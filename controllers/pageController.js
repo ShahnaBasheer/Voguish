@@ -23,7 +23,8 @@ const getHomePage = asyncHandler(async (req,res) => {
          {isDeleted:false,isDeletedBy:false}).populate('brand')
             .populate('category').sort({ createdAt: -1 }).limit(5).lean();
         res.render('users/home',{user,newarrivals,totalQty,
-           bodycss:'css/nav_footer.css',maincss:'css/home.css'});
+           bodycss:'css/nav_footer.css',maincss:'css/home.css',
+           bodyjs:'js/productCard.js'});
    } catch(error){
        console.log(error) 
    }
@@ -36,8 +37,9 @@ const getWomenPage = asyncHandler( async (req,res) => {
         const products = await Product.find(
          {gender:"women",isDeleted:false,isDeletedBy:false})
             .populate('brand').lean();
-        res.render('users/category_page',{bodycss:'css/nav_footer.css',
-           maincss:'css/category_page.css',main:"women",products,user,totalQty});  
+        res.render('users/category_page',{main:"women",products,user,totalQty,
+           bodycss:'css/nav_footer.css',bodyjs:'js/productCard.js',
+           maincss:'css/category_page.css',});  
    } catch(error) {
        throw new Error(error);
    }
@@ -50,8 +52,9 @@ const getMenPage = asyncHandler( async (req,res) => {
         const products = await Product.find(
          {gender:"men",isDeleted:false,isDeletedBy:false})
             .populate('brand').lean();
-        res.render('users/category_page',{bodycss:'css/nav_footer.css',
-           maincss:'css/category_page.css',main:"men",products,user,totalQty});  
+        res.render('users/category_page',{main:"men",products,user,totalQty,
+           bodycss:'css/nav_footer.css', maincss:'css/category_page.css',
+           bodyjs:'js/productCard.js'});  
    } catch(error) {
       throw new Error(error);
    }
@@ -61,12 +64,13 @@ const getMenPage = asyncHandler( async (req,res) => {
 //Display Kids page
 const getKidsPage = asyncHandler( async (req,res) => {
    try{
-        let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find(
-          {gender:{ $in: ["girls", "boys"] },isDeleted:false,isDeletedBy:false })
-           .populate('brand').lean();
-        res.render('users/category_page',{bodycss:'css/nav_footer.css',
-           maincss:'css/category_page.css',main:"kids",products,user,totalQty});  
+         let user = req?.user, totalQty = await cartQty(user);
+         const products = await Product.find(
+            {gender:{ $in: ["girls", "boys"] },isDeleted:false,isDeletedBy:false })
+             .populate('brand').lean();
+         res.render('users/category_page',{main:"kids",products,user,totalQty,
+            bodycss:'css/nav_footer.css',maincss:'css/category_page.css',
+            bodyjs:'js/productCard.js'});  
    } catch(error) {
       throw new Error(error);
    }
@@ -75,12 +79,13 @@ const getKidsPage = asyncHandler( async (req,res) => {
 //Display Girls page
 const getGirlsPage = asyncHandler( async (req,res) => {
    try{
-        let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find(
-         {gender:"girls",isDeleted:false,isDeletedBy:false})
-         .populate('brand').lean();
-        res.render('users/category_page',{bodycss:'css/nav_footer.css',
-           maincss:'css/category_page.css',main:"girls",products,user,totalQty});  
+         let user = req?.user, totalQty = await cartQty(user);
+         const products = await Product.find(
+          {gender:"girls",isDeleted:false,isDeletedBy:false})
+          .populate('brand').lean();
+         res.render('users/category_page',{main:"girls",products,user,totalQty,
+           bodycss:'css/nav_footer.css', maincss:'css/category_page.css',
+           bodyjs:'js/productCard.js'});  
    } catch(error) {
       throw new Error(error);
    }
@@ -93,8 +98,9 @@ const getBoysPage = asyncHandler( async (req,res) => {
         const products = await Product.find(
            {gender:"boys",isDeleted:false,isDeletedBy:false})
            .populate('brand').lean();
-        res.render('users/category_page',{bodycss:'css/nav_footer.css',
-           maincss:'css/category_page.css',main:"boys",products,user,totalQty});  
+        res.render('users/category_page',{main:"boys",products,user,totalQty,
+           bodycss:'css/nav_footer.css',maincss:'css/category_page.css',
+           bodyjs:'js/productCard.js',});  
    } catch(error) {
       throw new Error(error);
    }

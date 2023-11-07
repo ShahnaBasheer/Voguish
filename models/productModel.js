@@ -84,11 +84,6 @@ const productSchema = new mongoose.Schema({
     rating: {
         type: Number,
     },
-    reviews: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Review',
-      }
-    ],
     isDeletedBy: {//entity was deleted by a category or brand deletion action.
         type: Boolean,
         default: false

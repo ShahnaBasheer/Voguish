@@ -1,10 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const Orders = require('../models/ordersModel');
 const Cart = require('../models/cartModel');
-const User = require('../models/userModel');
+const User = require('../models/ordersModel');
 const CartItem = require('../models/cartItemModel');
 const {  generateOrderId, cartQty } = require('../helperfns');
-const Order = require('../models/ordersModel');
 
 
 //Display Orders
@@ -12,6 +11,14 @@ const getOrders = asyncHandler( async (req,res) => {
     const orders = await Orders.find().populate('shippingAddress').lean();
     res.render('admin/orders',{admin:true,adminInfo:req.user,orders});
 });
+
+const getOrdersPage = asyncHandler( async(req,res) => {
+    const user = req.user, totalQty = await cartQty(user);
+    const userprofile  = await User.findById(req.user.id).populate('addresses').populate('defaultAddress').lean();
+    res.render('users/ordersInfo',{user,userprofile,totalQty,
+        bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
+});
+
 
 const orderDetails = asyncHandler( async (req,res) => {
     try {
@@ -79,7 +86,7 @@ const createOrders = asyncHandler(async (req, res) => {
 const cancelOrder = asyncHandler( async(req,res) => {
     try {
         const { orderId } = req.params;
-        await Order.updateOne({orderId:orderId},{status:"cancelled"});
+        await Orders.updateOne({orderId:orderId},{status:"cancelled"});
         return res.redirect('/admin/orders')
 
     } catch (error) {
@@ -91,7 +98,7 @@ const cancelOrder = asyncHandler( async(req,res) => {
 const restoreOrder = asyncHandler(async(req,res) => {
     try {
         const { orderId } = req.params;
-        await Order.updateOne({orderId:orderId},{status:"Processing"});
+        await Orders.updateOne({orderId:orderId},{status:"Processing"});
         return res.redirect('/admin/orders')
     } catch (error) {
         console.error(error);
@@ -102,4 +109,4 @@ const restoreOrder = asyncHandler(async(req,res) => {
   
 module.exports = { getOrders, orderDetails,
      createOrders, cancelOrder,
-     restoreOrder }
+     restoreOrder, getOrdersPage }

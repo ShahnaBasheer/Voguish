@@ -1,0 +1,83 @@
+<section class="py-5">
+    <div class="container">
+        <div class="row ">
+               {{> profileSideBar}}
+            <div class="col-md-9">
+                <div class="shadow rounded bg-white show active p-5" id="">
+                    <h4 class="font-italic mb-4">Personal information</h4>
+                    
+                    <div class="d-flex">
+                        <div class="d-flex">
+                           <input type="text" class="form-control" data-field="firstname" id="firstname" 
+                             name="firstname" placeholder="First Name" value="{{userprofile.firstname}}" required disabled>
+                            <button class="edit-link" data-field="firstname">Edit</button>
+                            <a href="/profile/edit/" class="btn btn-primary save-button" data-field="firstname">Save</a> 
+                        </div>
+                        
+                        <div class="d-flex">
+                           <input type="text" class="form-control" data-field="lastname" id="lastname"
+                             name="lastname" placeholder="Last Name" value="{{userprofile.lastname}}" required disabled>
+                            <button class="edit-link" data-field="lastname">Edit</button>
+                            <a href="/profile/edit/" class="btn btn-primary save-button" data-field="lastname">Save</a>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <span>Gender</span>
+                        <input type="radio" id="male"  name="gender"
+                           data-field="gender" value="male" required disabled 
+                           {{#if (isEqualTo userprofile.gender 'male')}}checked{{/if}}>
+                        <label for="male" class="pe-3">Male</label>
+                        <input type="radio" id="female" name="gender"
+                           data-field="gender" value="female" required disabled
+                           {{#if (isEqualTo userprofile.gender 'female')}}checked{{/if}}>
+                        <label for="female">Female</label><br>
+                        <button class="edit-link" data-field="gender">Edit</button>
+                        <a href="/profile/edit/" class="btn btn-primary save-button" data-field="gender">Save</a>
+                    </div>
+                        
+                    <div class="d-flex">
+                        <input type="email" name="email" id="email" data-field="email" 
+                           class="form-control" pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" placeholder="example@email.com"
+                           value="{{userprofile.email}}" required disabled>
+                        <button class="edit-link" data-field="email">Edit</button>
+                        <a href="/profile/edit/" class="btn btn-primary save-button" data-field="email">Save</a>
+                    </div>
+                    <p id="email-text" class="text-danger"></p>
+                    <div class="d-flex">
+                        <input type="tel" class="form-control" id="phone" data-field="phone" name="phone" 
+                          placeholder="+1 888-999-7777" value="{{user.phone}}" required disabled>
+                        <button class="edit-link" data-field="phone">Edit</button>
+                        <a href="/profile/edit/" class="btn btn-primary save-button" data-field="phone">Save</a>
+                    </div>
+                    <p id="phone-text" class="text-danger"></p>
+				</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalOtp" data-bs-backdrop="static" data-bs-keyboard="false" 
+    tabindex="-1" aria-labelledby="modalOtpLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-center" id="modalOtpLabel">Verify OTP</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+           <div id="oldEmail">
+               <input type="text" class="form-control" placeholder="Enter OTP sent to ">
+           </div>
+           <div id="newEmail">
+               <input type="text" class="form-control" placeholder="Enter OTP sent to ">
+           </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">SUBMIT</button>
+      </div>
+    </div>
+  </div>
+</div>

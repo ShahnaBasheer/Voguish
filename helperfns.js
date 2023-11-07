@@ -5,6 +5,7 @@ const otpGenerator = require('otp-generator');
 const sendEmail = require('./utils/sendMail');
 const User = require('./models/userModel');
 const Cart = require('./models/cartModel');
+const CartItem = require('./models/cartItemModel');
 
 
 
@@ -84,5 +85,54 @@ const cartQty = async (user) => {
 }
 
 
+const selectCartItem = async( slug, req ) => {
+  const product = await Product.findOne({ slug });
+  const existingCart = await Cart.findOne({user:req.user});
+  let selectSize,selectColor;
+
+  if (!product) return res.status(404).json({ message: 'Product not found' });        
+
+  const validOptionFound = Array.from(product.sizes.keys()).some(size => {
+      const availableColor = product.sizes.get(size).find(item => item.stock > 0);
+      if (availableColor) {
+          selectSize = size;
+          selectColor = availableColor.color;
+          return true; // Exit the loop if a valid option is found
+      }
+      return false;
+  });
+  if (!validOptionFound) {
+      return res.status(400).json({ message: 'Product is out of stock!' });
+  }    
+  let item = { 
+      product: product._id, 
+      size: req.query.size || selectSize, 
+      color:  req.query.color || selectColor, 
+  }
+  let cartItemExist = await CartItem.findOne(item);
+
+  if (!cartItemExist) {
+      const newCartItem = new CartItem(item);
+      await newCartItem.save();
+      cartItemExist = newCartItem; 
+  }
+   
+  if (!existingCart) {
+      const newCart = new Cart({ user: req.user?._id, items: [{ cartItem: cartItemExist._id, quantity: req.query.qty || 1 }] });
+      await newCart.save();
+  } else {
+      let index;
+      let itemExist = existingCart.items.some((item,i) =>{
+          index =  i;
+          return item.cartItem.toString() === cartItemExist._id.toString()
+      });
+      if(!itemExist){
+          existingCart.items.push({ cartItem: cartItemExist._id, quantity: req.query.qty || 1 });
+      }else existingCart.items[index].quantity++;
+      await existingCart.save();
+  }
+}
+
 module.exports = { createUniqueSlug, otpEmailSend,
-       generateOrderId, findCart, cartQty }
+       generateOrderId, findCart, cartQty,
+       selectCartItem }

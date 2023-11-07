@@ -8,10 +8,20 @@ const { otpEmailSend, cartQty } = require('../helperfns');
 
 const getProfilePage =  asyncHandler( async(req,res) => {
     const user = req.user, totalQty = await cartQty(user);
-    const userprofile  = await User.findById(req.user.id).populate('addresses').populate('defaultAddress').lean();
-    res.render('users/myprofile',{user,userprofile,totalQty,
+    const userprofile  = await User.findById(req.user.id).lean();
+    res.render('users/profileInfo',{user,userprofile,totalQty,
        bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
+
+
+const getAddressPage = asyncHandler( async(req,res) => {
+    const user = req.user, totalQty = await cartQty(user);
+    const userprofile  = await User.findById(req.user.id).populate('addresses').populate('defaultAddress').lean();
+    res.render('users/addressInfo',{user,userprofile,totalQty,
+        bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
+});
+
+
 
 const editProfile = asyncHandler( async (req,res) => {
     try{
@@ -117,6 +127,8 @@ const defaultAddress = asyncHandler( async(req,res) => {
     }
 });
 
+
 module.exports = { getProfilePage, editProfile, 
      addNewAddress, editAddress, deleteAddress,
-     defaultAddress }
+     defaultAddress, getAddressPage,
+     }
