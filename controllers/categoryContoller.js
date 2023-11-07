@@ -35,18 +35,7 @@ const addCategory = asyncHandler (async (req, res) => {
   }
 });
 
-//delete Category 
-const deleteCategory = asyncHandler( async (req,res) => {
-    const { id } = req.params;
-    validateMongodbId(id);
-    try{
-        const category = await Category.findByIdAndDelete(id).lean();
-        await Product.deleteMany({ category: category._id });
-        res.redirect('/admin/categories');
-    } catch(error){
-        throw new Error(error);
-    }
-});
+
 
 //display edit Category page
 const getEditCategory = asyncHandler( async (req,res) => {
@@ -76,6 +65,49 @@ const editCategory = asyncHandler( async (req,res) => {
   }
 });
 
+//delete Category 
+const deleteCategory = asyncHandler( async (req,res) => {
+    const { id } = req.params;
+    validateMongodbId(id);
+    try{
+        const category = await Category.findByIdAndUpdate(id,{isDeleted:true});
+        await Product.updateMany({ category, isDeleted:false},
+            {$set : {isDeletedBy:true}});
+        res.redirect('/admin/categories');
+    } catch(error){
+        throw new Error(error);
+    }
+});
+
+const restoreCategory = asyncHandler( async (req,res) => {
+    const { id } = req.params;
+    validateMongodbId(id);
+    try{
+        const category = await Category.findByIdAndUpdate(id,
+            {isDeleted:false},{ new: true });
+        
+        const products = await Product.find({
+            category: category._id,
+            isDeleted: false,
+        }).populate({
+            path: 'brand',
+            match: { isDeleted: false }, // Check the isDeleted field of the Brand model
+        }).exec();
+    
+        // Update isDeletedBy field for the fetched products
+        products.forEach(async (product) => {
+            if (product.brand && product.brand.isDeleted === false) {
+                product.isDeletedBy = false;
+                await product.save();
+            }
+        });
+
+        res.redirect('/admin/categories');
+    } catch(error){
+        throw new Error(error);
+    }
+});
+
 
 module.exports = {
     getAllCategories,
@@ -84,4 +116,5 @@ module.exports = {
     deleteCategory,
     editCategory,
     getEditCategory,
+    restoreCategory,
 }

@@ -3,7 +3,9 @@ const Orders = require('../models/ordersModel');
 const Cart = require('../models/cartModel');
 const User = require('../models/userModel');
 const CartItem = require('../models/cartItemModel');
-const {  generateOrderId } = require('../helperfns');
+const {  generateOrderId, cartQty } = require('../helperfns');
+const Order = require('../models/ordersModel');
+
 
 //Display Orders
 const getOrders = asyncHandler( async (req,res) => {
@@ -14,7 +16,6 @@ const getOrders = asyncHandler( async (req,res) => {
 const orderDetails = asyncHandler( async (req,res) => {
     try {
         const { order_id }  = req.query;
-        console.log(order_id,"juhdj")
         const orderdetails = await Orders.findOne({ orderId: order_id })
             .populate('user')
             .populate({
@@ -27,7 +28,6 @@ const orderDetails = asyncHandler( async (req,res) => {
             })
             .populate('shippingAddress')
             .lean();
-           console.log(orderdetails)
         res.render('admin/orderDetails',{admin:true,adminInfo:req.user,orderdetails});
     } catch (error) {
         console.log(error)
@@ -45,9 +45,9 @@ const createOrders = asyncHandler(async (req, res) => {
           const cartitem = await CartItem.findById(item.cartItem).populate('product');
           const itemTotalPrice = cartitem.product.price * item.quantity;
           orderItems.push({
-            item: cartitem.id,
-            quantity: item.quantity,
-            price: itemTotalPrice,
+              item: cartitem.id,
+              quantity: item.quantity,
+              price: itemTotalPrice,
           });
     
           totalPrice += itemTotalPrice;
@@ -56,13 +56,18 @@ const createOrders = asyncHandler(async (req, res) => {
         // Create the order
         req.body.user = req.user;
         req.body.orderItems = orderItems;
-        req.body.totalAmount = totalPrice;
+        req.body.totalPrice = totalPrice;
+        req.body.GrandTotal = totalPrice + cart.deliveryCharge;
+        req.body.delivery =  cart.deliveryCharge;
         req.body.orderId = generateOrderId();
         let order = await Orders.create(req.body);
         // Remove items from the cart
-        await Cart.findOneAndUpdate({ user: req.user?._id }, { $set: { items: [] } });
-    
-        if (order)res.render('users/orderConfirmation', { user: req.user });
+        cart.items = [];
+        await cart.save();
+        const user = req.user, totalQty = await cartQty(user);
+        if (order){
+            res.render('users/orderConfirmation', { user, totalQty});
+        }
         else res.status(500).json({ error: 'Failed to create order' });
 
     } catch (error) {
@@ -71,5 +76,30 @@ const createOrders = asyncHandler(async (req, res) => {
     }
 });
 
+const cancelOrder = asyncHandler( async(req,res) => {
+    try {
+        const { orderId } = req.params;
+        await Order.updateOne({orderId:orderId},{status:"cancelled"});
+        return res.redirect('/admin/orders')
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+const restoreOrder = asyncHandler(async(req,res) => {
+    try {
+        const { orderId } = req.params;
+        await Order.updateOne({orderId:orderId},{status:"Processing"});
+        return res.redirect('/admin/orders')
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
   
-module.exports = { getOrders, orderDetails, createOrders }
+module.exports = { getOrders, orderDetails,
+     createOrders, cancelOrder,
+     restoreOrder }

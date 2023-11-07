@@ -44,7 +44,7 @@ router.get('/cart/cart-item-remove/:id',nocache(), authMiddleware, isUser, remov
 router.get('/cart/qty-plus/:id',nocache(), authMiddleware, isUser, quantityPlus);
 router.get('/cart/qty-minus/:id',nocache(), authMiddleware, isUser, quantityMinus);
 router.get('/checkout',nocache(), authMiddleware, isUser, getCheckoutPage);
-router.post('/checkout/orders/',nocache(), authMiddleware, isUser, createOrders);
+router.post('/checkout/orders/',nocache(), authMiddleware, isUser, removeEmptyStrings, createOrders);
 router.get('/contact',nocache(), authMiddleware, isUser, getContactPage);
 router.get('/profile',nocache(), authMiddleware, isUser, getProfilePage);
 router.post('/profile/edit',nocache(), authMiddleware, isUser, editProfile);

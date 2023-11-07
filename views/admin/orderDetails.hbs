@@ -92,18 +92,19 @@
                                                                         <td>
                                                                             <div class="d-flex align-items-center">
                                                                                 <div class="me-3">
-                                                                                    <img src="../assets/images/products/product-1.png" alt="product-img" height="40">
+                                                                                    <img src="/uploads/{{this.item.product.images.img-1}}" alt="product-img"
+                                                                                     width="60">
                                                                                 </div>
                                                                                 <div class="flex-1">
-                                                                                    <h5 class="m-0">Blue color T-shirt</h5>
-                                                                                    <p class="mb-0">Size : Large</p>
+                                                                                    <h5 class="m-0">{{this.item.product.title}}</h5>
+                                                                                    <p class="mb-0">Size : {{this.item.size}}</p>
                                                                                     <p class="mb-0">Color : {{this.item.color}}</p>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
-                                                                        <td>1</td>
-                                                                        <td>$41</td>
-                                                                        <td>$41</td>
+                                                                        <td>{{this.quantity}}</td>
+                                                                        <td>₹{{this.item.product.price}}</td>
+                                                                        <td>₹{{this.price}}</td>
                                                                     </tr>
                                                                     {{/each}}
                                                                 </tbody>
@@ -125,19 +126,23 @@
                                                                 <tbody>
                                                                     <tr>
                                                                         <th scope="row">Sub Total :</th>
-                                                                        <td>$176</td>
+                                                                        <td>₹{{orderdetails.totalPrice}}</td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th scope="row">Shipping Charge :</th>
-                                                                        <td>$24</td>
+                                                                        <td>₹{{orderdetails.delivery}}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th scope="row">Estimated Tax :</th>
-                                                                        <td>$12</td>
+                                                                        <th scope="row">Fast Delivery Charge :</th>
+                                                                        {{#if (isEqualTo orderdetails.shippingMethod "fast delivery")}}
+                                                                           <td>₹25</td>
+                                                                        {{else}}
+                                                                            <td>₹0</td>
+                                                                        {{/if}}
                                                                     </tr>
                                                                     <tr>
-                                                                        <th scope="row">Total :</th>
-                                                                        <td>$212</td>
+                                                                        <th scope="row">GrandTotal :</th>
+                                                                        <td>₹{{orderdetails.GrandTotal}}</td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -155,28 +160,36 @@
                                     <div class="col-lg-4">
                                         <div>
                                             <h4 class="font-15 mb-2">Shipping Information</h4>
-
                                             <div class="card p-2 mb-lg-0">
-                                                
                                                 <table class="table table-borderless table-sm mb-0">
-                            
                                                     <tbody>
                                                         <tr>
-                                                            <th colspan="2"><h5 class="font-15 m-0">Arnold Jackson</h5></th>
+                                                            <th colspan="2"><h5 class="font-15 m-0">{{orderdetails.shippingAddress.firstname}} 
+                                                                {{orderdetails.shippingAddress.lastname}}</h5>
+                                                            </th>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Address:</th>
-                                                            <td>707 Locust View Drive
-                                                                San Francisco, CA 94115</td>
+                                                            <td>{{orderdetails.shippingAddress.address}}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th scope="row">Phone :</th>
-                                                            <td>(123) 456-7890</td>
+                                                            <th scope="row">City:</th>
+                                                            <td>{{orderdetails.shippingAddress.city}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">State:</th>
+                                                            <td>{{orderdetails.shippingAddress.state}}</td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Mobile :</th>
-                                                            <td>(+01) 12345 67890</td>
+                                                            <td>{{orderdetails.shippingAddress.phone}}</td>
                                                         </tr>
+                                                        {{#if orderdetails.shippingAddress.alternativePhone}}
+                                                        <tr>
+                                                            <th scope="row">Alternative:</th>
+                                                            <td>{{orderdetails.shippingAddress.alternativePhone}}</td>
+                                                        </tr>
+                                                        {{/if}}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -192,9 +205,21 @@
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">Payment Type:</th>
-                                                            <td>Credit Card</td>
+                                                            <td>{{orderdetails.paymentMethod}}</td>
                                                         </tr>
                                                         <tr>
+                                                            <th scope="row">Payment Status:</th>
+                                                            <td>{{orderdetails.paymentStatus}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Order Status:</th>
+                                                            <td>{{orderdetails.status}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Order Date:</th>
+                                                            <td>{{orderdetails.createdAt}}</td>
+                                                        </tr>
+                                                        <!--<tr>
                                                             <th scope="row">Provider :</th>
                                                             <td>Visa ending in 2851</td>
                                                         </tr>
@@ -205,13 +230,13 @@
                                                         <tr>
                                                             <th scope="row">CVV :</th>
                                                             <td>xxx</td>
-                                                        </tr>
+                                                        </tr>-->
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <!--
                                     <div class="col-lg-4">
                                         <div>
                                             <h4 class="font-15 mb-2">Delivery Info</h4>
@@ -229,7 +254,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>-->
                                 </div>
 
                             </div>

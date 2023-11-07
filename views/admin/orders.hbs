@@ -76,12 +76,18 @@
                                 <li class="list-inline-item">
                                     <a href="/admin/order-details?order_id={{this.orderId}}" class="action-icon"> <i class="fa-solid fa-eye"></i></a>
                                 </li>
-                                <li class="list-inline-item">
-                                    <a href="#" class="action-icon"> <i class="fa-solid fa-pen-to-square"></i></a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#" class="action-icon"> <i class="fa-solid fa-trash"></i></a>
-                                </li>
+																{{#if (isEqualTo this.status "cancelled")}}
+																    <li class="list-inline-item"></li>
+																      <a href="/admin/restore-order/{{this.orderId}}">
+                                          <i class="fa-solid fa-rotate-left text-primary"></i></i>
+                                      </a>
+																		</li>
+																{{else}}
+                                    <li class="list-inline-item">
+                                        <a href="/admin/cancel-order/{{this.orderId}}" class="action-icon">
+																				 <i class="fa-solid fa-trash"></i></a>
+                                    </li>
+																{{/if}}
                             </ul>
                         </td>
 											</tr>
@@ -215,3 +221,6 @@
 		    </div><!--//container-fluid-->
 	    </div><!--//app-content-->
 	    
+<!-- <li class="list-inline-item">
+  <a href="#" class="action-icon"> <i class="fa-solid fa-pen-to-square"></i></a>
+</li>-->

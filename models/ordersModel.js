@@ -31,7 +31,7 @@ const orderSchema = new mongoose.Schema({
           required: true
         },
     }],
-    totalAmount: {
+    totalPrice: {
         type: Number,
     },
     shippingAddress: {
@@ -47,13 +47,23 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Processing', 'Shipped', 'Delivered'],
+        enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
         default: 'Processing'
     },
     paymentMethod: {
         type: String,
         enum: ['Credit Card', 'PayPal', 'Cash on Delivery'],
         required: true
+    },
+    delivery: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
+    GrandTotal:{
+        type: Number,
+        required: true,
+        default: 0,
     },
     paymentStatus: {
         type: String,
@@ -71,8 +81,9 @@ const orderSchema = new mongoose.Schema({
 
 orderSchema.pre('save', async function (next) {
     if (this.shippingMethod === 'fast delivery') {
-        this.totalAmount += 25; // Add extra cost for fast delivery
+        this.GrandTotal += 25; // Add extra cost for fast delivery
     }
+
     next();
 });
 

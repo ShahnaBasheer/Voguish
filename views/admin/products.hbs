@@ -28,6 +28,8 @@
                                           <th>Stock</th>
                                           <th>Created At</th>
                                           <th>Updated At</th>
+                                          <th>IsDeletedBy</th>
+                                          <th>IsDeleted</th>
                                           <th>Action</th>
                                       </tr>
                                   </thead>
@@ -129,13 +131,21 @@
                                            <td>{{this.totalStock}}</td>
                                            <td>{{removeGMT this.createdAt}}</td>
                                            <td>{{removeGMT this.updatedAt}}</td>
+                                           <td>{{this.isDeletedBy}}</td>
+                                           <td>{{this.isDeleted}}</td>
                                            <td>
                                                 <a href="/admin/edit-product/{{this._id}}">
                                                     <i class="fa-solid fa-pen-to-square text-primary"></i>
                                                 </a>
-                                                <a href="/admin/delete-product/{{this._id}}" class="deletebtn">
-                                                  <i class="fa-solid fa-trash text-danger"></i>
-                                                </a>
+                                                {{#if this.isDeleted}}
+                                                    <a href="/admin/restore-product/{{this._id}}">
+                                                       <i class="fa-solid fa-rotate-left text-primary"></i></i>
+                                                    </a>
+                                                {{else}}
+                                                    <a href="/admin/delete-product/{{this._id}}" class="deletebtn">
+                                                        <i class="fa-solid fa-trash text-danger"></i>
+                                                    </a>
+                                                {{/if}}
                                            </td>
                                       </tr>
                                      {{/each}}

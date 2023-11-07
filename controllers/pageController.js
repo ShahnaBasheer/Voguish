@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');;
-const { findCart, cartQty } = require('../helperfns');
+const { cartQty } = require('../helperfns');
 
 
 //Display Login page
@@ -19,7 +19,8 @@ const getSignupPage = asyncHandler( async (req,res) => {
 const getHomePage = asyncHandler(async (req,res) => {
    try{ 
         let user = req?.user, totalQty = await cartQty(user);
-        const newarrivals = await Product.find().populate('brand')
+        const newarrivals = await Product.find(
+         {isDeleted:false,isDeletedBy:false}).populate('brand')
             .populate('category').sort({ createdAt: -1 }).limit(5).lean();
         res.render('users/home',{user,newarrivals,totalQty,
            bodycss:'css/nav_footer.css',maincss:'css/home.css'});
@@ -32,7 +33,9 @@ const getHomePage = asyncHandler(async (req,res) => {
 const getWomenPage = asyncHandler( async (req,res) => {
    try{
         let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find({gender:"women"}).populate('brand').lean();
+        const products = await Product.find(
+         {gender:"women",isDeleted:false,isDeletedBy:false})
+            .populate('brand').lean();
         res.render('users/category_page',{bodycss:'css/nav_footer.css',
            maincss:'css/category_page.css',main:"women",products,user,totalQty});  
    } catch(error) {
@@ -44,7 +47,9 @@ const getWomenPage = asyncHandler( async (req,res) => {
 const getMenPage = asyncHandler( async (req,res) => {
    try{
         let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find({gender:"men"}).populate('brand').lean();
+        const products = await Product.find(
+         {gender:"men",isDeleted:false,isDeletedBy:false})
+            .populate('brand').lean();
         res.render('users/category_page',{bodycss:'css/nav_footer.css',
            maincss:'css/category_page.css',main:"men",products,user,totalQty});  
    } catch(error) {
@@ -57,7 +62,8 @@ const getMenPage = asyncHandler( async (req,res) => {
 const getKidsPage = asyncHandler( async (req,res) => {
    try{
         let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find({gender:{ $in: ["girls", "boys"] } })
+        const products = await Product.find(
+          {gender:{ $in: ["girls", "boys"] },isDeleted:false,isDeletedBy:false })
            .populate('brand').lean();
         res.render('users/category_page',{bodycss:'css/nav_footer.css',
            maincss:'css/category_page.css',main:"kids",products,user,totalQty});  
@@ -70,7 +76,9 @@ const getKidsPage = asyncHandler( async (req,res) => {
 const getGirlsPage = asyncHandler( async (req,res) => {
    try{
         let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find({gender:"girls"}).populate('brand').lean();
+        const products = await Product.find(
+         {gender:"girls",isDeleted:false,isDeletedBy:false})
+         .populate('brand').lean();
         res.render('users/category_page',{bodycss:'css/nav_footer.css',
            maincss:'css/category_page.css',main:"girls",products,user,totalQty});  
    } catch(error) {
@@ -82,7 +90,9 @@ const getGirlsPage = asyncHandler( async (req,res) => {
 const getBoysPage = asyncHandler( async (req,res) => {
    try{
         let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find({gender:"boys"}).populate('brand').lean();
+        const products = await Product.find(
+           {gender:"boys",isDeleted:false,isDeletedBy:false})
+           .populate('brand').lean();
         res.render('users/category_page',{bodycss:'css/nav_footer.css',
            maincss:'css/category_page.css',main:"boys",products,user,totalQty});  
    } catch(error) {

@@ -3,6 +3,7 @@ const CartItem = require('./cartItemModel');
 const Product = require('./productModel');
 
 
+
 const cartSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -36,7 +37,7 @@ const cartSchema = new mongoose.Schema({
         required: true,
         default: 50,
     },
-    total : {
+    totalAmount : {
         type: Number,
         required:true,
         default: 0,
@@ -46,20 +47,27 @@ const cartSchema = new mongoose.Schema({
 
     cartSchema.pre('save',async function(next) {
         try {
-            let totalPrice = totalMrp = 0;
-            
-            for(let item of this.items){
-                const cartitem = await CartItem.findById(item.cartItem);
-                const product = await Product.findById(cartitem.product)
-                totalPrice += (item.quantity * product.price);
-                totalMrp += (item.quantity * product.mrp)        
+            let totalMrp = 0;
+            let totalPrice = 0;
+    
+            for (const item of this.items) {
+                const cartItem = await CartItem.findById(item.cartItem).populate('product');
+                if (cartItem && cartItem.product) {
+                    totalMrp += cartItem.product.mrp * item.quantity;
+                    totalPrice += cartItem.product.price * item.quantity;
+                }
             }
-            this.totalPrice = totalPrice;
+    
             this.totalMrp = totalMrp;
-
-            if(totalPrice >= 500) this.deliveryCharge = 0; 
-            else this.deliveryCharge = 50;
-            this.total = this.totalPrice + this.deliveryCharge; 
+            this.totalPrice = totalPrice;
+    
+            if (totalPrice >= 500 || !this.items.length) {
+                this.deliveryCharge = 0;
+            } else {
+                this.deliveryCharge = 50;
+            }
+    
+            this.totalAmount = this.totalPrice + this.deliveryCharge;
             next();
         } catch (error) {
             next(error);

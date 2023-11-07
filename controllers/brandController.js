@@ -36,18 +36,6 @@ const addBrand = asyncHandler (async (req, res) => {
 });
 
 
-//delete Brand
-const deleteBrand = asyncHandler( async (req,res) => {
-    const { id } = req.params;
-    validateMongodbId(id);
-    try{
-        const brand = await Brand.findByIdAndDelete(id).lean();;
-        await Product.deleteMany({ brand: brand._id });
-        res.redirect('/admin/brands');
-    } catch(error){
-        throw new Error(error);
-    }
-});
 
 //display edit brand page
 const getEditBrand = asyncHandler( async (req,res) => {
@@ -71,6 +59,42 @@ const editBrand = asyncHandler( async (req,res) => {
   }
 });
 
+//delete Brand
+const deleteBrand = asyncHandler( async (req,res) => {
+    const { id } = req.params;
+    validateMongodbId(id);
+    try{
+        const brand = await Brand.findByIdAndUpdate(id,{isDeleted:true});
+        await Product.updateMany({ brand, isDeleted:false},
+            {$set : {isDeletedBy:true}});
+        res.redirect('/admin/brands');
+    } catch(error){
+        throw new Error(error);
+    }
+});
+
+const restoreBrand = asyncHandler( async (req,res) =>{
+    const { id } = req.params;
+    validateMongodbId(id);
+    try{
+        const brand = await Brand.findByIdAndUpdate(id,
+            {isDeleted:false},{ new: true });
+         const products = await Product.find({brand: brand._id,isDeleted: false})
+         .populate({path: 'category', match: { isDeleted: false }}).exec();
+        
+            // Update isDeletedBy field for the fetched products
+        products.forEach(async (product) => {
+            if (product.category && product.category.isDeleted === false) {
+                product.isDeletedBy = false;
+                await product.save();
+            }
+        });
+        res.redirect('/admin/categories');
+    } catch(error){
+        throw new Error(error);
+    }
+});
+
 
 module.exports = {
     getAllBrands,
@@ -79,4 +103,5 @@ module.exports = {
     deleteBrand,
     editBrand,
     getEditBrand,
+    restoreBrand,
 }

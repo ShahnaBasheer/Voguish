@@ -4,7 +4,7 @@ const Category = require('../models/categoryModel');
 const { createUniqueSlug } = require('../helperfns')
 const asyncHandler = require('express-async-handler');
 const fs = require('fs').promises;
-const { findCart, cartQty } = require('../helperfns');
+const { cartQty } = require('../helperfns');
 
 
 //get a product
@@ -137,35 +137,44 @@ const editProduct = asyncHandler(async (req,res) => {
 //Delete a product
 const deleteProduct = asyncHandler(async (req,res) => {
     const { id } = req.params;
+    validateMongodbId(id);
     try {
-        const product = await Product.findByIdAndDelete(id);
-        for(key in product.images){
-            await fs.unlink('uploads/'+ product.images[key]);
+        const product = await Product.findByIdAndUpdate(id,{isDeleted:true});
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
         }
+        await product.save();
         res.redirect('/admin/view-products');
     } catch (error) {
         throw new Error(error)
     }
 });
 
+//Retrieve the deleted  product
+const restoreProduct = asyncHandler(async (req,res) => {
+    const { id } = req.params;
+    validateMongodbId(id);
+    try {
+        const product = await Product.findAndUpdate({
+            id,isDeletedBy:false},
+            {isDeleted: false});
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+        await product.save();
+        res.redirect('/admin/view-products');
+    } catch (error) {
+        throw new Error(error)
+    }
+});
+
+
 module.exports = {
     addProduct, getProduct, getAllProducts,
     editProduct, deleteProduct, getAddProduct,
-    getEditProduct,
+    getEditProduct, restoreProduct,
 };
 
-/*if(req.body?.stockcounts){
-    const sizes = Object.keys(req.body?.stockcounts).map((size) => {
-        const stock = req.body.stockcounts[size];
-        if(stock > 0){
-            return {
-                size: size,
-                stock: Number(req.body?.stockcounts[size]),
-            };
-        }
-        return null;
-      }).filter(Boolean);
-    req.body.sizes = sizes;
-}
-
-*/
+/* /*for(key in product.images){
+       await fs.unlink('uploads/'+ product.images[key]);
+}*/

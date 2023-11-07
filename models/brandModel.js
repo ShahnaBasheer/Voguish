@@ -12,8 +12,11 @@ const brandSchema = new mongoose.Schema({
     country: {
         type: String,
         required: true,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
     }, 
-
 });
 
 module.exports = mongoose.model('Brand', brandSchema);

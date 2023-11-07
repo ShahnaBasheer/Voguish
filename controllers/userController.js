@@ -100,11 +100,13 @@ const loginUser = asyncHandler(async (req, res) =>{
                 httpOnly: true,
                 secure: true,
                 maxAge: 15 * 60 * 1000,
+                sameSite: 'Lax' ,
             });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
                 maxAge: 3 * 24 * 60 * 60 * 1000, 
+                sameSite: 'Lax' ,
             });
             res.redirect('/');
         }else{
@@ -249,14 +251,14 @@ const adminLogin = asyncHandler( async (req,res) => {
             const refreshToken = generateAdminRefreshToken(findadmin?.id);
             await User.findByIdAndUpdate(findadmin.id, { refreshToken }, { new: true });
 
-            res.cookie("adminaccesstoken", accessToken, {
+            res.cookie("adminAccessToken", accessToken, {
                 httpOnly: true,
                 secure: true, // Set to true if served over HTTPS
                 maxAge:  15 * 60 * 1000,
                 sameSite: 'Lax' ,
             });
 
-            res.cookie("adminrefreshtoken", refreshToken, {
+            res.cookie("adminRefreshToken", refreshToken, {
                 httpOnly: true,
                 secure: true, 
                 maxAge: 2 * 24 * 60 * 60 * 1000,
@@ -274,15 +276,15 @@ const adminLogin = asyncHandler( async (req,res) => {
 });
 
 const adminLogout = asyncHandler (async(req,res) => {
-    const refreshToken = req.cookies.adminrefreshtoken;
+    const refreshToken = req.cookies.adminRefreshToken;
 
     if (!refreshToken) throw new Error("No Refresh Token in Cookies");
     
-    res.clearCookie("adminaccesstoken", {
+    res.clearCookie("adminAccessToken", {
         httpOnly: true,
         secure: true,
     });
-    res.clearCookie("adminrefreshtoken", {
+    res.clearCookie("adminrRereshToken", {
         httpOnly: true,
         secure: true,
     });

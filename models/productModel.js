@@ -89,6 +89,14 @@ const productSchema = new mongoose.Schema({
         ref: 'Review',
       }
     ],
+    isDeletedBy: {//entity was deleted by a category or brand deletion action.
+        type: Boolean,
+        default: false
+    }, 
+    isDeleted: {//entity was deleted individually
+        type: Boolean,
+        default: false
+    },
     },
     { timestamps : true } 
   
@@ -96,6 +104,9 @@ const productSchema = new mongoose.Schema({
 
 // Pre-save hook to calculate price from mrp and discount before saving the product
 productSchema.pre('save', function(next) {
+    if (this.isDeleted) {
+        return next(new Error('Cannot save deleted document.'));
+    }
     this.price = Math.ceil(this.mrp - (this.mrp * (this.discount / 100)));
 
     if(this.sizes){

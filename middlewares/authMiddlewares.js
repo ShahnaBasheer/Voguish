@@ -94,45 +94,54 @@ const isLoggedInUser = asyncHandler(async (req, res, next) => {
 
 //admin auth middleware
 const adminAuth = asyncHandler(async (req, res, next) => {
+    const accessToken = req.cookies?.adminAccessToken;
+    const refreshToken = req.cookies?.adminRefreshToken;
     try {
-        const accessToken = req.cookies?.adminaccesstoken;
+        if (!accessToken && !refreshToken) {
+            throw new Error("Not authorized: no access token");
+        }
+        const decodedAccessToken = jwt.verify(accessToken, process.env.JWT_ADMIN_SECRET);
+        const user = await User.findById(decodedAccessToken.id);
+        if (!user) {
+            return res.status(401).json({ message: "Admin not found!" });
+        }
 
-        if(!accessToken) throw new Error("Not authorized: no access token")
-        const decoded = jwt.verify(accessToken, process.env.JWT_ADMIN_SECRET);
-        const user = await User.findById(decoded.id);
-
-        if (!user) return res.status(401).json({message: "User not found!"});
-        console.log("admin has token")
         req.user = user;
         next();
-    } catch (error) {  
-        try{ 
-            if (error instanceof jwt.TokenExpiredError) {
-                console.log("Token expired for admin");
-                const refreshToken= req.cookies?.adminrefreshtoken;
-    
-                if(!refreshToken ) throw new Error("No Refresh Token in Cookies");
-        
-                const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_ADMIN_SECRET);
-                const user = await User.findOne({ _id : decoded.id});
-                
-                if(!user) throw new Error("No Refresh token present in db or not matched");          
+    } catch (error) {
+        console.log("Error:",error.message);
+        try {
+            if (error instanceof jwt.TokenExpiredError || !accessToken) {
+                console.log("Accesstoken expired for admin");
+                if (!refreshToken) {
+                    throw new Error("No Refresh Token in Cookies");
+                }
+
+                const decodedRefreshToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_ADMIN_SECRET);
+                const user = await User.findOne({ _id: decodedRefreshToken.id });
+
+                if (!user) {
+                    throw new Error("No Refresh token present in db or not matched");
+                }
+
                 const newAccessToken = generateAdminToken(user);
-                res.clearCookie('adminaccesstoken');
-                res.cookie('adminaccesstoken', newAccessToken, {
-                    httpOnly: true,
-                    secure: true, 
-                    maxAge: 15 * 60 * 1000, 
-                });
                 req.user = user;
+                res.clearCookie('adminAccessToken');
+                res.cookie('adminAccessToken', newAccessToken, {
+                    httpOnly: true,
+                    secure: true,
+                    maxAge: 15 * 60 * 1000, // Set the new access token expiration time
+                    sameSite: 'Lax' 
+                });
             }
             next();
         } catch (error) {
-           console.log(error.message);
-           next();     
+            console.log("Error:",error.message);
+            next();
         }
     }
 });
+
 
 
 // check user is admin
