@@ -27,121 +27,126 @@
                     <div id="filterBox">
                         <div class="d-flex justify-content-between align-items-center py-4 px-3">
                             <h4 class="text-center">FILTER</h4>
-                            <a href="/{{#if (isInArray main 'girls' 'boys')}}kids{{else}}{{main}}{{/if}}" class="btn btn-sm px-2 py-0" id="reset">
+                            <a href="/{{#if (isInArray main 'girls' 'boys')}}kids{{else}}{{main}}{{/if}}" 
+                            class="btn btn-sm px-2 py-0" id="reset">
                               Reset <i class="fa-solid fa-rotate"></i>
                             </a>
                         </div>
                         
                         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                             {{#unless (isEqualTo priceStats.maxPrice priceStats.minPrice)}}
-                            <div class="mb-3 mt-4">
-                                <div class="d-flex justify-content-center">
-                                    <section class="range-slider">   
-                                        <div class="output-container">
-                                            <span class="output outputOne">{{priceStats.min}}</span>
-                                            <span class="output outputTwo">{{priceStats.max}}</span>
-                                            <button type="submit" class="btn btn-sm btn-danger py-0">
-                                                <small><i class="fa-solid fa-check"></i></small>
-                                            </button>
-                                        </div>
-                                        <span class="full-range"></span>
-                                        <span class="incl-range"></span>
-                                        <input name="minRange" value="{{priceStats.min}}" id="rangeOne" class="ranges"
-                                            min="{{priceStats.minPrice}}" max="{{priceStats.maxPrice}}" step="1" type="range">
-                                        <input name="maxRange" value="{{priceStats.max}}" id="rangeTwo" class="ranges"
-                                           min="{{priceStats.minPrice}}" max="{{priceStats.maxPrice}}" step="1" type="range">    
-                                    </section>
+                                <div class="mb-3 mt-4">
+                                    <div class="d-flex justify-content-center">
+                                        <section class="range-slider">   
+                                            <div class="output-container">
+                                                <span class="output outputOne">{{priceStats.min}}</span>
+                                                <span class="output outputTwo">{{priceStats.max}}</span>
+                                                <button type="submit" class="btn btn-sm btn-danger py-0">
+                                                    <small><i class="fa-solid fa-check"></i></small>
+                                                </button>
+                                            </div>
+                                            <span class="full-range"></span>
+                                            <span class="incl-range"></span>
+                                            <input name="minRange" value="{{priceStats.min}}" id="rangeOne" class="ranges"
+                                                min="{{priceStats.minPrice}}" max="{{priceStats.maxPrice}}" step="1" type="range">
+                                            <input name="maxRange" value="{{priceStats.max}}" id="rangeTwo" class="ranges"
+                                               min="{{priceStats.minPrice}}" max="{{priceStats.maxPrice}}" step="1" type="range">    
+                                        </section>
+                                    </div>
+                                    <div class="d-flex justify-content-between px-4" id="minMax">
+                                        <small class="">Min: ₹{{priceStats.minPrice}}</small>
+                                        <small class="">Max: ₹{{priceStats.maxPrice}}</small>
+                                    </div>
                                 </div>
-                                <div class="d-flex justify-content-between px-4" id="minMax">
-                                    <small class="">Min: ₹{{priceStats.minPrice}}</small>
-                                    <small class="">Max: ₹{{priceStats.maxPrice}}</small>
-                                </div>
-                            </div>
                             {{/unless}}
 
-                            {{#if (isInArray  main 'kids' 'girls' 'boys')}}
-                            <div class="panel panel-default">
-                                <div class="panel-heading" role="tab" id="headingGender">
-                                    <h3 class="panel-title">
-                                        <a {{#if @root/selectedOptions}}
-                                              {{#unless (getProperty @root/selectedOptions 'gender')}}class="collapsed"{{/unless}}
-                                           {{else}} class="collapsed"
-                                           {{/if}}
-                                           role="button" data-bs-toggle="collapse"
-                                           href="#collapse-gender" aria-expanded="true" aria-controls="collapsegender">
-                                            Gender
-                                        </a>
-                                    </h3>
-                                </div>
-                                <div id="collapse-gender" class="panel-collapse collapse{{#if @root/selectedOptions}}
-                                          {{#if (getProperty @root/selectedOptions 'gender')}}show{{/if}}
-                                       {{/if}}" role="tabpanel" aria-labelledby="heading{{@index}}">
-                                    <div class="panel-body">
-                                        <div class="bg-white pb-3 d-flex justify-content-center">   
-                                            <div class="form-check form-check-inline pe-3">
-                                                <input class="form-check-input custom-radio-input genders" type="radio" id="gender_1" 
-                                                    value="girls" name="gender"{{#if @root/selectedOptions}}
-                                                      {{#if (isEqualTo (getProperty @root/selectedOptions 'gender') 'girls')}}checked{{/if}}
-                                                    {{/if}}>
-                                                <label class="form-check-label" for="gender_1">girls</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input custom-radio-input genders" type="radio" id="gender_2" 
-                                                   value="boys" name="gender" {{#if @root/selectedOptions}}
-                                                      {{#if (isEqualTo (getProperty @root/selectedOptions 'gender') 'boys')}}checked{{/if}}
-                                                    {{/if}}>
-                                                <label class="form-check-label" for="gender_2">boys</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {{/if}}
-                       
-                        
+
                             {{#each filters as |outerValue outerKey|}}
-                            <div class="panel panel-default">
-                                <div class="panel-heading" role="tab" id="heading{{@index}}">
-                                    <h3 class="panel-title">
-                                        <a {{#if @root/selectedOptions}}
-                                              {{#unless (getProperty @root/selectedOptions outerKey)}}class="collapsed"{{/unless}}
-                                           {{else}} class="collapsed"
-                                           {{/if}}
-                                           role="button" data-bs-toggle="collapse"
-                                           href="#collapse-{{@index}}" aria-expanded="true" aria-controls="collapseOne">
-                                            {{@key}} 
-                                        </a>
-                                    </h3>
-                                </div>
-                                <div id="collapse-{{@index}}" class="panel-collapse collapse{{#if @root/selectedOptions}}
-                                       {{#if (getProperty @root/selectedOptions outerKey)}}show{{/if}}
-                                    {{/if}}"
-                                    role="tabpanel" aria-labelledby="heading{{@index}}">
-                                    <div class="panel-body">
-                                        <div class="bg-white p-4 mb-30">
-                                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                                <input type="checkbox" class="custom-control-input" id="{{@key}}-all" name="{{@key}}">
-                                                <label class="custom-control-label" for="{{@key}}-all">Select All</label>
-                                            </div>
-                                            {{#each this}}
-                                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                                <input type="checkbox" class="custom-control-input" 
-                                                   id="{{outerKey}}-{{@index}}" name="{{outerKey}}[]" 
-                                                   {{#if (isEqualTo outerKey 'discount')}}value="{{this.min}}"
-                                                    {{else}} value="{{this.name}}"
+                                {{#if (andFunction (isEqualTo outerKey 'gender') (isInArray  @root/main 'kids' 'girls' 'boys'))}}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="headingGender">
+                                            <h3 class="panel-title">
+                                                <a {{#if @root/selectedOptions}}
+                                                      {{#unless (getProperty @root/selectedOptions 'gender')}}class="collapsed"{{/unless}}
+                                                   {{else}} class="collapsed"
                                                    {{/if}}
-                                                   {{#if @root/selectedOptions}}
-                                                        {{#if (contains (getProperty @root/selectedOptions outerKey) this.name)}}
-                                                        checked{{/if}}
-                                                    {{/if}}>
-                                                <label class="custom-control-label" for="{{outerKey}}-{{@index}}">{{this.name}}</label>
-                                                <span class="badge border">{{this.count}}</span>
+                                                   role="button" data-bs-toggle="collapse"
+                                                   href="#collapse-gender" aria-expanded="true" aria-controls="collapsegender">
+                                                    gender
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div id="collapse-gender" class="panel-collapse collapse{{#if @root/selectedOptions}}
+                                                  {{#if (getProperty @root/selectedOptions 'gender')}}show{{/if}}
+                                               {{/if}}" role="tabpanel" aria-labelledby="heading{{@index}}">
+                                            <div class="panel-body">
+                                                <div class="bg-white px-4 py-3"> 
+                                                    {{#each this}}  
+                                                        <div class="form-check d-flex align-items-center justify-content-between mb-3">
+                                                            <div>
+                                                                <input class="form-check-input custom-radio-input genders" type="radio" id="gender_{{@index}}" 
+                                                                     value="{{this.name}}" name="gender"{{#if @root/selectedOptions}}
+                                                                     {{#if (isEqualTo (getProperty @root/selectedOptions 'gender') this.name)}}checked{{/if}}
+                                                                     {{/if}}>
+                                                                <label class="form-check-label" for="gender_{{@index}}">{{this.name}}</label>
+                                                            </div>
+                                                            <span class="badge border">{{this.count}}</span>
+                                                        </div>
+                                                    {{/each}}
+                                                </div>
                                             </div>
-                                            {{/each}}
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                {{/if}}
+
+                                {{#unless (isEqualTo outerKey 'gender')}}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="heading{{@index}}">
+                                            <h3 class="panel-title">
+                                                <a {{#if @root/selectedOptions}}
+                                                      {{#unless (getProperty @root/selectedOptions outerKey)}}class="collapsed"{{/unless}}
+                                                   {{else}} class="collapsed"
+                                                   {{/if}}
+                                                   role="button" data-bs-toggle="collapse"
+                                                   href="#collapse-{{@index}}" aria-expanded="true" aria-controls="collapseOne">
+                                                    {{@key}} 
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <div id="collapse-{{@index}}" class="panel-collapse collapse{{#if @root/selectedOptions}}
+                                               {{#if (getProperty @root/selectedOptions outerKey)}}show{{/if}}
+                                            {{/if}}"
+                                            role="tabpanel" aria-labelledby="heading{{@index}}">
+                                            <div class="panel-body">
+                                                <div class="bg-white px-4 py-3">
+                                                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                                        <input type="checkbox" class="custom-control-input selectAll" 
+                                                            name="selectAll[]" id="{{@key}}-all" value="{{@key}}"
+                                                            {{#if @root/selectedOptions}}
+                                                               {{#if (contains @root/selectedOptions.selectAll outerKey)}}checked{{/if}}
+                                                            {{/if}}>
+                                                        <label class="custom-control-label" for="{{@key}}-all">Select All</label>
+                                                    </div>
+                                                 {{#each this}}
+                                                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                                        <input type="checkbox" class="custom-control-input" 
+                                                           id="{{outerKey}}-{{@index}}" name="{{outerKey}}[]" 
+                                                           {{#if (isEqualTo outerKey 'discount')}}value="{{this.min}}"
+                                                            {{else}} value="{{this.name}}"
+                                                           {{/if}}
+                                                           {{#if @root/selectedOptions}}
+                                                                {{#if (contains (getProperty @root/selectedOptions outerKey) this.name)}}
+                                                                checked{{/if}}
+                                                            {{/if}}>
+                                                        <label class="custom-control-label" for="{{outerKey}}-{{@index}}">{{this.name}}</label>
+                                                        <span class="badge border">{{this.count}}</span>
+                                                    </div>
+                                                  {{/each}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/unless}}
                             {{/each}} 
                         </div>
                     </div>
@@ -160,6 +165,14 @@
                                     <div>
                                         <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
                                         <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
+                                        <span class="d-inline-block fw-bold ps-3">
+                                            {{#if (isEqualTo main 'kids')}}
+                                                ({{products.length}} items)
+                                            {{else}}
+                                                ({{filters.gender.[0].count}} items)
+                                            {{/if}}
+                                            
+                                        </span>
                                     </div>
                                     <div class="ml-2">
                                         <div class="btn-group">

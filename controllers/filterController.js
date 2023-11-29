@@ -70,7 +70,6 @@ const filterProducts = asyncHandler( async(req,res)=> {
             sort = { $sort:  sortField } ;
         }
         
-        console.log(pipeline)
         let products = await Product.aggregate([{$match: pipeline},sort,
             { $lookup: { from: 'brands', localField: 'brand', foreignField: '_id', as: 'brand' } },
             { $unwind: '$brand' } 
@@ -80,7 +79,8 @@ const filterProducts = asyncHandler( async(req,res)=> {
              await filterFunction(_page, _main, pipeline, false );
         
         if(discount) selectedOptions['discount'] = selectedOptions['discount']?.map(item => `${item}% And Above`);
-
+        
+        console.log(selectedOptions)
         res.render(renderPage,{main:pageFilter, products, user, 
               totalQty, Brands, filters,  priceStats ,selectedOptions,
               bodycss:'/css/nav_footer.css',bodyjs:'/js/productCard.js',

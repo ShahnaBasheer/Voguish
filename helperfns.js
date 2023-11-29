@@ -167,7 +167,7 @@ const filterFunction = async(page,pageFilter, matchStage = '', isGetFilterPage =
     try {
         let filters = {}, pageField, renderPage,
             categoryMatch = { isDeleted:false, isDeletedBy:false },
-            properties = ['category', 'brand', 'sizes' , 'discount', 'material',
+            properties = ['gender', 'category', 'brand', 'sizes' , 'discount', 'material',
                     'type','occassion', 'pattern', 'neckline','typeOfWork', 'legStyle',
                     'riseStyle', 'padding', 'coverage', 'wiring'];
 
@@ -215,7 +215,14 @@ const filterFunction = async(page,pageFilter, matchStage = '', isGetFilterPage =
 const getFieldCounts = async (fieldName, matchStage, categoryMatch) => {
     try {
         let pipeline;
-        if (fieldName === 'category' || fieldName === 'brand') {
+        if(fieldName === 'gender'){
+             pipeline = [
+                { $match: matchStage},
+                { $group: { _id: '$gender', count: { $sum: 1 } } },
+                { $project: {_id: 0, name: `$_id`,count: 1 } },
+             ]
+             console.log(await Product.aggregate(pipeline))
+        } else if (fieldName === 'category' || fieldName === 'brand') {
           pipeline = [
               { $match: (fieldName === 'category')?categoryMatch:matchStage },
               {
@@ -228,7 +235,7 @@ const getFieldCounts = async (fieldName, matchStage, categoryMatch) => {
               },
               { $unwind: `$${fieldName}`,},
               { $group: { _id: `$${fieldName}.${fieldName}`,count: { $sum: 1 },},},
-              { $project: {_id: 0,name: `$_id`,count: 1,},},
+              { $project: {_id: 0,name: `$_id`,count: 1 } }
           ];
         } else if (fieldName === 'sizes') {
           pipeline = [

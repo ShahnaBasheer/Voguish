@@ -58,9 +58,9 @@
                                 <div id="collapse-{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                                     <div class="panel-body">
                                         <div class="bg-white p-4 mb-30">
-                                        
                                             <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                                <input type="checkbox" class="custom-control-input" id="{{@key}}-all" name="{{@key}}">
+                                                <input type="checkbox" class="custom-control-input selectAll" id="{{@key}}-all" 
+                                                 {{#if (getProperty @root/selectedOptions @root/key)}}checked{{/if}}name="{{@key}}">
                                                 <label class="custom-control-label" for="{{@key}}-all">Select All</label>
                                             </div>
                                             {{#each this}}

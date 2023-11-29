@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const addToWishlistBtn = document.querySelectorAll('.addToWishlist');
-    const checkboxes = document.querySelectorAll('.custom-control-input, .custom-radio-input');
+    const checkboxes = document.querySelectorAll('.custom-control-input:not(.selectAll), .custom-radio-input');
     const checkedBoxes = document.querySelectorAll('input:checked');
+    const selectAll = document.querySelectorAll('.selectAll');
     let rangeOne = document.getElementById('rangeOne'),
         rangeTwo = document.getElementById('rangeTwo'),
         outputOne = document.querySelector('.outputOne'),
@@ -53,14 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 outputTwo.style.left = (valueTwo / this.getAttribute('max')) * 100 + '%';
                 outputTwo.innerHTML = `₹${valueTwo}`;
-        
                 // Ensure rangeTwo does not cross rangeOne
                 if (valueTwo < valueOne) {
                   rangeTwo.value = valueOne ;
                   updateView.call(rangeTwo);
                 }
             }
-         
+
             // Update the inclusive range
             inclRange.style.width = (Math.abs(valueTwo - valueOne) / (maxPrice - minPrice)) * 100 + '%';
             inclRange.style.left = (Math.min(valueOne, valueTwo) - minPrice) / (maxPrice - minPrice) * 100 + '%';
@@ -93,34 +93,48 @@ document.addEventListener('DOMContentLoaded', function() {
             if (checkbox.type === 'radio' && checkbox.getAttribute('name') == 'gender') {
                 const radioValue = checkbox.value;
                 checkbox.removeAttribute('name');
-                
                 document.getElementById('mainPage').value = radioValue;
             }
             document.getElementById('filterForm').submit();
-        });
-
-        
+        });  
     });
     
-    checkedBoxes.forEach( function (item) {
+    checkedBoxes?.forEach( function (item) {
          // Create a button element
          const closeButton = document.createElement('button');
          closeButton.classList.add('btn', 'btn-sm', 'me-2', 'px-3');
          closeButton.innerHTML = `${item.value}<i class="fa-solid fa-circle-xmark ps-2"></i>`;
  
-         closeButton.addEventListener('click', function () {
+         closeButton?.addEventListener('click', function () {
             if(item.type == 'radio' && item.getAttribute('name') == 'gender') {
                 item.checked = false;
                 document.getElementById('mainPage').value = "kids"; 
                 document.getElementById('filterForm').submit();
                 
-            } else if(item.type == 'checkbox') item.click();
+            } else if(item.type == 'checkbox'){
+                let filter = item.getAttribute('name').replace(/\[\]/g, '');
+                let selected = document.getElementById(`${filter}-all`);
+                if(selected.checked) selected.checked = false;
+                item.click();
+            }
          });
          if(item.getAttribute('name') != 'sorting'){
-             selectedItems.appendChild(closeButton);
+              selectedItems.appendChild(closeButton);
          }
          
-    })
+    });
+
+
+    selectAll?.forEach( function(opt) {
+        const key = opt.id.replace(/-all$/, '');
+        opt.addEventListener('change', function (e) {
+            const allvalues = document.querySelectorAll(`input[name = "${key}[]"]`);
+            allvalues?.forEach((item) => {
+                if(item.checked){ item.checked = false }
+                item.click()
+            });
+        });
+    });
    
 });
 

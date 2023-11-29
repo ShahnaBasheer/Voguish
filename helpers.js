@@ -67,16 +67,14 @@ const compareIds = function(id1, id2, options) {
 };
 
 
-const isLessThan = function(a, b) {
-    return a <= b;
-};
+const isLessThan = function(a, b) { return a <= b; };
 
+const andFunction = function(a, b) { return (a && b) };
 
-const getProperty = function(obj, key) {
-    return obj[key];
-  };
+const getProperty = function(obj, key) { return obj[key] };
 
 const contains = function(array, target){
+    console.log(array,target)
     if( new Set(array).has(target)){ return true; }
     return false;
 } 
@@ -102,5 +100,6 @@ module.exports = {
     momentsAgo,
     getProperty,
     contains,
-    isInArray
+    isInArray,
+    andFunction
 } ;
