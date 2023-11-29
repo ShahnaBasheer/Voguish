@@ -1,228 +1,257 @@
 <div id="page">
     <!-- Shop Start -->
+   
     <div class="container-fluid">
-        <div class="row">
-            <!-- Shop Sidebar Start -->
-            <div class="col-lg-2 py-5">
-                
-                <div>
-                    <h4>FILTER</h4>
+        <form method="GET" action="/filters" id="filterForm"> 
+            <div class="row">
+                <!-- Shop Sidebar Start -->
+                <div class="col-lg-2 py-3">
+                    <div class="col-12 py-2 ps-3" id="page_title"> 
+                        <h1 class="text-uppercase">{{main}}</h1>
+                        {{#if (isEqualTo main 'women')}}
+                             <img src="/images/pngwing.com (3).png" alt="" width="60" height="auto">
+                        {{else if (isEqualTo main 'men')}}
+                             <img src="/images/PngItem_40914.png" alt="" width="36" height="auto">
+                        {{else if (isEqualTo main 'girls')}}
+                             <img src="/images/20704361.jpg" alt="" width="55" height="auto"> 
+                        {{else if (isEqualTo main 'boys')}}
+                             <img src="/images/8864985edd.jpg" alt="" width="50" height="auto">  
+                        {{else}}
+                             <img src="/images/kids__.png" alt="" width="100" height="auto">
+                        {{/if}}
+                    </div> 
 
-                    <!-- Category Start -->
-                    <h5 class="section-title position-relative text-uppercase mb-3">
-                    <span class="pe-3">category</span></h5>
-                    <div class="bg-white p-4 mb-30">
-                        <form>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" checked id="category-all">
-                                <label class="custom-control-label" for="category-all">All Price</label>
-                                <span class="badge border">1000</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="category-1">
-                                <label class="custom-control-label" for="category-1">Kurtas</label>
-                                <span class="badge border">150</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="category-2">
-                                <label class="custom-control-label" for="category-2">Sarees</label>
-                                <span class="badge border">295</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="category-3">
-                                <label class="custom-control-label" for="category-3">Salwar Suits and Sets</label>
-                                <span class="badge border">246</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="category-4">
-                                <label class="custom-control-label" for="category-4">Tops</label>
-                                <span class="badge border">145</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                                <input type="checkbox" class="custom-control-input" id="category-5">
-                                <label class="custom-control-label" for="category-5">Jeans</label>
-                                <span class="badge border">168</span>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- Category End -->
-
-
-                    <!-- Price Starts -->
-                    <h5 class="section-title position-relative text-uppercase mb-3">
-                    <span class="pe-3">price</span></h5>
-                    <div class="bg-white p-4 mb-30">
-                        <form>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" checked id="price-all">
-                                <label class="custom-control-label" for="price-all">All Price</label>
-                                <span class="badge border">1000</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="price-1">
-                                <label class="custom-control-label" for="price-1">$0 - $100</label>
-                                <span class="badge border">150</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="price-2">
-                                <label class="custom-control-label" for="price-2">$100 - $200</label>
-                                <span class="badge border">295</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="price-3">
-                                <label class="custom-control-label" for="price-3">$200 - $300</label>
-                                <span class="badge border">246</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="price-4">
-                                <label class="custom-control-label" for="price-4">$300 - $400</label>
-                                <span class="badge border">145</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                                <input type="checkbox" class="custom-control-input" id="price-5">
-                                <label class="custom-control-label" for="price-5">$400 - $500</label>
-                                <span class="badge border">168</span>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- Price End -->
-                  
-                    <!-- Color Start -->
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="pe-3">color</span></h5>
-                    <div class="bg-white p-4 mb-30">
-                        <form>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" checked id="color-all">
-                                <label class="custom-control-label" for="price-all">All Color</label>
-                                <span class="badge border">1000</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="color-1">
-                                <label class="custom-control-label" for="color-1">Black</label>
-                                <span class="badge border">150</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="color-2">
-                                <label class="custom-control-label" for="color-2">White</label>
-                                <span class="badge border">295</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="color-3">
-                                <label class="custom-control-label" for="color-3">Red</label>
-                                <span class="badge border">246</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="color-4">
-                                <label class="custom-control-label" for="color-4">Blue</label>
-                                <span class="badge border">145</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                                <input type="checkbox" class="custom-control-input" id="color-5">
-                                <label class="custom-control-label" for="color-5">Green</label>
-                                <span class="badge border">168</span>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- Color End -->
-    
-                    <!-- Size Start -->
-                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="pe-3">size</span></h5>
-                    <div class="bg-white p-4 mb-30">
-                        <form>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" checked id="size-all">
-                                <label class="custom-control-label" for="size-all">All Size</label>
-                                <span class="badge border">1000</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="size-1">
-                                <label class="custom-control-label" for="size-1">XS</label>
-                                <span class="badge border">150</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="size-2">
-                                <label class="custom-control-label" for="size-2">S</label>
-                                <span class="badge border">295</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="size-3">
-                                <label class="custom-control-label" for="size-3">M</label>
-                                <span class="badge border">246</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                                <input type="checkbox" class="custom-control-input" id="size-4">
-                                <label class="custom-control-label" for="size-4">L</label>
-                                <span class="badge border">145</span>
-                            </div>
-                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                                <input type="checkbox" class="custom-control-input" id="size-5">
-                                <label class="custom-control-label" for="size-5">XL</label>
-                                <span class="badge border">168</span>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                    <!-- Size End -->
-            </div>
-            <!-- Shop Sidebar End -->
-
-            <!-- Shop Product Start -->
-            <div class="col-lg-10">
-                <div class="row pb-3">
-                    <!-- Category Name Block-->
-                    <div class="col-12 page_title pt-4">
-                       <h2 class="text-uppercase text-center">{{main}}</h2>
-                       <hr>
-                    </div>
-                    <div class="col-12 pb-1">
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div>
-                                <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
-                                <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
-                            </div>
-                            <div class="ml-2">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">Sorting</button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#">Latest</a>
-                                        <a class="dropdown-item" href="#">Popularity</a>
-                                        <a class="dropdown-item" href="#">Best Rating</a>
-                                    </div>
+                    <input type="hidden" name="_main" value="{{main}}" id="mainPage"> 
+                    <!-- FilterBox starts-->
+  
+                    <div id="filterBox">
+                        <div class="d-flex justify-content-between align-items-center py-4 px-3">
+                            <h4 class="text-center">FILTER</h4>
+                            <a href="/{{#if (isInArray main 'girls' 'boys')}}kids{{else}}{{main}}{{/if}}" class="btn btn-sm px-2 py-0" id="reset">
+                              Reset <i class="fa-solid fa-rotate"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                            {{#unless (isEqualTo priceStats.maxPrice priceStats.minPrice)}}
+                            <div class="mb-3 mt-4">
+                                <div class="d-flex justify-content-center">
+                                    <section class="range-slider">   
+                                        <div class="output-container">
+                                            <span class="output outputOne">{{priceStats.min}}</span>
+                                            <span class="output outputTwo">{{priceStats.max}}</span>
+                                            <button type="submit" class="btn btn-sm btn-danger py-0">
+                                                <small><i class="fa-solid fa-check"></i></small>
+                                            </button>
+                                        </div>
+                                        <span class="full-range"></span>
+                                        <span class="incl-range"></span>
+                                        <input name="minRange" value="{{priceStats.min}}" id="rangeOne" class="ranges"
+                                            min="{{priceStats.minPrice}}" max="{{priceStats.maxPrice}}" step="1" type="range">
+                                        <input name="maxRange" value="{{priceStats.max}}" id="rangeTwo" class="ranges"
+                                           min="{{priceStats.minPrice}}" max="{{priceStats.maxPrice}}" step="1" type="range">    
+                                    </section>
                                 </div>
-                                <div class="btn-group ml-2">
-                                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">Showing</button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#">10</a>
-                                        <a class="dropdown-item" href="#">20</a>
-                                        <a class="dropdown-item" href="#">30</a>
+                                <div class="d-flex justify-content-between px-4" id="minMax">
+                                    <small class="">Min: ₹{{priceStats.minPrice}}</small>
+                                    <small class="">Max: ₹{{priceStats.maxPrice}}</small>
+                                </div>
+                            </div>
+                            {{/unless}}
+
+                            {{#if (isInArray  main 'kids' 'girls' 'boys')}}
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="headingGender">
+                                    <h3 class="panel-title">
+                                        <a {{#if @root/selectedOptions}}
+                                              {{#unless (getProperty @root/selectedOptions 'gender')}}class="collapsed"{{/unless}}
+                                           {{else}} class="collapsed"
+                                           {{/if}}
+                                           role="button" data-bs-toggle="collapse"
+                                           href="#collapse-gender" aria-expanded="true" aria-controls="collapsegender">
+                                            Gender
+                                        </a>
+                                    </h3>
+                                </div>
+                                <div id="collapse-gender" class="panel-collapse collapse{{#if @root/selectedOptions}}
+                                          {{#if (getProperty @root/selectedOptions 'gender')}}show{{/if}}
+                                       {{/if}}" role="tabpanel" aria-labelledby="heading{{@index}}">
+                                    <div class="panel-body">
+                                        <div class="bg-white pb-3 d-flex justify-content-center">   
+                                            <div class="form-check form-check-inline pe-3">
+                                                <input class="form-check-input custom-radio-input genders" type="radio" id="gender_1" 
+                                                    value="girls" name="gender"{{#if @root/selectedOptions}}
+                                                      {{#if (isEqualTo (getProperty @root/selectedOptions 'gender') 'girls')}}checked{{/if}}
+                                                    {{/if}}>
+                                                <label class="form-check-label" for="gender_1">girls</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input custom-radio-input genders" type="radio" id="gender_2" 
+                                                   value="boys" name="gender" {{#if @root/selectedOptions}}
+                                                      {{#if (isEqualTo (getProperty @root/selectedOptions 'gender') 'boys')}}checked{{/if}}
+                                                    {{/if}}>
+                                                <label class="form-check-label" for="gender_2">boys</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            {{/if}}
+                       
+                        
+                            {{#each filters as |outerValue outerKey|}}
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="heading{{@index}}">
+                                    <h3 class="panel-title">
+                                        <a {{#if @root/selectedOptions}}
+                                              {{#unless (getProperty @root/selectedOptions outerKey)}}class="collapsed"{{/unless}}
+                                           {{else}} class="collapsed"
+                                           {{/if}}
+                                           role="button" data-bs-toggle="collapse"
+                                           href="#collapse-{{@index}}" aria-expanded="true" aria-controls="collapseOne">
+                                            {{@key}} 
+                                        </a>
+                                    </h3>
+                                </div>
+                                <div id="collapse-{{@index}}" class="panel-collapse collapse{{#if @root/selectedOptions}}
+                                       {{#if (getProperty @root/selectedOptions outerKey)}}show{{/if}}
+                                    {{/if}}"
+                                    role="tabpanel" aria-labelledby="heading{{@index}}">
+                                    <div class="panel-body">
+                                        <div class="bg-white p-4 mb-30">
+                                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                                <input type="checkbox" class="custom-control-input" id="{{@key}}-all" name="{{@key}}">
+                                                <label class="custom-control-label" for="{{@key}}-all">Select All</label>
+                                            </div>
+                                            {{#each this}}
+                                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                                <input type="checkbox" class="custom-control-input" 
+                                                   id="{{outerKey}}-{{@index}}" name="{{outerKey}}[]" 
+                                                   {{#if (isEqualTo outerKey 'discount')}}value="{{this.min}}"
+                                                    {{else}} value="{{this.name}}"
+                                                   {{/if}}
+                                                   {{#if @root/selectedOptions}}
+                                                        {{#if (contains (getProperty @root/selectedOptions outerKey) this.name)}}
+                                                        checked{{/if}}
+                                                    {{/if}}>
+                                                <label class="custom-control-label" for="{{outerKey}}-{{@index}}">{{this.name}}</label>
+                                                <span class="badge border">{{this.count}}</span>
+                                            </div>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}} 
                         </div>
                     </div>
-    
-                    {{#each products}} 
+                    <input type="hidden" name="_page" value="gender"> 
+                    <!--End Filterbox here-->
+                </div>    
+                <!-- Shop Sidebar End -->
+
+                <!-- Shop Product Start -->
+                <div class="col-lg-10 mt-4">
+                    <div class="row">
+                        <!-- Category Name Block-->
+                        {{#if products.length}}
+                            <div class="col-12">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
+                                        <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
+                                    </div>
+                                    <div class="ml-2">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-light dropdown-toggle"
+                                               data-bs-toggle="dropdown">Sorting</button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-item">
+                                                    <input type="radio" name="sorting" value="latest" 
+                                                        id="sort-1" class="custom-radio-input" checked
+                                                        {{#if (isEqualTo selectedOptions.sorting 'latest')}}
+                                                            checked
+                                                        {{/if}}>
+                                                    <label for="sort-1" class="ps-2">Latest</label>
+                                                </div>
+                                                <div class="dropdown-item">
+                                                    <input type="radio" name="sorting" value="best_rating" 
+                                                       id="sort-2" class="custom-radio-input" 
+                                                       {{#if (isEqualTo selectedOptions.sorting 'best_rating')}}
+                                                            checked
+                                                        {{/if}}>
+                                                    <label for="sort-2" class="ps-2">Best Rating</label>
+                                                </div>
+                                                <div class="dropdown-item">
+                                                    <input type="radio" name="sorting" value="price_low_to_high" 
+                                                       id="sort-3" class="custom-radio-input"
+                                                       {{#if (isEqualTo selectedOptions.sorting 'price_low_to_high')}}
+                                                            checked
+                                                        {{/if}}>
+                                                    <label for="sort-3" class="ps-2">Price Low To High</label>
+                                                </div>
+                                                <div class="dropdown-item">
+                                                    <input type="radio" name="sorting" value="price_high_to_low" 
+                                                       id="sort-4" class="custom-radio-input"
+                                                       {{#if (isEqualTo selectedOptions.sorting 'price_high_to_low')}}
+                                                            checked
+                                                        {{/if}}>
+                                                    <label for="sort-4" class="ps-2">Price High To Low</label>
+                                                </div>
+                                                <div class="dropdown-item">
+                                                    <input type="radio" name="sorting" value="discount_high_to_low" 
+                                                       id="sort-5" class="custom-radio-input"
+                                                       {{#if (isEqualTo selectedOptions.sorting 'discount_high_to_low')}}
+                                                            checked
+                                                        {{/if}}>
+                                                    <label for="sort-5" class="ps-2">Discount High to Low</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group ml-2">
+                                            <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">Showing</button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item" href="#">10</a>
+                                                <a class="dropdown-item" href="#">20</a>
+                                                <a class="dropdown-item" href="#">30</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="selectedItems" class="my-4"></div>
+                       
+                            {{#each products}} 
+                                <div class=" col-xl-3 col-lg-4 col-sm-6">
+                                    {{> productcard}}
+                                </div>
+                            {{/each}}
+                        {{else}}
+                            <div class="d-flex justify-content-center align-items-center" id="emptyProducts">
+                                <div class="d-flex justify-content-center flex-column">
+                                    <h3>No Products Found</h3>
+                                    <a href="/{{main}}" class="btn btn-dark px-5 mt-3">Reset Filter</a>
+                                </div>  
+                            </div>
+                        {{/if}}
                     
-                    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                        {{> productcard}}
-                    </div>
-                    {{/each}}
-                  
-                    <div class="col-12">
-                        <nav class="block">
-                          <ul class="pagination justify-content-center">
-                            <li class="page-item disabled"><a class="page-link" href="#">Previous</span></a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                          </ul>
-                        </nav>
+                        <div class="col-12">
+                            <nav class="block">
+                              <ul class="pagination justify-content-center">
+                                <li class="page-item disabled"><a class="page-link" href="#">Previous</span></a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                              </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
+                <!-- Shop Product End -->
             </div>
-            <!-- Shop Product End -->
-        </div>
+        </form>
     </div>
     <!-- Shop End -->
 </div>

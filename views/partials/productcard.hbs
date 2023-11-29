@@ -1,7 +1,7 @@
-    <div class="product-item bg-light mb-4">
+    <div class="product-item mb-4">
           <div class="product-img position-relative overflow-hidden">
-              <a href="/product/{{this._id}}" class="d-block">
-                <img class="img-fluid w-100" src="uploads/{{this.images.img-1}}" alt="">
+              <a href="/product/{{this.slug}}" class="d-block">
+                <img class="img-fluid w-100" src="/uploads/{{this.images.img-1}}" alt="">
               </a>
               <div class="product-links">
                   <a href="/wishlist/add-to-wishlist/{{this.slug}}" class="addToWishlist">
@@ -10,7 +10,7 @@
                       <i class="fa fa-shopping-cart"></i></a>
               </div>
           </div>
-          <a href="/product/{{this._id}}" class="d-block pro-link">
+          <a href="/product/{{this.slug}}" class="d-block pro-link">
               <div class="product-content py-1 text-center"> 
                   <h6 class="product-brand"><a href="#">
                       {{this.brand.brand}}</a></h6>

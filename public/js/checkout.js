@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
     let navItems = document.querySelectorAll('.nav-item');
     let newAddressForm = document.getElementById('newaddressForm')
     const submitButton = newAddressForm.querySelector('button[type="submit"]');
-    const shippingAddressCollapse = document.getElementById('shipping-address');
+    const razorpayOption = document.getElementById('razorpayOption');
+    const shippingAddressCollapse = document.getElementById('shipping-address'); 
+    const checkoutCartForm = document.getElementById('checkoutCart');
     const formElements = document.querySelectorAll('#newaddressForm input, #newaddressForm select, #newaddressForm textarea');
     const fastDelivery = document.getElementById('fastDelivery');
     const standardDelivery = document.getElementById('standardDelivery');
@@ -98,6 +100,47 @@ document.addEventListener('DOMContentLoaded', function () {
         totalElement.textContent = parseInt(totalValue);
     });
 
+    
+    checkoutCartForm.addEventListener( 'submit',async function(event){
+        event.preventDefault();
+        if(razorpayOption &&  razorpayOption.checked){
+            try {
+
+              const formData =  new FormData(checkoutCartForm);
+
+              const response = await fetch('/checkout/orders/', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData)),
+            });
+
+            const result = await response.json();
+            
+            console.log(result)
+            if(response.ok){
+                let options = {
+                    key: 'rzp_test_VmjxeAY1dbkR2y', // Replace with your actual key
+                    amount: result.razorpayOrderData.amount,
+                    currency: result.razorpayOrderData.currency,
+                    name: 'VOGUISH Fashion',
+                    description: 'Test Transaction',
+                    order_id: result.razorpayOrderData.id,
+                    callback_url: '/razorpay/order-payment',
+                };
+
+                let rzp = new Razorpay(options);
+                rzp.open();
+            }       
+            } catch (error) {
+                console.error('Error creating Razorpay order:', error);
+            }
+        }else{
+            checkoutCartForm.submit();
+        }
+       
+    });
 });
   
 

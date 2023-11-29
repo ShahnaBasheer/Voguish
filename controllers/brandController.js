@@ -2,7 +2,22 @@ const asyncHandler = require('express-async-handler');
 const Brand = require('../models/brandModel');
 const validateMongodbId = require('../utils/validateMongodbId');
 const Product = require('../models/productModel');
+const { cartQty, genderBrandFilter } = require('../helperfns');
 
+
+
+//get a brand 
+const getBrand = asyncHandler( async(req,res) => {
+    const { brand } = req.query;
+    try {
+        const brandSelected = await Brand.findOne({ brand }).lean();
+        await genderBrandFilter('brand', brandSelected, req, res);      
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error:"Something went wrong!"})
+
+    }        
+});
 
 //get Brand Page 
 const getAllBrands = asyncHandler (async (req, res) => {
@@ -97,6 +112,7 @@ const restoreBrand = asyncHandler( async (req,res) =>{
 
 
 module.exports = {
+    getBrand,
     getAllBrands,
     getAddBrand,
     addBrand,

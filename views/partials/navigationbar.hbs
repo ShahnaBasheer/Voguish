@@ -1,4 +1,4 @@
-	  <div class="superNav border-bottom py-1 bg-light">
+	  <div class="superNav py-1 bg-light">
       <div class="container">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 centerOnMobile">
@@ -60,7 +60,7 @@
                      {{#if user}}
                          <li><a class="dropdown-item" href="/profile">My Profile</a></li>
                      {{/if}}
-                     <li><a class="dropdown-item" href="#">Orders</a></li>
+                     <li><a class="dropdown-item" href="/orders">Orders</a></li>
                      {{#if user}}
                         <li><a class="dropdown-item" href="/logout">Logout</a></li>
                      {{/if}}
@@ -78,16 +78,17 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link mx-2" href="/cart">
-                  <span class="text-warning">{{totalQty}}</span>
-                  <i class="fa-solid fa-cart-shopping me-1 text-white"></i>
+              <a class="nav-link mx-2 position-relative" href="/cart">
+              <i class="fa-solid fa-cart-shopping text-white"></i>
+                  <span class="position-absolute top-25 translate-middle text-white
+                    badge rounded-circle bg-danger">{{totalQty}}</span>
               </a>
             </li>
         </ul>
       </div>
 
       <!--Menu Bar -->        
-      <div class="d-block w-75 ms-auto d-md-flex d-none" id="menu">
+      <div class="d-block w-75 ms-auto d-md-flex d-none colorlib-nav" id="menu">
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link mx-3" href="/home">Home</a>
@@ -101,8 +102,13 @@
             <li class="nav-item">
               <a class="nav-link mx-3" href="/kids">Kids</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item has-dropdown">
               <a class="nav-link mx-3" href="#">Brands</a>
+              <ul class="dropdown">
+                  {{#each Brands}}   
+										<li><a href="/brand?brand={{this}}" class="nav-link">{{this}}</a></li>
+									{{/each}}
+							</ul>
             </li>
             <li class="nav-item">
               <a class="nav-link mx-3" href="#">About</a>

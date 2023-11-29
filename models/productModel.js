@@ -94,7 +94,6 @@ const productSchema = new mongoose.Schema({
     },
     },
     { timestamps : true } 
-  
 );
 
 // Pre-save hook to calculate price from mrp and discount before saving the product

@@ -1,7 +1,17 @@
 const moment = require('moment');
 
 const removeGMT = function(dateString) {
-    const formattedDate = moment(dateString).format('DD/MM/YYYY');
+    const formattedDate = moment(dateString).format('DD/MM/YYYY hh:mm A');
+    return formattedDate;
+};
+
+const momentsAgo = function(dateString) {
+    const formattedDate = moment(dateString).fromNow();
+    return formattedDate;
+};
+
+const reviewFormat = function(dateString) {
+    const formattedDate = moment(dateString).format('DD MMMM YYYY');
     return formattedDate;
 };
 
@@ -56,6 +66,27 @@ const compareIds = function(id1, id2, options) {
     }
 };
 
+
+const isLessThan = function(a, b) {
+    return a <= b;
+};
+
+
+const getProperty = function(obj, key) {
+    return obj[key];
+  };
+
+const contains = function(array, target){
+    if( new Set(array).has(target)){ return true; }
+    return false;
+} 
+
+// Assuming you have a Handlebars helper setup
+const isInArray = function(element, ...arrayElements) {
+    return arrayElements.includes(element);
+};
+
+
 module.exports = { 
     removeGMT , 
     isEqualTo, 
@@ -66,4 +97,10 @@ module.exports = {
     uniqueColors,
     calculate,
     compareIds,
+    isLessThan,
+    reviewFormat,
+    momentsAgo,
+    getProperty,
+    contains,
+    isInArray
 } ;

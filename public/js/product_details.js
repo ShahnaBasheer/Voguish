@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     goToCartBtn.style.display = 'none';
     let selectedColor = document.querySelector('input[name="color"]:checked');
     const sizeAlert = document.getElementById('size-alert');
-    const cartDelete = document.querySelectorAll('.cart-remove');
     const quantityInput = document.getElementById('quantityInput');
     const minusBtn = document.getElementById('minusBtn');
     const plusBtn = document.getElementById('plusBtn');
@@ -152,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });  
     });
 
-    addToCartBtn.addEventListener('click',function(e){
+    addToCartBtn?.addEventListener('click',function(e){
         const url = addToCartBtn.getAttribute('href');
         if(!addToCartBtn.getAttribute('href').includes('size=')){
             e.preventDefault();
@@ -161,17 +160,17 @@ document.addEventListener('DOMContentLoaded', function() {
         addToCartBtn.setAttribute('href',addQueryParam(url,`qty=${quantityInput.value}`));        
     });
 
-    minusBtn.addEventListener('click', function() {
+    minusBtn?.addEventListener('click', function() {
         if (quantityInput.value > 1) {
             quantityInput.value = parseInt(quantityInput.value) - 1;
         }
     });
     
-    plusBtn.addEventListener('click', function() {
+    plusBtn?.addEventListener('click', function() {
         quantityInput.value = parseInt(quantityInput.value) + 1;
     });
     
-    quantityInput.addEventListener('input', function(event) {
+    quantityInput?.addEventListener('input', function(event) {
         const cleanedValue = event.target.value.replace(/[^\d]/g, '');
         event.target.value = cleanedValue || 1;
     });
@@ -197,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function addQueryParam(url,param) {
         return url.includes('?') ? `${url}&${param}` : `${url}?${param}`;
     }
+  
 });
 
 

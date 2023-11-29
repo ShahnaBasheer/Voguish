@@ -38,18 +38,11 @@
                 <div class="h-100 p-3">
                     <h5 class='pro-brand'>{{product.brand.brand}}</h5>
                     <p class="pro-title">{{product.title}}</p>
-                    
-                    <!--<div class="d-flex mb-3">
-                        <div class="text-primary me-2">
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star"></small>
-                            <small class="fas fa-star-half-alt"></small>
-                            <small class="far fa-star"></small>
-                        </div>
-                        <small class="pt-1">(99 Reviews)</small>
-                    </div>-->
-                    <h4 class="font-weight-semi-bold mb-4 price">₹{{product.price}}
+                    <span class="bg-primary d-inline-block px-3 text-white">
+                        {{product.rating}} <i class="fas fa-star fs-6 text-white"></i>
+                    </span>
+                   
+                    <h4 class="font-weight-semi-bold mb-4 mt-3 price">₹{{product.price}}
                     <span class="ms-3 text-success fs-5">{{product.discount}}% Off</span></p></h4>
                     <p class="text-dark offerprice"><small>MRP
                       <span class="text-decoration-line-through">
@@ -125,127 +118,187 @@
             </div>
         </div>
     </div>
-
-        <!-- Nav pills -->
-        <div class="row px-xl-5">
-            <div class="col moreinfo px-0">
-                <div class="bg-light p-0 ">
-                    <div class="nav nav-tabs mb-4">
-                        <a class="nav-item nav-link active" data-bs-toggle="tab" href="#tab-pane-1">Description</a>
-                        <a class="nav-item nav-link" data-bs-toggle="tab" href="#tab-pane-2">Information</a>
-                        <a class="nav-item nav-link" data-bs-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+    
+    <div class="container-fluid container-md">
+        <div class="row">
+            <div class="col-12" id="moreinfo">
+                <nav>
+                    <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-description-tab" data-bs-toggle="tab" 
+                           href="#nav-description" role="tab" aria-controls="nav-description" aria-selected="true">
+                           Description</a>
+                        <a class="nav-item nav-link" id="nav-information-tab" data-bs-toggle="tab" 
+                           href="#nav-information" role="tab" aria-controls="nav-information" 
+                          aria-selected="false">More Information</a>
+                        <a class="nav-item nav-link" id="nav-reviews-tab" data-bs-toggle="tab" 
+                           href="#nav-reviews" role="tab" aria-controls="nav-reviews" aria-selected="false">
+                           Reviews({{totalReviews}})</a>
                     </div>
-                    <div class="tab-content py-3 px-5">
-                        <div class="tab-pane fade show active" id="tab-pane-1">
-                            <h4 class="mb-3">Product Description</h4>
-                            <p>{{product.description}}</p>
-                        </div>
-                        <div class="tab-pane fade" id="tab-pane-2">
-                            <h4 class="mb-3">Additional Information</h4>
+                </nav>
 
-                            <dl class="row">
-                                 {{#each product.moreProductInfo}}
-                                      <dt class="col-sm-3">{{@key}}</dt>
-                                      <dd class="col-sm-9">{{this}}</dd>
-                                 {{/each}}
-                               
-                            </dl>
-                        </div>
-                           
-                        <div class="tab-pane fade" id="tab-pane-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h4 class="mb-4">1 review for "Product Name"</h4>
-                                    <div class="review">
-										<div class="user-img" style="background-image: url(/uploads/{{product.image}})"></div>
-										<div class="desc">
-											<h5>
-												<span class="text-left">Jacob Webb</span>
-												<span class="text-right">14 March 2018</span>
-											</h5>
-											<p class="star">
-												<span>
-													<small class="fas fa-star"></small>
-                                                    <small class="fas fa-star"></small>
-                                                    <small class="fas fa-star"></small>
-                                                    <small class="fas fa-star-half-alt"></small>
-                                                    <small class="far fa-star"></small>
-									   			</span>
-									   			<span class="text-right"><a href="#" class="reply"><i class="icon-reply"></i></a></span>
-											</p>
-											<p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrov</p>
-										</div>
-									</div>
+                <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-description" role="tabpanel" 
+                        aria-labelledby="nav-description-tab">
+                        <h4 class="mb-3">Product Description</h4>
+                        <p>{{product.description}}</p>
+                    </div>
+                    <div class="tab-pane fade" id="nav-information" role="tabpanel" 
+                        aria-labelledby="nav-information-tab">
+                        <h4 class="mb-3">Additional Information</h4>
+                        <dl class="row">
+                            {{#each product.moreProductInfo}}
+                                 <dt class="col-sm-3">{{@key}}</dt>
+                                 <dd class="col-sm-9">{{this}}</dd>
+                            {{/each}}
+                        </dl>
+                    </div>
+                    <div class="tab-pane fade" id="nav-reviews" role="tabpanel" 
+                        aria-labelledby="nav-reviews-tab">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <div class="border border-2 border-primary p-3 rounded-3">
+                                        <div><span class="rating-num fw-bolder fs-1 text-primary">{{product.rating}}</span>
+                                            <i class="fas fa-star text-warning"></i>
+                                        </div>
+                                        <div><i class="fa-solid fa-user"></i>{{totalReviews}} total</div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-primary" 
+                                        data-bs-toggle="modal"data-bs-target="#leaveReview">Leave Your Review
+                                    </button> 
+                                    </div>
+                                      
                                 </div>
-								<div class="col-md-3 col-md-push-1">
-									<div class="rating-wrap">
-										<h3>Give a Review</h3>
-										<p class="star">
-											<span>
-												<small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star-half-alt"></small>
-                                                <small class="far fa-star"></small>
-												(98%)
-											</span>
-											<span>20 Reviews</span>
-										</p>
-										<p class="star">
-											<span>
-												<small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star-half-alt"></small>
-                                                <small class="far fa-star"></small>
-												(85%)
-											</span>
-											<span>10 Reviews</span>
-										</p>
-										<p class="star">
-											<span>
-												<small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star-half-alt"></small>
-                                                <small class="far fa-star"></small>
-												(98%)
-											</span>
-											<span>5 Reviews</span>
-										</p>
-										<p class="star">
-											<span>
-												<small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star-half-alt"></small>
-                                                <small class="far fa-star"></small>
-												(98%)
-											</span>
-											<span>0 Reviews</span>
-										</p>
-										<p class="star">
-											<span>
-												<small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star"></small>
-                                                <small class="fas fa-star-half-alt"></small>
-                                                <small class="far fa-star"></small>
-												(98%)
-											</span>
-											<span>0 Reviews</span>
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
+                                <div class="clearfix">
+ 
+                                    <div class="col-md-6 float-md-end mb-3 ms-md-3">
+                                        <div class="mx-auto w-75">
+                                            <h5>Rating</h5>
+                                            <div class="ratings-progress">
+                                                {{#each ratingData}}
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <span>{{this.rating}}<i class="fa-solid fa-star pe-2"></i></span>
+                                                    <div class="progress flex-grow-1" role="progressbar" aria-label="Rating {{this.rating}}"
+                                                        aria-valuemin="0" aria-valuemax="100" style="height: 13px;">
+                                                        <div class="progress-bar bg-{{this.color}}" style="width:{{this.percentage}};height: 13px;"></div>
+                                                    </div>
+                                                    <span class="ps-3 d-inline-block"> ({{this.count}})</span>
+                                                </div>
+                                                {{/each}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{#each reviews}}
+                                    <div class="review col-md-6 mb-3 ms-md-3">
+                                        <div class="mb-1 d-flex justify-content-between">
+                                            <h6>{{this.postedBy.firstname}} {{this.postedBy.lastname}}</h6>
+                                            <div class="lh-sm" style="font-size:.8rem;">
+                                               <span class="fw-semibold">{{reviewFormat this.createdAt}}</span><br>
+                                               {{momentsAgo this.createdAt}}
+                                            </div>
+                                        </div>
+                                        <p class="star my-2">
+                                            <span>
+                                              {{#with this.rating as |outerRating|}}
+                                                {{#loop 5}}
+                                                    {{#if (isLessThan this outerRating)}}
+                                                        <small class="fas fa-star text-warning"></small>
+                                                    {{else}}
+                                                    
+                                                        <small class="far fa-star text-warning"></small>
+                                                    {{/if}}
+                                                {{/loop}}
+                                             {{/with}}
+                                            </span>
+                                        </p>
+                                        <small class="text-right fw-bold">{{this.title}}</small>
+                                        <p>{{this.comment}}</p>
+                                        <hr>
+                                    </div> 
+                                    {{/each}}     
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-      
+</div>     
 <!-- Nav pills Ends here-->
 <!-- Shop Detail End -->
 
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="leaveReview" tabindex="-1" aria-labelledby="leaveReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="leaveReviewModalLabel">Leave a Review</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="/reviews/add-review">
+                <div class="modal-body">
+                    <div class="d-flex my-3">
+                        <p class="mb-0 mr-2">Your Rating * :</p>                
+                        <div class="container-wrapper">  
+                            <div class="row justify-content-center">    
+                                <!-- star rating -->
+                                <div class="rating-wrapper">
+                                    <input type="radio" id="5-star-rating" name="rating" value="5"
+                                    {{#if (isEqualTo userReview.rating 5)}}checked{{/if}}>
+                                    <label for="5-star-rating" class="star-rating">
+                                      <i class="fas fa-star d-inline-block"></i>
+                                    </label>
+                                    
+                                    <input type="radio" id="4-star-rating" name="rating" value="4"
+                                    {{#if (isEqualTo userReview.rating 4)}}checked{{/if}}>
+                                    <label for="4-star-rating" class="star-rating star">
+                                      <i class="fas fa-star d-inline-block"></i>
+                                    </label>
+                                    
+                                    <input type="radio" id="3-star-rating" name="rating" value="3"
+                                    {{#if (isEqualTo userReview.rating 3)}}checked{{/if}}>
+                                    <label for="3-star-rating" class="star-rating star">
+                                      <i class="fas fa-star d-inline-block"></i>
+                                    </label>
+                                    
+                                    <input type="radio" id="2-star-rating" name="rating" value="2"
+                                    {{#if (isEqualTo userReview.rating 2)}}checked{{/if}}>
+                                    <label for="2-star-rating" class="star-rating star">
+                                      <i class="fas fa-star d-inline-block"></i>
+                                    </label>
+                                    
+                                    <input type="radio" id="1-star-rating" name="rating" value="1"
+                                    {{#if (isEqualTo userReview.rating 1)}}checked{{/if}}>
+                                    <label for="1-star-rating" class="star-rating star">
+                                      <i class="fas fa-star d-inline-block"></i>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="product_slug" value="{{product.slug}}">
+                    <div class="form-group">
+                        <label for="comment">Your Review *</label>
+                        <textarea id="comment" name="comment" cols="30" rows="5" 
+                           class="form-control">{{userReview.comment}}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Title(optional) *</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                           value="{{userReview.title}}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

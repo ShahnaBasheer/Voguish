@@ -134,11 +134,11 @@
                                            <td>{{this.isDeletedBy}}</td>
                                            <td>{{this.isDeleted}}</td>
                                            <td>
-                                                <a href="/admin/edit-product/{{this._id}}">
+                                                <a href="/admin/edit-product/{{this.slug}}">
                                                     <i class="fa-solid fa-pen-to-square text-primary"></i>
                                                 </a>
                                                 {{#if this.isDeleted}}
-                                                    <a href="/admin/restore-product/{{this._id}}">
+                                                    <a href="/admin/restore-product/{{this.slug}}">
                                                        <i class="fa-solid fa-rotate-left text-primary"></i></i>
                                                     </a>
                                                 {{else}}

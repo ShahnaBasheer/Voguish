@@ -21,7 +21,8 @@ const createUser = asyncHandler(async (req,res) => {
         await otpEmailSend(req, true);
         res.render('users/otpverification',{email,bodyjs:'js/otp.js'});
     } catch (error) {
-        throw error;
+        console.log(error)
+        return res.redirect(req.header('Referer'));
     }
 });
 
@@ -91,7 +92,6 @@ const loginUser = asyncHandler(async (req, res) =>{
         if(findUser?.isBlocked) return res.redirect('/account-blocked');
     
         if(findUser && await findUser?.comparePassword(password) && findUser?.role =='user' && findUser.isVerified){
-            console.log("hjghhii")
             const accessToken = generateToken(findUser?.id);
             const refreshToken = generateRefreshToken(findUser?.id);
             await User.findByIdAndUpdate(findUser.id,{refreshToken:refreshToken});

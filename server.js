@@ -6,7 +6,9 @@ const exphbs = require('express-handlebars');
 const logger = require('morgan');
 const { notFound, errorHandler } = require('./middlewares/errorHandlers');
 const { removeGMT, isEqualTo, roleEquals, calculate,
-      inc, loop, calculateTotal, uniqueColors, compareIds } = require('./helpers');
+      inc, loop, calculateTotal, uniqueColors, contains,
+      isLessThan, compareIds, momentsAgo, isInArray,
+      reviewFormat, getProperty } = require('./helpers');
 const session = require('express-session');
 const flash = require('express-flash');
 const cors = require('cors');
@@ -26,8 +28,10 @@ app.engine(
     defaultLayout: 'layout', 
     layoutsDir: path.join(__dirname, 'views','layouts'),
     partialsDir: path.join(__dirname,'views','partials'),
-    helpers: { removeGMT, isEqualTo, inc, roleEquals, loop,
-              calculateTotal, uniqueColors, calculate, compareIds }
+    helpers: { removeGMT, isEqualTo, inc, roleEquals, loop, contains,
+              calculateTotal, uniqueColors, calculate, compareIds,
+              isLessThan, momentsAgo, reviewFormat, getProperty,
+              isInArray }
   }));
 
   
@@ -42,7 +46,7 @@ app.use(flash());
 app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false}));
+app.use(express.urlencoded({ extended: true}));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());

@@ -41,8 +41,8 @@ const orderSchema = new mongoose.Schema({
     },
     shippingMethod: {
         type: String,
-        enum: ['standard', 'fast delivery'],
-        default: 'standard', // Default value is 'standard'
+        enum: ['Standard', 'Fast delivery'],
+        default: 'Standard', // Default value is 'standard'
         required: true
     },
     status: {
@@ -52,7 +52,7 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['Credit Card', 'PayPal', 'Cash on Delivery'],
+        enum: ['Credit Card', 'PayPal', 'Cash on Delivery', 'Razorpay'],
         required: true
     },
     delivery: {
@@ -67,11 +67,15 @@ const orderSchema = new mongoose.Schema({
     },
     paymentStatus: {
         type: String,
-        enum: ['Pending', 'Paid'],
+        enum: ['Pending', 'Paid', 'Failed'],
         default: function () {
             // Set paymentStatus as 'Pending' if paymentMethod is 'Cash on Delivery'
             return this.paymentMethod === 'Cash on Delivery' ? 'Pending' : 'Paid';
         }
+    },
+    paymentInfo: {
+        type: mongoose.Schema.Types.Mixed,
+        // You can add any other specific properties based on the payment method
     },
     createdAt: {
         type: Date,
@@ -80,10 +84,6 @@ const orderSchema = new mongoose.Schema({
 });
 
 orderSchema.pre('save', async function (next) {
-    if (this.shippingMethod === 'fast delivery') {
-        this.GrandTotal += 25; // Add extra cost for fast delivery
-    }
-
     next();
 });
 

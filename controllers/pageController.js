@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
-const Product = require('../models/productModel');;
-const { cartQty } = require('../helperfns');
+const Product = require('../models/productModel');
+const Brand = require('../models/brandModel');;
+const { cartQty, genderBrandFilter } = require('../helperfns');
 
 
 //Display Login page
@@ -19,10 +20,12 @@ const getSignupPage = asyncHandler( async (req,res) => {
 const getHomePage = asyncHandler(async (req,res) => {
    try{ 
         let user = req?.user, totalQty = await cartQty(user);
+        const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
+        const Brands = allBrands.sort();
         const newarrivals = await Product.find(
          {isDeleted:false,isDeletedBy:false}).populate('brand')
             .populate('category').sort({ createdAt: -1 }).limit(5).lean();
-        res.render('users/home',{user,newarrivals,totalQty,
+        res.render('users/home',{user,newarrivals,totalQty,Brands,
            bodycss:'css/nav_footer.css',maincss:'css/home.css',
            bodyjs:'js/productCard.js'});
    } catch(error){
@@ -32,14 +35,8 @@ const getHomePage = asyncHandler(async (req,res) => {
 
 //Display Women page
 const getWomenPage = asyncHandler( async (req,res) => {
-   try{
-        let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find(
-         {gender:"women",isDeleted:false,isDeletedBy:false})
-            .populate('brand').lean();
-        res.render('users/category_page',{main:"women",products,user,totalQty,
-           bodycss:'css/nav_footer.css',bodyjs:'js/productCard.js',
-           maincss:'css/category_page.css',});  
+   try{  
+      await genderBrandFilter('gender','women',req,res);
    } catch(error) {
        throw new Error(error);
    }
@@ -48,13 +45,7 @@ const getWomenPage = asyncHandler( async (req,res) => {
 //Display Men page
 const getMenPage = asyncHandler( async (req,res) => {
    try{
-        let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find(
-         {gender:"men",isDeleted:false,isDeletedBy:false})
-            .populate('brand').lean();
-        res.render('users/category_page',{main:"men",products,user,totalQty,
-           bodycss:'css/nav_footer.css', maincss:'css/category_page.css',
-           bodyjs:'js/productCard.js'});  
+      await genderBrandFilter('gender','men',req,res);
    } catch(error) {
       throw new Error(error);
    }
@@ -64,13 +55,7 @@ const getMenPage = asyncHandler( async (req,res) => {
 //Display Kids page
 const getKidsPage = asyncHandler( async (req,res) => {
    try{
-         let user = req?.user, totalQty = await cartQty(user);
-         const products = await Product.find(
-            {gender:{ $in: ["girls", "boys"] },isDeleted:false,isDeletedBy:false })
-             .populate('brand').lean();
-         res.render('users/category_page',{main:"kids",products,user,totalQty,
-            bodycss:'css/nav_footer.css',maincss:'css/category_page.css',
-            bodyjs:'js/productCard.js'});  
+      await genderBrandFilter('gender','kids',req,res); 
    } catch(error) {
       throw new Error(error);
    }
@@ -79,13 +64,7 @@ const getKidsPage = asyncHandler( async (req,res) => {
 //Display Girls page
 const getGirlsPage = asyncHandler( async (req,res) => {
    try{
-         let user = req?.user, totalQty = await cartQty(user);
-         const products = await Product.find(
-          {gender:"girls",isDeleted:false,isDeletedBy:false})
-          .populate('brand').lean();
-         res.render('users/category_page',{main:"girls",products,user,totalQty,
-           bodycss:'css/nav_footer.css', maincss:'css/category_page.css',
-           bodyjs:'js/productCard.js'});  
+      await genderBrandFilter('gender','girls',req,res); 
    } catch(error) {
       throw new Error(error);
    }
@@ -94,13 +73,7 @@ const getGirlsPage = asyncHandler( async (req,res) => {
 //Display Boys page
 const getBoysPage = asyncHandler( async (req,res) => {
    try{
-        let user = req?.user, totalQty = await cartQty(user);
-        const products = await Product.find(
-           {gender:"boys",isDeleted:false,isDeletedBy:false})
-           .populate('brand').lean();
-        res.render('users/category_page',{main:"boys",products,user,totalQty,
-           bodycss:'css/nav_footer.css',maincss:'css/category_page.css',
-           bodyjs:'js/productCard.js',});  
+      await genderBrandFilter('gender','boys',req,res);  
    } catch(error) {
       throw new Error(error);
    }
@@ -109,12 +82,16 @@ const getBoysPage = asyncHandler( async (req,res) => {
 //get Contact page 
 const getContactPage = asyncHandler( async (req,res) => {
    let user = req?.user, totalQty = await cartQty(user);
-   res.render('users/contact',{user,totalQty});
+   const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
+   const Brands = allBrands.sort();
+   res.render('users/contact',{user,totalQty,Brands});
 });
 
 //otp verification
 const otpVerify = asyncHandler(async(req,res) => {
-   res.render('users/otpverification',{bodyjs:'js/otp.js'});
+   const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
+   const Brands = allBrands.sort();
+   res.render('users/otpverification',{bodyjs:'js/otp.js',Brands});
 });
 
 
@@ -151,3 +128,123 @@ module.exports = {
     otpVerify,
     getContactPage,  
 }
+
+
+/*
+
+ const uniqueFilters = await Product.aggregate([
+               { $match: { gender: "women" } },
+               {
+                  $lookup: {
+                      from: 'brands', // Adjust to the actual name of your brand collection
+                      localField: 'brand',
+                      foreignField: '_id',
+                      as: 'brand',
+                  },
+              },
+              {
+                  $lookup: {
+                      from: 'categories', // Adjust to the actual name of your brand collection
+                      localField: 'category',
+                      foreignField: '_id',
+                      as: 'category',
+                     },
+               }, 
+               { $unwind: "$brand" },
+               { $unwind: "$category" },
+               {
+                 $group: {
+                   _id: null,
+                   categories: { $addToSet: "$category.category" },
+                   brands: { $addToSet: "$brand.brand" },
+                   sizes: { $addToSet: "$sizes.size" },
+                   prices: { $addToSet: "$price" },
+                   discounts: { $addToSet: "$discount" },
+                   materials: { $addToSet: "$moreProductInfo.material" },
+                   types: { $addToSet: "$moreProductInfo.type" },
+                   occasions: { $addToSet: "$moreProductInfo.occasion" },
+                   patterns: { $addToSet: "$moreProductInfo.pattern" },
+                   necklines: { $addToSet: "$moreProductInfo.neckline" },
+                   sleeves: { $addToSet: "$moreProductInfo.sleeve" },
+                   fits: { $addToSet: "$moreProductInfo.fit" },
+                   closures: { $addToSet: "$moreProductInfo.closure" },
+                   typeOfWorks: { $addToSet: "$moreProductInfo.typeOfWork" },
+                   legStyles: { $addToSet: "$moreProductInfo.legStyle" },
+                   riseStyles: { $addToSet: "$moreProductInfo.riseStyle" },
+                   paddings: { $addToSet: "$moreProductInfo.padding" },
+                   coverages: { $addToSet: "$moreProductInfo.coverage" },
+                   wirings: { $addToSet: "$moreProductInfo.wiring" },
+                   count: { $sum: 1 },
+                 },
+               },
+               {
+                  $project: {
+                     _id: 0,
+                     
+                     categories: { name: "$categories", count: "$count" },
+                     brands: { name: "$brands", count: "$count" },
+                     sizes: { name: "$sizes", count: "$count" },
+                     prices: { name: "$prices", count: "$count" },
+                     discounts: { name: "$discounts", count: "$count" },
+                     materials: { name: "$materials", count: "$count" },
+                     types: { name: "$types", count: "$count" },
+                     occasions: { name: "$occasions", count: "$count" },
+                     patterns: { name: "$patterns", count: "$count" },
+                     necklines: { name: "$necklines", count: "$count" },
+                     sleeves: { name: "$sleeves", count: "$count" },
+                     fits: { name: "$fits", count: "$count" },
+                     closures: { name: "$closures", count: "$count" },
+                     typeOfWorks: { name: "$typeOfWorks", count: "$count" },
+                     legStyles: { name: "$legStyles", count: "$count" },
+                     riseStyles: { name: "$riseStyles", count: "$count" },
+                     paddings: { name: "$paddings", count: "$count" },
+                     coverages: { name: "$coverages", count: "$count" },
+                     wirings: { name: "$wirings", count: "$count" },
+                  },
+                },
+             ]);
+         console.log(uniqueFilters)    
+
+        
+
+         function getUniqueSet(property) {
+            if(property == 'brand' || property == 'category'){
+               return [...new Set(products.flatMap(product => product[property][property]))];
+            }else{
+               return [...new Set(products.flatMap(product => product[property]))];
+            }
+            
+         }
+         function getUniqueMore(field,property) {
+            return [...new Set(products.flatMap(product => { 
+               let value = product[field][property];
+               return value !== undefined ? [value] : [];
+            }))]
+         }
+          function getUniqueSet(property) {
+            if(property == 'brand' || property == 'category'){
+               return [...new Set(products.flatMap(product => product[property][property]))];
+            }else{
+               return [...new Set(products.flatMap(product => product[property]))];
+            }
+            
+         }
+         let maxPrice = Math.max.apply(0,getUniqueSet('price'));
+         let minPrice = Math.min.apply(0,getUniqueSet('price'));
+         const filters = {};
+ 
+         const filterProperties = ['category', 'brand'];
+         const moreProperties = ['material', 'type', 'occasion', 'pattern', 'neckline', 'sleeve', 'fit', 'closure', 'typeOfWork', 'legStyle', 'riseStyle', 'padding', 'coverage', 'wiring'];
+         
+         filterProperties.forEach(property => { filters[property] = getUniqueSet(property)});
+         filters['size'] =  [...new Set(products.flatMap(product => Object.keys(product.sizes)))];
+         filters['discount'] = [70,80,60,50,40,30,20,10];
+         moreProperties.forEach(property => {
+             filters[property] = getUniqueMore('moreProductInfo', property);
+         });
+         
+         // Remove properties with empty arrays
+         Object.keys(filters).forEach(key => (Array.isArray(filters[key]) && filters[key].length === 0) && delete filters[key]);
+
+
+*/

@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
     phone:{
         type:String,
         unique:true,
+        sparse: true,// Allows null values without throwing a duplicate key error
     },
     password:{
         type:String,
@@ -60,9 +61,14 @@ const userSchema = new mongoose.Schema({
     phoneVerified: {
         type: Boolean,
         default: false, 
-    },
+    }
     },{ timestamps: true },
 );
+
+/*userSchema.index({ phone: 1 }, {
+     unique: true, 
+     partialFilterExpression: { phone: { $exists: true } } 
+});*/
 
 userSchema.pre('save', async function(next) {
     if(this.isModified('password')){
@@ -71,6 +77,7 @@ userSchema.pre('save', async function(next) {
     }
   });
  
+
 userSchema.methods.comparePassword = async function(enteredPassword) {
       return await bcrypt.compare(enteredPassword, this.password);
   };

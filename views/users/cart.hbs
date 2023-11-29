@@ -27,7 +27,7 @@
                                         <img src="/uploads/{{this.cartItem.product.images.img-1}}" alt="" style="width: 50px;"> 
                                     </div>
                                     <div class="col-10">
-                                        <div><a href="/product/{{this.cartItem.product._id}}">
+                                        <div><a href="/product/{{this.cartItem.product.slug}}">
                                         {{this.cartItem.product.title}}</a></div>
                                     </div>
                                 </div>  
@@ -93,7 +93,7 @@
                                 {{else}}
                                     FREE
                                 {{/if}}
-                                </h6>
+                            </h6>
                         </div>
                     </div>
                     <div class="pt-2">

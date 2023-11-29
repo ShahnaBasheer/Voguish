@@ -4,7 +4,10 @@ const Category = require('../models/categoryModel');
 const { createUniqueSlug } = require('../helperfns')
 const asyncHandler = require('express-async-handler');
 const fs = require('fs').promises;
+const Review = require('../models/reviewModel');
 const { cartQty } = require('../helperfns');
+const { validateMongodbId } = require('../utils/validateMongodbId');
+const CartItem = require('../models/cartItemModel')
 
 
 //get a product
@@ -17,18 +20,49 @@ const getAllProducts = asyncHandler(async (req,res) => {
     }
 });
 
-//get a product
-const getProduct = asyncHandler(async (req,res) => {
-    const { id } = req.params;
-    try{
-        const product = await Product.findById(id).populate('brand').lean();
-        const user = req.user,totalQty = await cartQty(user);
-        res.render('users/product_details',
-        {bodycss:'/css/product_details.css',product,user,totalQty,
-        bodyjs: '/js/product_details.js'})
-    } catch(error) {
-        throw new Error(error);
-    }  
+const getProduct = asyncHandler(async (req, res) => {
+    const slug  = req.params;
+    try {
+        const product = await Product.findOne(slug).populate('brand').lean();
+        const user = req.user, totalQty = await cartQty(user);
+        const reviews = await Review.find({product: product?._id}).populate('postedBy').lean();
+        const userReview = await Review.findOne({product:product._id,postedBy : user?.id}).lean();
+        const totalReviews = reviews.length;
+
+        const reviewsData = await Review.aggregate([
+            { $match: { product: product._id } },
+            { $group: { _id: '$rating', count: { $sum: 1 } } },
+            { $addFields: { percentage: { $multiply: [
+                        { $divide: ['$count', totalReviews] }, 100] }
+                }
+            },
+            { $project: { _id: 0, rating: '$_id', count: 1, percentage: 1 } }
+        ]);
+        const ratingData = [
+            {rating:5, count: 0, percentage: "0%", color: 'success'},
+            {rating:4, count: 0, percentage: "0%", color: 'primary'},
+            {rating:3, count: 0, percentage: "0%", color: 'info'},
+            {rating:2, count: 0, percentage: "0%", color: 'warning'},
+            {rating:1, count: 0, percentage: "0%", color: 'danger'},
+        ]
+        
+        reviewsData.forEach(item => {
+            const index = ratingData.findIndex(ratingItem => ratingItem.rating === item.rating);
+            if (index !== -1) {
+                ratingData[index].rating = item.rating;
+                ratingData[index].count = item.count;
+                ratingData[index].percentage = `${item.percentage.toFixed(2)}%`     
+            }
+        });
+
+        res.render('users/product_details', { user,product,reviews,
+            userReview,totalQty,ratingData,totalReviews,
+            bodycss: '/css/product_details.css', bodyjs: '/js/product_details.js'
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 //create a product
@@ -70,16 +104,16 @@ const getAddProduct = asyncHandler( async (req,res) => {
 
 //Update a product
 const getEditProduct = asyncHandler(async (req,res) => {
-    const { id } = req.params;
+    const  slug  = req.params;
     try {   
-        const product = await Product.findById(id).populate('brand').populate('category').lean();
+        const product = await Product.findOne(slug).populate('brand').populate('category').lean();
         const brands = await Brand.find().lean();
         const categories = await Category.find().lean();
         const gender = ['women', 'men', 'girls', 'boys' ]
         res.render('admin/editProduct',
           {admin:true,product,brands,categories,adminInfo:req.user,gender:gender});
     } catch (error) {
-        throw new Error(error)
+       console.log(error)
     }
 });
 
@@ -137,7 +171,6 @@ const editProduct = asyncHandler(async (req,res) => {
 //Delete a product
 const deleteProduct = asyncHandler(async (req,res) => {
     const { id } = req.params;
-    validateMongodbId(id);
     try {
         const product = await Product.findByIdAndUpdate(id,{isDeleted:true});
         if (!product) {
@@ -152,12 +185,11 @@ const deleteProduct = asyncHandler(async (req,res) => {
 
 //Retrieve the deleted  product
 const restoreProduct = asyncHandler(async (req,res) => {
-    const { id } = req.params;
-    validateMongodbId(id);
+    const { slug } = req.params;
     try {
-        const product = await Product.findAndUpdate({
-            id,isDeletedBy:false},
-            {isDeleted: false});
+        const product = await Product.findOne({slug,isDeletedBy:false});
+        product.isDeleted = false;
+        console.log(product)
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
