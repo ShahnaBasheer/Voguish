@@ -1,17 +1,18 @@
 const moment = require('moment');
 
 const removeGMT = function(dateString) {
-    const formattedDate = moment(dateString).format('DD/MM/YYYY hh:mm A');
+    //const formattedDate = moment(dateString).utcOffset('+05:30').format('DD/MM/YYYY hh:mm A');
+    const formattedDate = moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A');
     return formattedDate;
 };
 
 const momentsAgo = function(dateString) {
-    const formattedDate = moment(dateString).fromNow();
+    const formattedDate = moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A').fromNow();
     return formattedDate;
 };
 
 const reviewFormat = function(dateString) {
-    const formattedDate = moment(dateString).format('DD MMMM YYYY');
+    const formattedDate = moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A').format('DD MMMM YYYY');
     return formattedDate;
 };
 
@@ -71,10 +72,11 @@ const isLessThan = function(a, b) { return a <= b; };
 
 const andFunction = function(a, b) { return (a && b) };
 
+const orFunction = function(a, b) { return (a || b) };
+
 const getProperty = function(obj, key) { return obj[key] };
 
 const contains = function(array, target){
-    console.log(array,target)
     if( new Set(array).has(target)){ return true; }
     return false;
 } 
@@ -101,5 +103,6 @@ module.exports = {
     getProperty,
     contains,
     isInArray,
-    andFunction
+    andFunction,
+    orFunction
 } ;

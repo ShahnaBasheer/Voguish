@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     
-    checkoutCartForm.addEventListener( 'submit',async function(event){
+    checkoutCartForm?.addEventListener( 'submit',async function(event){
         event.preventDefault();
         if(razorpayOption &&  razorpayOption.checked){
             try {

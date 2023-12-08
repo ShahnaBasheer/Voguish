@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-    imageSelect.forEach(function(item){
+    imageSelect?.forEach(function(item){
         const imageInput = item.querySelector(".upload");
         const imagePreview = item.querySelector('.imagePreview');
         
@@ -188,7 +188,7 @@ function colorStock(){
     const sizeDataInput = document.getElementById('sizeDataInput');
     const sizeRows = Array.from(sizeTableBody.children);
     
-    sizeRows.forEach(row => {
+    sizeRows?.forEach(row => {
         const size = row.querySelector('td:first-child input').value.toUpperCase();
         const colorCells = Array.from(row.querySelectorAll('.addInfo-text.color'));
         const stockCells = Array.from(row.querySelectorAll('.addInfo-text.stock'));

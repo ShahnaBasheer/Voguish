@@ -1,6 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');
-const Brand = require('../models/brandModel');;
+const Brand = require('../models/brandModel');
+const Order = require('../models/ordersModel');
+const Users = require('../models/userModel');
+const moment = require('moment');
 const { cartQty, genderBrandFilter } = require('../helperfns');
 
 
@@ -97,8 +100,135 @@ const otpVerify = asyncHandler(async(req,res) => {
 
 //Display Admin Dashboard
 const getDashboard = asyncHandler( async (req,res) => {
-   res.render('admin/dashboard',{admin:true,adminInfo:req.user});
+   try {
+       const today = new Date();
+       const currentYear = today.getFullYear()
+      
+      const startOfPreviousWeek = new Date(today);
+      startOfPreviousWeek.setUTCDate(today.getUTCDate() - 6);
+      startOfPreviousWeek.setUTCHours(0, 0, 0, 0);
+
+      const YearlySales = await Order.aggregate([
+         {
+           $match: { createdAt: { $exists: true }, status: { $ne: 'Cancelled' } }
+         },
+         {
+            $group: {
+               _id: { year: { $year: '$createdAt' }, },
+               totalSales: { $sum: '$GrandTotal' },
+               orderCount: { $sum: 1 } 
+            }
+         },
+         { $sort: { '_id.year': 1 } },
+         {
+            $project: { _id: 0, year: '$_id.year', totalSales: '$totalSales', orderCount: '$orderCount'}
+          }
+       ]);
+       
+       
+       const MonthlySales = await Order.aggregate([
+         {
+            $match: {
+               createdAt: { $exists: true },
+               status: { $ne: 'Cancelled' },
+               $expr: { $eq: [{ $year: '$createdAt' }, currentYear] }
+            }
+         },
+         {
+            $group: {
+               _id: {
+                 year: { $year: '$createdAt' },
+                 month: {
+                  $substr: [
+                    { $dateToString: { format: '%B',date: '$createdAt',timezone: '+05:30'}},
+                    0,3
+                  ]
+                },
+               
+               },
+               totalSales: { $sum: '$GrandTotal' },
+               orderCount: { $sum: 1 }
+            }
+         },
+         { $sort: {'_id.month': 1 } },
+         {
+            $project: { _id: 0, month: '$_id.month', totalSales: '$totalSales', orderCount: '$orderCount'}
+         }
+       ]);
+
+       const WeeklySales = await Order.aggregate([
+         {
+           $match: {
+             createdAt: { $exists: true },
+             status: { $ne: 'Cancelled' },
+             createdAt: { $gte: startOfPreviousWeek }
+           }
+         },
+         {
+           $group: {
+             _id: {
+               date: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: '+05:30' } }
+             },
+             totalSales: { $sum: '$GrandTotal' },
+             orderCount: { $sum: 1 }
+           }
+         },
+         { $sort: { '_id.date': 1 }},
+         {
+           $project: { _id: 0, date: '$_id.date', totalSales: '$totalSales',orderCount: '$orderCount' }
+         }
+       ]);
+
+       const AllUsers = await Users.find().count();
+
+       // Create an array of days (formattedStartOfWeek, formattedStartOfWeek + 1 day, ..., today)
+       const daysInRange = Array.from({ length: 7 }, (_, i) => {
+         const day = new Date(startOfPreviousWeek);
+         day.setDate(startOfPreviousWeek.getDate() + i);
+         return day.toISOString().split('T')[0];
+       });
+
+       let updatedWeeklySales = daysInRange.map((day, index) => {
+           const matchingDay = WeeklySales.find(item => item.date === day);
+           if(matchingDay)matchingDay.day = index + 1;
+           return matchingDay || { date: day, totalSales: 0,  orderCount: 0 ,day: index+1};
+       });
+
+       let monthRange =  ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+       let updatedMonthlySales = monthRange.map((month, index) => {
+           const matchingDay = MonthlySales.find(item => item.month === month);
+           return matchingDay || { month: month, totalSales: 0,  orderCount: 0 };
+       });
+       
+       let AllSales = YearlySales.reduce((total,value) => total + value.totalSales, 0  );
+       let OrderCount = YearlySales.reduce((total,value) => total + value.orderCount, 0  );
+
+       // Format the number as currency with commas
+       let TotalSales = AllSales.toLocaleString('en-IN', {
+          style: 'currency',
+          currency: 'INR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+         
+      res.render('admin/dashboard',{admin:true,adminInfo:req.user,
+           WeeklySales: JSON.stringify(updatedWeeklySales),
+           YearlySales: JSON.stringify(YearlySales),
+           MonthlySales: JSON.stringify(updatedMonthlySales),
+           TotalSales,OrderCount,AllUsers,
+      });
+      
+    } catch (error) {
+         console.error('Error fetching sales report:', error);
+         throw error;
+    }
 });
+
+
+
+
 
 //Display Admin Login
 const getAdminLogin = asyncHandler( async (req,res) => {
@@ -129,122 +259,3 @@ module.exports = {
     getContactPage,  
 }
 
-
-/*
-
- const uniqueFilters = await Product.aggregate([
-               { $match: { gender: "women" } },
-               {
-                  $lookup: {
-                      from: 'brands', // Adjust to the actual name of your brand collection
-                      localField: 'brand',
-                      foreignField: '_id',
-                      as: 'brand',
-                  },
-              },
-              {
-                  $lookup: {
-                      from: 'categories', // Adjust to the actual name of your brand collection
-                      localField: 'category',
-                      foreignField: '_id',
-                      as: 'category',
-                     },
-               }, 
-               { $unwind: "$brand" },
-               { $unwind: "$category" },
-               {
-                 $group: {
-                   _id: null,
-                   categories: { $addToSet: "$category.category" },
-                   brands: { $addToSet: "$brand.brand" },
-                   sizes: { $addToSet: "$sizes.size" },
-                   prices: { $addToSet: "$price" },
-                   discounts: { $addToSet: "$discount" },
-                   materials: { $addToSet: "$moreProductInfo.material" },
-                   types: { $addToSet: "$moreProductInfo.type" },
-                   occasions: { $addToSet: "$moreProductInfo.occasion" },
-                   patterns: { $addToSet: "$moreProductInfo.pattern" },
-                   necklines: { $addToSet: "$moreProductInfo.neckline" },
-                   sleeves: { $addToSet: "$moreProductInfo.sleeve" },
-                   fits: { $addToSet: "$moreProductInfo.fit" },
-                   closures: { $addToSet: "$moreProductInfo.closure" },
-                   typeOfWorks: { $addToSet: "$moreProductInfo.typeOfWork" },
-                   legStyles: { $addToSet: "$moreProductInfo.legStyle" },
-                   riseStyles: { $addToSet: "$moreProductInfo.riseStyle" },
-                   paddings: { $addToSet: "$moreProductInfo.padding" },
-                   coverages: { $addToSet: "$moreProductInfo.coverage" },
-                   wirings: { $addToSet: "$moreProductInfo.wiring" },
-                   count: { $sum: 1 },
-                 },
-               },
-               {
-                  $project: {
-                     _id: 0,
-                     
-                     categories: { name: "$categories", count: "$count" },
-                     brands: { name: "$brands", count: "$count" },
-                     sizes: { name: "$sizes", count: "$count" },
-                     prices: { name: "$prices", count: "$count" },
-                     discounts: { name: "$discounts", count: "$count" },
-                     materials: { name: "$materials", count: "$count" },
-                     types: { name: "$types", count: "$count" },
-                     occasions: { name: "$occasions", count: "$count" },
-                     patterns: { name: "$patterns", count: "$count" },
-                     necklines: { name: "$necklines", count: "$count" },
-                     sleeves: { name: "$sleeves", count: "$count" },
-                     fits: { name: "$fits", count: "$count" },
-                     closures: { name: "$closures", count: "$count" },
-                     typeOfWorks: { name: "$typeOfWorks", count: "$count" },
-                     legStyles: { name: "$legStyles", count: "$count" },
-                     riseStyles: { name: "$riseStyles", count: "$count" },
-                     paddings: { name: "$paddings", count: "$count" },
-                     coverages: { name: "$coverages", count: "$count" },
-                     wirings: { name: "$wirings", count: "$count" },
-                  },
-                },
-             ]);
-         console.log(uniqueFilters)    
-
-        
-
-         function getUniqueSet(property) {
-            if(property == 'brand' || property == 'category'){
-               return [...new Set(products.flatMap(product => product[property][property]))];
-            }else{
-               return [...new Set(products.flatMap(product => product[property]))];
-            }
-            
-         }
-         function getUniqueMore(field,property) {
-            return [...new Set(products.flatMap(product => { 
-               let value = product[field][property];
-               return value !== undefined ? [value] : [];
-            }))]
-         }
-          function getUniqueSet(property) {
-            if(property == 'brand' || property == 'category'){
-               return [...new Set(products.flatMap(product => product[property][property]))];
-            }else{
-               return [...new Set(products.flatMap(product => product[property]))];
-            }
-            
-         }
-         let maxPrice = Math.max.apply(0,getUniqueSet('price'));
-         let minPrice = Math.min.apply(0,getUniqueSet('price'));
-         const filters = {};
- 
-         const filterProperties = ['category', 'brand'];
-         const moreProperties = ['material', 'type', 'occasion', 'pattern', 'neckline', 'sleeve', 'fit', 'closure', 'typeOfWork', 'legStyle', 'riseStyle', 'padding', 'coverage', 'wiring'];
-         
-         filterProperties.forEach(property => { filters[property] = getUniqueSet(property)});
-         filters['size'] =  [...new Set(products.flatMap(product => Object.keys(product.sizes)))];
-         filters['discount'] = [70,80,60,50,40,30,20,10];
-         moreProperties.forEach(property => {
-             filters[property] = getUniqueMore('moreProductInfo', property);
-         });
-         
-         // Remove properties with empty arrays
-         Object.keys(filters).forEach(key => (Array.isArray(filters[key]) && filters[key].length === 0) && delete filters[key]);
-
-
-*/

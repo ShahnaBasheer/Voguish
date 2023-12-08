@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Orders = require('../models/ordersModel');
 const Cart = require('../models/cartModel');
-const User = require('../models/ordersModel');
 const CartItem = require('../models/cartItemModel');
 const {  generateOrderId, cartQty } = require('../helperfns');
 const CryptoJS = require('crypto-js');
@@ -10,15 +9,20 @@ const Razorpay = require('razorpay');
 
 //Display Orders in admin side
 const getOrders = asyncHandler( async (req,res) => {
-    const orders = await Orders.find().populate('shippingAddress').lean();
+    const orders = await Orders.find().sort({ createdAt: -1 })
+    .populate('shippingAddress').populate('user').lean();
     res.render('admin/orders',{admin:true,adminInfo:req.user,orders});
 });
 
 //Display Orders in user side
 const getOrdersPage = asyncHandler( async(req,res) => {
     try {
-        const user = req.user, totalQty = await cartQty(user);
+        const user = req.user, totalQty = await cartQty(user),
+              page = parseInt(req.query.page) || 1,
+              pageSize = 10; 
+
         const myorders = await Orders.aggregate([
+            { $match: { user : user?._id } },
             { $unwind: "$orderItems" },
             {
                 $lookup: {
@@ -38,9 +42,12 @@ const getOrdersPage = asyncHandler( async(req,res) => {
                 }
             },
             { $unwind: "$orderItems.cartItem.product" },
+            { $skip: (page - 1) * pageSize },
+            { $limit: pageSize },
             {
                 $project: {
                     _id: 0,
+                    user: "$user",
                     orderId: "$orderId",
                     product: "$orderItems.cartItem.product",
                     size: "$orderItems.cartItem.size",
@@ -61,7 +68,6 @@ const getOrdersPage = asyncHandler( async(req,res) => {
             }
         ]);
         console.log(myorders)
-        
     res.render('users/ordersInfo',{user,totalQty,myorders,
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
     } catch (error) {
@@ -130,14 +136,14 @@ const createOrders = asyncHandler(async (req, res) => {
                 amount: req.body.GrandTotal * 100,
                 currency: 'INR',
             };
-
+           
             const razorpayInstance = new Razorpay({
                 key_id: process.env.RAZOR_KEY_ID ,
                 key_secret: process.env.RAZOR_KEY_SECRET,
             }); 
-
+        
             req.body.paymentStatus = 'Pending';
-            razorpayOrderData = await razorpayInstance.orders.create(options);       
+            razorpayOrderData = await razorpayInstance.orders.create(options);     
             order = await Orders.create({ ...req.body,paymentInfo:razorpayOrderData});
         } else {
             order = await Orders.create(req.body);
@@ -146,6 +152,7 @@ const createOrders = asyncHandler(async (req, res) => {
         }
 
         const user = req.user, totalQty = await cartQty(user);
+        console.log({ razorpayOrderData },"wekmmkmgdrk")
         if (order) {
             if (paymentMethod === 'Razorpay') res.json({ razorpayOrderData })
             else res.render('users/orderConfirmation', { user, totalQty });  
@@ -191,31 +198,39 @@ const razorpayPayment = asyncHandler( async(req,res) => {
    
 });
 
-const cancelOrder = asyncHandler( async(req,res) => {
-    try {
-        const { orderId } = req.params;
-        await Orders.updateOne({orderId:orderId},{status:"cancelled"});
-        return res.redirect('/admin/orders')
 
+
+const changeOrderStatus = asyncHandler(async(req,res) => {
+    try {
+        const { orderId, action } = req.query;
+        let status, paymentStatus;
+
+        if(action == 'restore'){
+            status = "Pending";
+            paymentStatus = "Pending";
+        } else if(action == 'shipped') {
+            status = "Shipped";
+        } else if(action == 'delivered') {
+            status = "Delivered";
+            paymentStatus = "Paid";
+        } else if(action == 'cancel') {
+            status = "Cancelled";
+            const order = await Orders.findOne({ orderId });
+            if(order.paymentStatus == "Paid") paymentStatus = "Refund";
+            else paymentStatus = "Cancelled";
+        }
+        
+        await Orders.updateOne({orderId},{status, paymentStatus});
+        return res.redirect('/admin/orders')
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-const restoreOrder = asyncHandler(async(req,res) => {
-    try {
-        const { orderId } = req.params;
-        await Orders.updateOne({orderId:orderId},{status:"Processing"});
-        return res.redirect('/admin/orders')
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+
 
   
 module.exports = { getOrders, orderDetails,
-     createOrders, cancelOrder,
-     restoreOrder, getOrdersPage,
-     razorpayPayment }
+     createOrders, getOrdersPage,
+     razorpayPayment, changeOrderStatus }

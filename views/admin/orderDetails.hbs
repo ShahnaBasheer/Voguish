@@ -1,264 +1,263 @@
- <div class="app-wrapper">
-      <!-- row -->
-      <div class="container-fluid">
-                          <div class="row my-5">
-                            <div class="col-lg-12 py-5">
-                                <div class="card py-4">
-                                    <div class="card-header border-bottom bg-transparent">
-                                        <h4 class="header-title mb-0">ORDER</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div>
-                                            <div class="row">
-                                                <div class="col-lg-3 col-sm-6">
+<div class="app-wrapper">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row my-5">
+          <div class="col-lg-12 py-5">
+              <div class="card py-4">
+                  <div class="card-header border-bottom bg-transparent">
+                      <h4 class="header-title mb-0">ORDER</h4>
+                  </div>
+                  <div class="card-body">
+                      <div>
+                          <div class="row">
+                              <div class="col-lg-3 col-sm-6">
 
-                                                    <div class="d-flex mb-2">
-                                                        <div class="me-2 align-self-center">
-                                                            <i class="ri-hashtag h2 m-0 text-muted"></i>
-                                                        </div>
-                                                        <div class="flex-1">
-                                                            <p class="mb-1">ID No.</p>
-                                                            <h6 class="mt-0">
-                                                                {{orderdetails.orderId}}
-                                                            </h6>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6">
+                                  <div class="d-flex mb-2">
+                                      <div class="me-2 align-self-center">
+                                          <i class="ri-hashtag h2 m-0 text-muted"></i>
+                                      </div>
+                                      <div class="flex-1">
+                                          <p class="mb-1">ID No.</p>
+                                          <h6 class="mt-0">
+                                              {{orderdetails.orderId}}
+                                          </h6>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-lg-3 col-sm-6">
 
-                                                    <div class="d-flex mb-2">
-                                                        <div class="me-2 align-self-center">
-                                                            <i class="ri-user-2-line h2 m-0 text-muted"></i>
-                                                        </div>
-                                                        <div class="flex-1">
-                                                            <p class="mb-1">Billing Name</p>
-                                                            <h5 class="mt-0">
-                                                                {{orderdetails.shippingAddress.firstname}}
-                                                                {{orderdetails.shippingAddress.lastname}}
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6">
-                                                    
-                                                    <div class="d-flex mb-2">
-                                                        <div class="me-2 align-self-center">
-                                                            <i class="ri-calendar-event-line h2 m-0 text-muted"></i>
-                                                        </div>
-                                                        <div class="flex-1">
-                                                            <p class="mb-1">Date</p>
-                                                            <h5 class="mt-0">
-                                                                {{removeGMT orderdetails.createdAt}} 
-                                                                <small class="text-muted">10:29 PM</small>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3 col-sm-6">
+                                  <div class="d-flex mb-2">
+                                      <div class="me-2 align-self-center">
+                                          <i class="ri-user-2-line h2 m-0 text-muted"></i>
+                                      </div>
+                                      <div class="flex-1">
+                                          <p class="mb-1">Billing Name</p>
+                                          <h5 class="mt-0">
+                                              {{orderdetails.shippingAddress.firstname}}
+                                              {{orderdetails.shippingAddress.lastname}}
+                                          </h5>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-lg-3 col-sm-6">
+                                  
+                                  <div class="d-flex mb-2">
+                                      <div class="me-2 align-self-center">
+                                          <i class="ri-calendar-event-line h2 m-0 text-muted"></i>
+                                      </div>
+                                      <div class="flex-1">
+                                          <p class="mb-1">Date</p>
+                                          <h5 class="mt-0">
+                                              {{removeGMT orderdetails.createdAt}} 
+                                              <small class="text-muted">10:29 PM</small>
+                                          </h5>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-lg-3 col-sm-6">
 
-                                                    <div class="d-flex mb-2">
-                                                        <div class="me-2 align-self-center">
-                                                            <i class="ri-map-pin-time-line h2 m-0 text-muted"></i>
-                                                        </div>
-                                                        <div class="flex-1">
-                                                            <p class="mb-1">Tracking ID</p>
-                                                            <h5 class="mt-0">
-                                                                123456789
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                  <div class="d-flex mb-2">
+                                      <div class="me-2 align-self-center">
+                                          <i class="ri-map-pin-time-line h2 m-0 text-muted"></i>
+                                      </div>
+                                      <div class="flex-1">
+                                          <p class="mb-1">Tracking ID</p>
+                                          <h5 class="mt-0">
+                                              123456789
+                                          </h5>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
 
-                                        <div class="mt-2">
-                                            <h4 class="header-title mb-3">Items from Order {{orderdetails.orderId}}</h4>
-                                            <div class="row">
-                                                <div class="col-lg-8">
-                                                    <div>
-                                                        <div class="table-responsive">
-                                                            <table class="table table-centered border table-nowrap mb-lg-0">
-                                                                <thead class="bg-light">
-                                                                    <tr>
-                                                                        <th>Product</th>
-                                                                        <th>Quantity</th>
-                                                                        <th>Price</th>
-                                                                        <th>Total</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {{#each orderdetails.orderItems}}
-                                                                    <tr>
-                                                                        <td>
-                                                                            <div class="d-flex align-items-center">
-                                                                                <div class="me-3">
-                                                                                    <img src="/uploads/{{this.item.product.images.img-1}}" alt="product-img"
-                                                                                     width="60">
-                                                                                </div>
-                                                                                <div class="flex-1">
-                                                                                    <h5 class="m-0">{{this.item.product.title}}</h5>
-                                                                                    <p class="mb-0">Size : {{this.item.size}}</p>
-                                                                                    <p class="mb-0">Color : {{this.item.color}}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>{{this.quantity}}</td>
-                                                                        <td>₹{{this.item.product.price}}</td>
-                                                                        <td>₹{{this.price}}</td>
-                                                                    </tr>
-                                                                    {{/each}}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                      <div class="mt-2">
+                          <h4 class="header-title mb-3">Items from Order {{orderdetails.orderId}}</h4>
+                          <div class="row">
+                              <div class="col-lg-8">
+                                  <div>
+                                      <div class="table-responsive">
+                                          <table class="table table-centered border table-nowrap mb-lg-0">
+                                              <thead class="bg-light">
+                                                  <tr>
+                                                      <th>Product</th>
+                                                      <th>Quantity</th>
+                                                      <th>Price</th>
+                                                      <th>Total</th>
+                                                  </tr>
+                                              </thead>
+                                              <tbody>
+                                                  {{#each orderdetails.orderItems}}
+                                                  <tr>
+                                                      <td>
+                                                          <div class="d-flex align-items-center">
+                                                              <div class="me-3">
+                                                                  <img src="/uploads/{{this.item.product.images.img-1}}" alt="product-img"
+                                                                   width="60">
+                                                              </div>
+                                                              <div class="flex-1">
+                                                                  <h5 class="m-0">{{this.item.product.title}}</h5>
+                                                                  <p class="mb-0">Size : {{this.item.size}}</p>
+                                                                  <p class="mb-0">Color : {{this.item.color}}</p>
+                                                              </div>
+                                                          </div>
+                                                      </td>
+                                                      <td>{{this.quantity}}</td>
+                                                      <td>₹{{this.item.product.price}}</td>
+                                                      <td>₹{{this.price}}</td>
+                                                  </tr>
+                                                  {{/each}}
+                                              </tbody>
+                                          </table>
+                                      </div>
+                                  </div>
+                              </div>
     
-                                                <div class="col-lg-4">
-                                                    <div>
-                                                        
-                                                        <div class="table-responsive">
-                                                            <table class="table table-centered border mb-0">
-                                                                <thead class="bg-light">
-                                                                    <tr>
-                                                                        <th colspan="2">Order summary</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <th scope="row">Sub Total :</th>
-                                                                        <td>₹{{orderdetails.totalPrice}}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th scope="row">Shipping Charge :</th>
-                                                                        <td>₹{{orderdetails.delivery}}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th scope="row">Fast Delivery Charge :</th>
-                                                                        {{#if (isEqualTo orderdetails.shippingMethod "fast delivery")}}
-                                                                           <td>₹25</td>
-                                                                        {{else}}
-                                                                            <td>₹0</td>
-                                                                        {{/if}}
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th scope="row">GrandTotal :</th>
-                                                                        <td>₹{{orderdetails.GrandTotal}}</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                              <div class="col-lg-4">
+                                  <div>
+                                      
+                                      <div class="table-responsive">
+                                          <table class="table table-centered border mb-0">
+                                              <thead class="bg-light">
+                                                  <tr>
+                                                      <th colspan="2">Order summary</th>
+                                                  </tr>
+                                              </thead>
+                                              <tbody>
+                                                  <tr>
+                                                      <th scope="row">Sub Total :</th>
+                                                      <td>₹{{orderdetails.totalPrice}}</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <th scope="row">Shipping Charge :</th>
+                                                      <td>₹{{orderdetails.delivery}}</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <th scope="row">Fast Delivery Charge :</th>
+                                                      {{#if (isEqualTo orderdetails.shippingMethod "fast delivery")}}
+                                                         <td>₹25</td>
+                                                      {{else}}
+                                                          <td>₹0</td>
+                                                      {{/if}}
+                                                  </tr>
+                                                  <tr>
+                                                      <th scope="row">GrandTotal :</th>
+                                                      <td>₹{{orderdetails.GrandTotal}}</td>
+                                                  </tr>
+                                              </tbody>
+                                          </table>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
 
-                                    </div>
-                                </div>
-                                <!-- end card -->
+                  </div>
+              </div>
+              <!-- end card -->
 
-                                <div class="row mb-3">
-                                    <div class="col-lg-4">
-                                        <div>
-                                            <h4 class="font-15 mb-2">Shipping Information</h4>
-                                            <div class="card p-2 mb-lg-0">
-                                                <table class="table table-borderless table-sm mb-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th colspan="2"><h5 class="font-15 m-0">{{orderdetails.shippingAddress.firstname}} 
-                                                                {{orderdetails.shippingAddress.lastname}}</h5>
-                                                            </th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Address:</th>
-                                                            <td>{{orderdetails.shippingAddress.address}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">City:</th>
-                                                            <td>{{orderdetails.shippingAddress.city}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">State:</th>
-                                                            <td>{{orderdetails.shippingAddress.state}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Mobile :</th>
-                                                            <td>{{orderdetails.shippingAddress.phone}}</td>
-                                                        </tr>
-                                                        {{#if orderdetails.shippingAddress.alternativePhone}}
-                                                        <tr>
-                                                            <th scope="row">Alternative:</th>
-                                                            <td>{{orderdetails.shippingAddress.alternativePhone}}</td>
-                                                        </tr>
-                                                        {{/if}}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div>
-                                            <h4 class="font-15 mb-2">Billing  Information</h4>
+              <div class="row mb-3">
+                  <div class="col-lg-4">
+                      <div>
+                          <h4 class="font-15 mb-2">Shipping Information</h4>
+                          <div class="card p-2 mb-lg-0">
+                              <table class="table table-borderless table-sm mb-0">
+                                  <tbody>
+                                      <tr>
+                                          <th colspan="2"><h5 class="font-15 m-0">{{orderdetails.shippingAddress.firstname}} 
+                                              {{orderdetails.shippingAddress.lastname}}</h5>
+                                          </th>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">Address:</th>
+                                          <td>{{orderdetails.shippingAddress.address}}</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">City:</th>
+                                          <td>{{orderdetails.shippingAddress.city}}</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">State:</th>
+                                          <td>{{orderdetails.shippingAddress.state}}</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">Mobile :</th>
+                                          <td>{{orderdetails.shippingAddress.phone}}</td>
+                                      </tr>
+                                      {{#if orderdetails.shippingAddress.alternativePhone}}
+                                      <tr>
+                                          <th scope="row">Alternative:</th>
+                                          <td>{{orderdetails.shippingAddress.alternativePhone}}</td>
+                                      </tr>
+                                      {{/if}}
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-lg-4">
+                      <div>
+                          <h4 class="font-15 mb-2">Billing  Information</h4>
 
-                                            <div class="card p-2 mb-lg-0">
-                                                <table class="table table-borderless table-sm mb-0">
-                                    
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">Payment Type:</th>
-                                                            <td>{{orderdetails.paymentMethod}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Payment Status:</th>
-                                                            <td>{{orderdetails.paymentStatus}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Order Status:</th>
-                                                            <td>{{orderdetails.status}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Order Date:</th>
-                                                            <td>{{orderdetails.createdAt}}</td>
-                                                        </tr>
-                                                        <!--<tr>
-                                                            <th scope="row">Provider :</th>
-                                                            <td>Visa ending in 2851</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Valid Date :</th>
-                                                            <td>02/2021</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">CVV :</th>
-                                                            <td>xxx</td>
-                                                        </tr>-->
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--
-                                    <div class="col-lg-4">
-                                        <div>
-                                            <h4 class="font-15 mb-2">Delivery Info</h4>
+                          <div class="card p-2 mb-lg-0">
+                              <table class="table table-borderless table-sm mb-0">
+                  
+                                  <tbody>
+                                      <tr>
+                                          <th scope="row">Payment Type:</th>
+                                          <td>{{orderdetails.paymentMethod}}</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">Payment Status:</th>
+                                          <td>{{orderdetails.paymentStatus}}</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">Order Status:</th>
+                                          <td>{{orderdetails.status}}</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">Order Date:</th>
+                                          <td>{{orderdetails.createdAt}}</td>
+                                      </tr>
+                                      <!--<tr>
+                                          <th scope="row">Provider :</th>
+                                          <td>Visa ending in 2851</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">Valid Date :</th>
+                                          <td>02/2021</td>
+                                      </tr>
+                                      <tr>
+                                          <th scope="row">CVV :</th>
+                                          <td>xxx</td>
+                                      </tr>-->
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+                  <!--
+                  <div class="col-lg-4">
+                      <div>
+                          <h4 class="font-15 mb-2">Delivery Info</h4>
 
-                                            <div class="card p-2 mb-lg-0">
-                                                <div class="text-center">
-                                                    <div class="my-2">
-                                                        <i class="mdi mdi-truck-fast h1 text-muted"></i>
-                                                    </div>
-                                                    <h5><b>UPS Delivery</b></h5>
-                                                    <div class="mt-2 pt-1">
-                                                        <p class="mb-1"><span class="fw-semibold">Order ID :</span> xxxx048</p>
-                                                        <p class="mb-0"><span class="fw-semibold">Payment Mode :</span> COD</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>-->
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                          <div class="card p-2 mb-lg-0">
+                              <div class="text-center">
+                                  <div class="my-2">
+                                      <i class="mdi mdi-truck-fast h1 text-muted"></i>
+                                  </div>
+                                  <h5><b>UPS Delivery</b></h5>
+                                  <div class="mt-2 pt-1">
+                                      <p class="mb-1"><span class="fw-semibold">Order ID :</span> xxxx048</p>
+                                      <p class="mb-0"><span class="fw-semibold">Payment Mode :</span> COD</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>-->
+              </div>
+          </div>
+        </div>
+    </div>
+</div>
                         

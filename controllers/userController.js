@@ -277,14 +277,15 @@ const adminLogin = asyncHandler( async (req,res) => {
 
 const adminLogout = asyncHandler (async(req,res) => {
     const refreshToken = req.cookies.adminRefreshToken;
-
+    
+    console.log(refreshToken)
     if (!refreshToken) throw new Error("No Refresh Token in Cookies");
     
     res.clearCookie("adminAccessToken", {
         httpOnly: true,
         secure: true,
     });
-    res.clearCookie("adminrRereshToken", {
+    res.clearCookie("adminRefreshToken", {
         httpOnly: true,
         secure: true,
     });

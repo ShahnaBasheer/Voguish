@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const CartItem = require('./cartItemModel');
-const Address = require('./addressModel');
-
 
 const orderSchema = new mongoose.Schema({
     orderId: {
@@ -47,12 +44,12 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
-        default: 'Processing'
+        enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'],
+        default: 'Pending'
     },
     paymentMethod: {
         type: String,
-        enum: ['Credit Card', 'PayPal', 'Cash on Delivery', 'Razorpay'],
+        enum: ['Credit Card', 'PayPal', 'Cash On Delivery', 'Razorpay'],
         required: true
     },
     delivery: {
@@ -67,10 +64,10 @@ const orderSchema = new mongoose.Schema({
     },
     paymentStatus: {
         type: String,
-        enum: ['Pending', 'Paid', 'Failed'],
+        enum: ['Pending', 'Paid', 'Failed', 'Refund', 'Cancelled'],
         default: function () {
             // Set paymentStatus as 'Pending' if paymentMethod is 'Cash on Delivery'
-            return this.paymentMethod === 'Cash on Delivery' ? 'Pending' : 'Paid';
+            return this.paymentMethod === 'Cash On Delivery' ? 'Pending' : 'Paid';
         }
     },
     paymentInfo: {
@@ -86,6 +83,7 @@ const orderSchema = new mongoose.Schema({
 orderSchema.pre('save', async function (next) {
     next();
 });
+
 
 const Order = mongoose.model('Order', orderSchema);
 

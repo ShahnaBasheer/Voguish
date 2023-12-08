@@ -121,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
          if(item.getAttribute('name') != 'sorting'){
               selectedItems.appendChild(closeButton);
          }
-         
     });
 
 
