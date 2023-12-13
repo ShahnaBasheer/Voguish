@@ -7,8 +7,13 @@ const sendEmail = require('./utils/sendMail');
 const User = require('./models/userModel');
 const Cart = require('./models/cartModel');
 const CartItem = require('./models/cartItemModel');
+const moment = require('moment');
 
 
+const getAllBrands = async () => {
+    const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
+    return allBrands.sort();
+};
 
 const createUniqueSlug = async (title) => {
   try{
@@ -143,8 +148,7 @@ const selectCartItem = async( slug, req ) => {
 const genderBrandFilter = async(page, filter, req, res) => {
     try {
         let user = req?.user, totalQty = await cartQty(user);
-        const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
-        const Brands = allBrands.sort();  
+        const Brands = await getAllBrands();  
 
         let { filters, matchStage , pageFilter, renderPage, priceStats } = 
              await filterFunction(page, filter);
@@ -292,6 +296,154 @@ const getFieldCounts = async (fieldName, matchStage, categoryMatch) => {
 }
 
 
-module.exports = { createUniqueSlug, otpEmailSend,
+const pagination = async() => {
+     
+};
+
+
+const invoiceHtml = async(invoiceData, _idx) => {
+    return  `<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Invoice</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+            <style>
+                body{ overflow-x: hidden;margin: 0;padding: 0;}
+                .text-danger strong {color: #9f181c;}
+                .receipt-main {
+                    background: #ffffff none repeat scroll 0 0;
+                    border-bottom: 12px solid #333333;
+                    border-top: 12px solid #9f181c;
+                    position: relative;
+                    box-shadow: 0 1px 21px #acacac;
+                    color: #333333;
+                }
+                .receipt-main p {
+                    color: #333333;
+                    line-height: 1.42857;
+                }
+                .receipt-main::after {
+                    background: #414143 none repeat scroll 0 0;
+                    content: "";
+                    height: 5px;
+                    left: 0;
+                    position: absolute;
+                    right: 0;
+                    top: -13px;
+                }
+                .receipt-header h5{ font-size: 1.1rem;}
+                .receipt-header p {
+                    font-size: 12px;
+                    margin: 0px;
+                }
+                .receipt-main th { background-color:rgb(58, 57, 57);}
+                .receipt-main td {
+                    font-size: 13px;
+                    font-weight: initial !important;
+                }
+                .receipt-main td p:last-child {
+                    margin: 0;
+                    padding: 0;
+                }	
+                .receipt-main .total h5 {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    margin: 0;
+                }
+                h6.orderId{ font-size: .94rem;}
+                .reciept-footer h6{
+                    color: rgb(222, 84, 84);
+                    font-weight: 700;
+                }
+                .reciept-footer p{
+                    color: rgb(90, 89, 89);
+                    font-size: .87rem;
+                }
+                .reciept-footer .sign{ font-size: 1rem;}
+            </style>
+        </head>
+        <body> 
+            <div class="row">
+                <div class="col-12">
+                    <div class="receipt-main px-5 py-4">
+                        <h5 class="text-center fw-bolder">INVOICE</h5>
+                        <h6 class="text-center orderId">ORDERID : ${invoiceData.orderId}</h6>
+                        <div class="row mt-5">
+                            <div class="col-md-7 col-6">
+                                <div class="receipt-header">
+                                    <h5>${invoiceData.shippingAddress.firstname} ${invoiceData.shippingAddress.lastname}</h5>
+                                    <p><b>Mobile :</b> ${invoiceData.shippingAddress.phone}</p>
+                                    <p><b>Address :</b> ${invoiceData.shippingAddress.address}</p>
+                                    <p>${invoiceData.shippingAddress.city}, ${invoiceData.shippingAddress.status}</p>
+                                    <p><b>PIN :</b> ${invoiceData.shippingAddress.zipCode}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-5 col-6">
+                                <div class="receipt-header">
+                                   <h5>VOGUISH FASHION</h5>
+                                   <p>+91 8848357834</p>
+                                   <p>voguish@gmail.com</p>
+                                   <p>India</p>
+                                </div>
+                            </div>
+                        </div>
+           
+                        <div class="my-4">
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Qty</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="col-md-7">${invoiceData.orderItems[_idx].item.product.title}</td>
+                                        <td class="col-md-2">${invoiceData.orderItems[_idx].quantity}</td>
+                                        <td class="col-md-3">${invoiceData.orderItems[_idx].price}/-</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <p><strong>Total Amount: </strong></p>
+                                            <p><strong>Late Fees: </strong></p>
+                                        </td>
+                                       
+                                        <td>
+                                            <p><strong>${invoiceData.orderItems[_idx].price}/-</strong></p>
+                                            <p><strong>0.0/-</strong></p>
+                                        </td>
+                                    </tr>
+                                    <tr class="total">
+                                        <td colspan="2"><h5 class="text-uppercase"><strong>Total: </strong></h5></td>
+                                        <td class="text-right text-danger"><h5><strong>${invoiceData.orderItems[_idx].price}/-</strong></h5></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+           
+                        <div class="row reciept-footer">
+                            <div class="col-8">
+                               <p class="mb-1"><b>OrderDate: ${moment.utc(invoiceData.createdAt).local().format('DD MMMM YYYY')} </b> </p>
+                               <h6>Thanks for shopping.!</h6>
+                            </div>
+                            <div class="col-4"><h5 class="sign text-right">Voguish</h5></div>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </body>
+    </html>`
+}
+
+
+
+
+
+
+module.exports = { createUniqueSlug, otpEmailSend, pagination,
        generateOrderId, findCart, cartQty, filterFunction,
-       selectCartItem, genderBrandFilter }
+       selectCartItem, genderBrandFilter, getAllBrands,
+       invoiceHtml }

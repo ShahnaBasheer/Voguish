@@ -2,9 +2,10 @@ const asyncHandler = require('express-async-handler');
 const Orders = require('../models/ordersModel');
 const Cart = require('../models/cartModel');
 const CartItem = require('../models/cartItemModel');
-const {  generateOrderId, cartQty } = require('../helperfns');
+const { generateOrderId, cartQty, getAllBrands, invoiceHtml } = require('../helperfns');
 const CryptoJS = require('crypto-js');
 const Razorpay = require('razorpay');
+const puppeteer = require('puppeteer');
 
 
 //Display Orders in admin side
@@ -17,12 +18,43 @@ const getOrders = asyncHandler( async (req,res) => {
 //Display Orders in user side
 const getOrdersPage = asyncHandler( async(req,res) => {
     try {
+        const Brands = await getAllBrands(); 
         const user = req.user, totalQty = await cartQty(user),
-              page = parseInt(req.query.page) || 1,
-              pageSize = 10; 
+              page = parseInt(req?.query?.page) || 1,
+              pageSize = parseInt(req?.query?.pageSize) || 10,
+              orderBy = parseInt(req?.query?.orderBy) || -1;
+              skipPage = (page - 1) * pageSize,
+              orderDate =  req?.query?.orderDate,
+              orderStatus =  req?.query?.orderStatus;
+        
+        
+        let matchCondition = { user: user?._id };
+        // Check if orderstatus is provided in the query
+        if(req?.query?.orderStatus){ 
+            matchCondition.status = { $in: orderStatus } 
+        }
+        if(req?.query?.orderDate){
+            const orderDateYears = req.query.orderDate.map(year => parseInt(year));
+            console.log(orderDateYears)
+            matchCondition.$expr =  { $in: [ { $year: { date: '$createdAt'} },orderDateYears]}
+        }
+
+        console.log(matchCondition)
+
+        const myordersCount = await Orders.aggregate([
+            { $match: matchCondition },
+            { $unwind: "$orderItems" },
+            { $count: "total"}
+        ]);
+        
+        const orderCount = myordersCount[0]?.total;
+        const totalPages = Math.ceil( orderCount / pageSize);
+        const startPage = Math.max(1, (page+1) - Math.ceil(pageSize / 2));
+        const endPage = Math.min(totalPages, startPage + pageSize - 1);
+        const paginationLinks = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
 
         const myorders = await Orders.aggregate([
-            { $match: { user : user?._id } },
+            { $match: matchCondition },
             { $unwind: "$orderItems" },
             {
                 $lookup: {
@@ -42,7 +74,8 @@ const getOrdersPage = asyncHandler( async(req,res) => {
                 }
             },
             { $unwind: "$orderItems.cartItem.product" },
-            { $skip: (page - 1) * pageSize },
+            { $sort: { "createdAt": orderBy } },
+            { $skip: skipPage },
             { $limit: pageSize },
             {
                 $project: {
@@ -50,6 +83,7 @@ const getOrdersPage = asyncHandler( async(req,res) => {
                     user: "$user",
                     orderId: "$orderId",
                     product: "$orderItems.cartItem.product",
+                    item: "$orderItems.cartItem._id",
                     size: "$orderItems.cartItem.size",
                     color: "$orderItems.cartItem.color",
                     quantity: "$orderItems.quantity",
@@ -67,8 +101,13 @@ const getOrdersPage = asyncHandler( async(req,res) => {
                 }
             }
         ]);
-        console.log(myorders)
-    res.render('users/ordersInfo',{user,totalQty,myorders,
+        let fromOrder = skipPage + 1;
+        let toOrder = fromOrder + pageSize - 1;
+        if(toOrder > orderCount) toOrder = orderCount;
+       
+    res.render('users/ordersInfo',{user,totalQty,myorders,paginationLinks,
+        page, Brands, endPage, totalOrders: orderCount,
+        fromOrder, toOrder, pageSize, orderBy, orderDate, orderStatus,
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
     } catch (error) {
          console.log(error);
@@ -77,6 +116,39 @@ const getOrdersPage = asyncHandler( async(req,res) => {
 });
 
 
+//Order details in user side
+const getOrdersDetails = asyncHandler( async (req,res) => {
+    try {
+        const { orderId, proItem } = req?.query;
+        const Brands = await getAllBrands(); 
+        const user = req.user, totalQty = await cartQty(user);
+        const order = await Orders.findOne({orderId,user:req?.user?._id})
+        .populate('shippingAddress')
+        .populate({
+            path: 'orderItems.item',
+            populate: {
+              path: 'product',
+              model: 'Product'
+            }
+          }).lean();
+        
+          
+        if(order){
+            let index = order?.orderItems.findIndex(pro => pro.item._id.toString() === proItem);
+            order.index = index;
+            console.log(index)
+            res.render('users/orderDetails',{user,totalQty,order,Brands,
+                bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
+        } 
+        else res.status(404).json({ error: 'Order not found' });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
+//Order details in admin side
 const orderDetails = asyncHandler( async (req,res) => {
     try {
         const { order_id }  = req.query;
@@ -229,8 +301,45 @@ const changeOrderStatus = asyncHandler(async(req,res) => {
 });
 
 
+const generateInvoice = asyncHandler(async (req, res) => {
+    try {
+        const { orderId, _idx } = req?.query;
+        const orderData = await Orders.findOne(
+            {orderId,user:req?.user?._id})
+            .populate('shippingAddress')
+            .populate({
+                path: 'orderItems.item',
+                populate: {
+                  path: 'product',
+                  model: 'Product'
+                }
+          }).lean();
+
+        const htmlContent = await invoiceHtml(orderData,_idx)
+
+        // Launch a headless browser using Puppeteer with the 'new' headless mode
+        const browser = await puppeteer.launch({ headless: 'new' });
+        const page = await browser.newPage();
+
+        // Set the HTML content of the page
+        await page.setContent(htmlContent);
+      
+        // Generate a PDF file from the HTML content
+        const pdfBuffer = await page.pdf({ format: 'A4'});
+        await browser.close();
+
+        // Set the response headers for PDF download
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=invoice.pdf');
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Error generating invoice:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
   
 module.exports = { getOrders, orderDetails,
-     createOrders, getOrdersPage,
-     razorpayPayment, changeOrderStatus }
+     createOrders, getOrdersPage, getOrdersDetails,
+     razorpayPayment, changeOrderStatus, generateInvoice
+     }

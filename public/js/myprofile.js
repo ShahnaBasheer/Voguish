@@ -8,10 +8,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteAddress = document.querySelectorAll('.delete-address');
     const messageAddress = document.getElementById('addressMessage');
     const defaultAddres =  document.querySelectorAll('.default-address');
-
+    const openOrderModal = document.querySelectorAll('.candidate-list-box');
+    const pageOrderSize = document.getElementById('choices-order-size');
+    const choicesOrderby = document.getElementById('choices-orderby');
+    const buyagain = document.querySelectorAll('.buyagain');
+    const orderFilter = document.querySelectorAll('#orderFilter input, .form-select');
     
-    editLinks.forEach(editLink => {
-        editLink.addEventListener('click', function(event) {
+
+    /*pageOrderSize?.addEventListener('change', function(){
+        window.location.href = `/orders?pageSize=${pageOrderSize.value}&orderBy=${choicesOrderby.value}`;
+    });
+    
+    choicesOrderby?.addEventListener('change', function(){
+        window.location.href = `/orders?pageSize=${pageOrderSize.value}&orderBy=${choicesOrderby.value}`
+    });*/
+
+
+
+    editLinks?.forEach(editLink => {
+        editLink?.addEventListener('click', function(event) {
           const fieldName = this.getAttribute('data-field');
           const saveButton = document.querySelector(`.save-button[data-field="${fieldName}"]`);
           const formField = document.querySelectorAll(`input[data-field="${fieldName}"]`);
@@ -27,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    saveBtn.forEach(saveButton => {
+    saveBtn?.forEach(saveButton => {
       saveButton.addEventListener('click', async function(event) {
         event.preventDefault();
         emailText.innerHTML = '';
@@ -75,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
 
-    addressForm.forEach(form => {
+    addressForm?.forEach(form => {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
     
@@ -131,11 +146,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    deleteAddress.forEach(item => {
+    deleteAddress?.forEach(item => {
         item.addEventListener('click', async function(event) {
             event.preventDefault();
             const addressId = item.getAttribute('data-id');
-            console.log(addressId,"djd")
     
             try {
                 const response = await fetch(`/profile/delete-address/${addressId}`, {
@@ -156,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    defaultAddres.forEach(button => {
+    defaultAddres?.forEach(button => {
         button.addEventListener('click', async function(event) {
             event.preventDefault();
             const addressId = this.getAttribute('data-id');
@@ -180,8 +194,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    buyagain?.forEach( function(buybtn){
+        buybtn?.addEventListener('click', function (event){
+            event.stopPropagation();
+        });
+    });
+
+    orderFilter?.forEach( function(input){
+        input?.addEventListener('change', function(item){
+            document.getElementById('orderFilter')?.submit();
+        }) 
+    });
+
+
+    
 });
- 
+
+
+
 
 
 

@@ -21,7 +21,7 @@
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px !important;
   }
   #menu{
-    background-color: #c94545;
+    background-color: #c94545;/*rgb(209, 0, 36)*/
   }
   #menu a{
     color: white;

@@ -1,121 +1,189 @@
-<section class="py-5">
-    <div class="container">
-        <div class="row ">
+<section class="px-5 py-3">
+        <div class="row">
                {{> profileSideBar}}
             <div class="col-md-9">
-                <div class="shadow rounded bg-white p-5" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                <div class="shadows rounded bg-white p-4 ms-2" id="v-pills-settings" role="tabpanel">
                     <h4 class="font-italic mb-4">My Orders</h4>
-                    
-                        <section class="section">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="align-items-center row">
-                                            <div class="col-lg-8">
-                                                <div class="mb-3 mb-lg-0"><h6 class="fs-16 mb-0">Showing 1 – 8 of 11 results</h6></div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="candidate-list-widgets">
-                                                    <div class="row">
-                                                        <div class="col-lg-6">
-                                                            <div class="selection-widget">
-                                                                <select class="form-select" data-trigger="true" name="choices-single-filter-orderby" id="choices-single-filter-orderby" aria-label="Default select example">
-                                                                    <option value="df">Default</option>
-                                                                    <option value="ne">Newest</option>
-                                                                    <option value="od">Oldest</option>
-                                                                    <option value="rd">Random</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6">
-                                                            <div class="selection-widget mt-2 mt-lg-0">
-                                                                <select class="form-select" data-trigger="true" name="choices-candidate-page" id="choices-candidate-page" aria-label="Default select example">
-                                                                    <option value="df">All</option>
-                                                                    <option value="ne">8 per Page</option>
-                                                                    <option value="ne">12 per Page</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                    <section class="section">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-lg-4">
+                                            <div class="mb-3 mb-lg-0"><h6 class="fs-16 mb-0 showing">
+                                            Showing {{fromOrder}} - {{toOrder}} of {{totalOrders}} results</h6></div>
                                         </div>
-                                        <div class="candidate-list">
-                                            {{#each myorders}}
-                                            <div class="candidate-list-box card mt-4">
-                                                <div class="p-4 card-body">
-                                                    <div class="align-items-center row">
-                                                        <div class="col-auto">
-                                                            <div class="candidate-list-images">
-                                                                <a href="#"><img src="/uploads/{{this.product.images.img-1}}" alt="" style="width:100px;height:auto;" /></a>
+                                        <div class="col-lg-8">
+                                            <form action="/orders" action="GET" id="orderFilter">
+                                                <div class="candidate-list-widgets">
+                                                    <div class="row d-flex justify-content-end ">
+                                                        <div class="col-6 d-flex justify-content-end pe-0">
+                                                            <div class="selection-widget">
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-secondary dropdown-toggle" type="button" 
+                                                                      id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" 
+                                                                       aria-expanded="false">Filters
+                                                                    </button>
+                                                                    <div class="dropdown-menu p-4" aria-labelledby="dropdownMenuButton" style="width:300px;">
+                                                                        <div class="row">
+                                                                            <div class="col-6">
+                                                                                <h6>ORDER STATUS</h6>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="Pending" id="statusPending"
+                                                                                      name="orderStatus[]" {{#if (contains @root/orderStatus 'Pending' )}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="statusPending">Pending</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="Delivered"
+                                                                                       id="statusDelivered" name="orderStatus[]" 
+                                                                                       {{#if (contains @root/orderStatus 'Delivered')}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="statusDelivered">Delivered</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="Shipped" 
+                                                                                       id="statusShipped" name="orderStatus[]" 
+                                                                                       {{#if (contains @root/orderStatus 'Shipped')}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="statusShipped">Shipped</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="Cancelled" 
+                                                                                       id="statusCancelled" name="orderStatus[]" 
+                                                                                       {{#if (contains @root/orderStatus 'Cancelled' )}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="statusCancelled">Cancelled</label>
+                                                                                </div>
+                                                                                <!-- Add more status checkboxes as needed -->
+                                                                            </div>
+                                                                            <div class="col-6">
+                                                                                <h6>ORDER TIME</h6>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="2023" id="time2023"
+                                                                                       name="orderDate[]" {{#if (contains @root/orderDate '2023')}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="time2023">2023</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="2022" id="time2022"
+                                                                                       name="orderDate[]" {{#if (contains @root/orderDate '2022')}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="time2022">2022</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="2021" id="time2021"
+                                                                                       name="orderDate[]" {{#if (contains @root/orderDate '2021')}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="time2021">2021</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="2020" id="time2020"
+                                                                                       name="orderDate[]" {{#if (contains @root/orderDate '2020')}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="time2020">2020</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" value="2019" id="time2019"
+                                                                                       name="orderDate[]" {{#if (contains @root/orderDate '2019')}}checked{{/if}}>
+                                                                                    <label class="form-check-label" for="time2019">2019</label>
+                                                                                </div>
+                                                                                <!-- Add more time checkboxes as needed -->
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-lg-5">
-                                                            <div class="candidate-list-content mt-3 mt-lg-0">
-                                                                <p>OrderId: {{this.orderId}}</p>
-                                                                <!--<h6 class="fs-19 mb-0">
-                                                                    <a class="primary-link" href="#"></a><span class="badge bg-warning ms-1"><i class="mdi mdi-star align-middle"></i>3.9</span>
-                                                                </h6>-->
-                                                                <p class="fw-bold mb-2">{{this.product.title}}</p>
-                                                                    <li class="list-inline-item"><i class="mdi mdi-map-marker">
-                                                                        Color: {{this.color}}</i>
-                                                                    </li><br>
-                                                                    <li class="list-inline-item"><i class="mdi mdi-map-marker">
-                                                                        Size: {{this.size}}</i>
-                                                                    </li><br>
-                                                                    <li class="list-inline-item"><i class="mdi mdi-map-marker">
-                                                                        Quantity: {{this.quantity}}</i>
-                                                                    </li><br>
-                                                                    
-                                                                    <li class="list-inline-item"><i class="mdi mdi-map-marker">
-                                                                        Payement Method: {{this.paymentMethod}}</i></li><br>
-                                                                    <li class="list-inline-item"><i class="mdi mdi-wallet">
-                                                                        Total Price: {{this.price}}</i></li>
-                                                                </ul>
+                                                        <div class="col-3 d-flex justify-content-end pe-0">
+                                                            <div class="selection-widget" style="width:102px;">
+                                                                <select class="form-select" data-trigger="true" name="orderBy" 
+                                                                   id="choices-orderby">
+                                                                    <option value="-1" {{#if (isEqualTo orderBy -1)}}selected{{/if}}>Newest</option>
+                                                                    <option value="1" {{#if (isEqualTo orderBy 1)}}selected{{/if}}>Oldest</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-lg-4">
-                                                            <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">
-                                                                <span>Payment Status: <span class="badge bg-success fs-14 mt-1">
-                                                                    {{this.paymentStatus}}</span></span>
-                                                                <span>Order Status: <span class="badge bg-success fs-14 mt-1">
-                                                                    {{this.status}}</span></span>
+                                                        <div class="col-3 d-flex justify-content-end ">
+                                                            <div class="selection-widget" style="width:67px;">
+                                                                <select class="form-select" data-bs-trigger="true" name="pageSize"
+                                                                   id="choices-order-size">
+                                                                    <option value="10" {{#if (isEqualTo pageSize 10)}}selected{{/if}}>10</option>
+                                                                    <option value="20" {{#if (isEqualTo pageSize 20)}}selected{{/if}}>20</option>
+                                                                    <option value="30" {{#if (isEqualTo pageSize 30)}}selected{{/if}}>30</option>
+                                                                </select>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="favorite-icon">
-                                                        <a href="#"><i class="mdi mdi-heart fs-18"></i></a>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            {{/each}}
+                                            </form>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="mt-4 pt-2 col-lg-12">
-                                        <nav aria-label="Page navigation example">
-                                            <div class="pagination job-pagination mb-0 justify-content-center">
-                                                <li class="page-item disabled">
-                                                    <a class="page-link" tabindex="-1" href="#">
-                                                        <i class="fa-solid fa-arrow-left"></i></a>
-                                                </li>
-                                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#"><i class="fa-solid fa-arrow-right"></i></a>
-                                                </li>
+                                    <div class="candidate-list">
+                                        {{#each myorders}}
+                                       <!-- onclick="window.location.href='#' -->
+                                        <div class="candidate-list-box card mt-3" onclick="window.location.href='/orders/order-details?orderId={{this.orderId}}&proItem={{this.item}}'">
+                                            <div class="px-4 py-3 card-body">
+                                                <div class="d-flex justify-content-between pe-3"> 
+                                                    <h6 class="fw-bold"><a href="#" class="orderId text-decoration-none">{{this.orderId}}</a> <small class="text-secondary ps-2">{{removeGMT this.createdAt}}</small></h6>
+                                                    <small class="fw-bolder status"><i class="fa-solid fa-circle
+                                                    {{#if (isEqualTo this.status 'Pending')}}text-warning
+                                                    {{else if (isEqualTo this.status 'Delivered')}}text-success
+                                                    {{else if (isEqualTo this.status 'Shipped')}}text-primary
+                                                    {{else if (isEqualTo this.status 'Cancelled')}}text-danger
+                                                    {{/if}}"></i> {{this.status}}</small>
+                                                </div>
+                                                <div class="row align-items-center pt-3">
+                                                    <div class="col-md-auto col-12">
+                                                        <div class="candidate-list-images">
+                                                            <a href="#"><img src="/uploads/{{this.product.images.img-1}}" alt="" 
+                                                               style="width:90px;height:auto;"/></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-7 col-12">
+                                                        <div class="candidate-list-content mt-3 mt-lg-0">
+                                                            <ul>
+                                                                <h6 class="protitle">{{this.product.title}}</h6>
+                                                                <li class="list-inline-item">Color: {{this.color}}</li>
+                                                                <li class="list-inline-item">Size: {{this.size}}</li>
+                                                                <li class="list-inline-item">Qty: {{this.quantity}}
+                                                                </li><br>
+                                                                <li class="list-inline-item price"><b>₹{{this.price}}</b></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 col-12 text-md-end text-center">
+                                                        <a href="/product/{{this.product.slug}}" 
+                                                        class="btn btn-block d-md-inline-block d-block buyagain">Buy again</a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </nav>
+                                        </div>
+                                        {{/each}}
                                     </div>
                                 </div>
                             </div>
-                        </section>
-
+                            <div class="row">
+                                <div class="mt-4 pt-2 col-lg-12">
+                                    <nav aria-label="Page navigation example">
+                                        <div class="pagination job-pagination mb-0 justify-content-center">
+                                            <li class="page-item {{#if (isEqualTo @root/page 1)}}disabled{{/if}}">
+                                                <a class="page-link" tabindex="-1" 
+                                                href="/orders?page={{dec page}}&pageSize={{@root/pageSize}}&orderBy={{@root/orderBy}}">
+                                                <i class="fa-solid fa-arrow-left"></i></a>
+                                            </li>
+                                            {{#each paginationLinks}}
+                                                <li class="page-item"><a class="page-link{{#if (isEqualTo @root/page this)}} active{{/if}}" 
+                                                href="/orders?page={{this}}&pageSize={{@root/pageSize}}&orderBy={{@root/orderBy}}{{#each @root/orderStatus}}&orderStatus[]={{this}}{{/each}}{{#each @root/orderDate}}&orderDate[]={{this}}{{/each}}">
+                                                {{this}}</a></li>
+                                            {{/each}}
+                                            <li class="page-item">
+                                                <a class="page-link {{#if (isEqualTo page endPage)}}disabled{{/if}}"
+                                                   href="/orders?page={{inc page}}&pageSize={{@root/pageSize}}&orderBy={{@root/orderBy}}">
+                                                   <i class="fa-solid fa-arrow-right"></i></a>
+                                            </li>
+                                        </div>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div> 
         </div>
-    </div>
+
 </section>
+
+

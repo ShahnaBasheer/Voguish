@@ -12,7 +12,8 @@ const { getWomenPage, getMenPage, getKidsPage,
 const { getProduct }  = require('../controllers/productController');
 const { getCartPage, addToCart, checkSize, removeCartItem,
         quantityPlus, quantityMinus, getCheckoutPage } = require('../controllers/cartController');
-const { createOrders, getOrdersPage, razorpayPayment } = require('../controllers/ordersController');
+const { createOrders, getOrdersPage, razorpayPayment,
+        getOrdersDetails, generateInvoice} = require('../controllers/ordersController');
 const { addToWishList, getWishList, deleteWishList,
         moveToCart } = require('../controllers/wishListController');
 const { getBrand } = require('../controllers/brandController');
@@ -53,6 +54,8 @@ router.get('/cart/qty-minus/:id', nocache(), authMiddleware, isUser, quantityMin
 router.get('/checkout', nocache(), authMiddleware, isUser, getCheckoutPage);
 router.post('/checkout/orders/', nocache(), authMiddleware, isUser, removeEmptyStrings, createOrders);
 router.get('/orders', nocache(), authMiddleware, isUser, getOrdersPage);
+router.get('/orders/order-details', nocache(), authMiddleware, isUser, getOrdersDetails);
+router.get('/orders/generate-invoice', nocache(), authMiddleware, isUser, generateInvoice)
 router.post('/razorpay/order-payment', nocache(), authMiddleware, isUser, razorpayPayment);
 router.get('/contact', nocache(), authMiddleware, isUser, getContactPage);
 router.get('/profile', nocache(), authMiddleware, isUser, getProfilePage);

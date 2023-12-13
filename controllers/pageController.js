@@ -4,7 +4,7 @@ const Brand = require('../models/brandModel');
 const Order = require('../models/ordersModel');
 const Users = require('../models/userModel');
 const moment = require('moment');
-const { cartQty, genderBrandFilter } = require('../helperfns');
+const { cartQty, genderBrandFilter, getAllBrands } = require('../helperfns');
 
 
 //Display Login page
@@ -23,11 +23,11 @@ const getSignupPage = asyncHandler( async (req,res) => {
 const getHomePage = asyncHandler(async (req,res) => {
    try{ 
         let user = req?.user, totalQty = await cartQty(user);
-        const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
-        const Brands = allBrands.sort();
+        const Brands = await getAllBrands();
         const newarrivals = await Product.find(
          {isDeleted:false,isDeletedBy:false}).populate('brand')
             .populate('category').sort({ createdAt: -1 }).limit(5).lean();
+            
         res.render('users/home',{user,newarrivals,totalQty,Brands,
            bodycss:'css/nav_footer.css',maincss:'css/home.css',
            bodyjs:'js/productCard.js'});
@@ -85,15 +85,13 @@ const getBoysPage = asyncHandler( async (req,res) => {
 //get Contact page 
 const getContactPage = asyncHandler( async (req,res) => {
    let user = req?.user, totalQty = await cartQty(user);
-   const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
-   const Brands = allBrands.sort();
+   const Brands = await getAllBrands();
    res.render('users/contact',{user,totalQty,Brands});
 });
 
 //otp verification
 const otpVerify = asyncHandler(async(req,res) => {
-   const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
-   const Brands = allBrands.sort();
+   const Brands = await getAllBrands();
    res.render('users/otpverification',{bodyjs:'js/otp.js',Brands});
 });
 

@@ -63,6 +63,7 @@
 																		<th class="cell">User</th>
 							  	  	  	      		<th class="cell">Billing Name</th>
 							  	  	  	      		<th class="cell">Payment Method</th>
+																		<th class="cell">Items</th>
 							  	  	  	      		<th class="cell">Date</th>
 							  	  	  	      		<th class="cell">Payment Status</th>
 							  	  	  	      		<th class="cell">Status</th>
@@ -79,6 +80,7 @@
 							  	  	  	      	  	      <td class="cell"><span class="truncate">
 							  	  	  	      	  	      	  {{this.shippingAddress.firstname}} {{this.shippingAddress.lastname}}</span></td>
 							  	  	  	      	  	      <td class="cell">{{this.paymentMethod}}</td>
+																						<td class="cell text-center">{{this.orderItems.length}}</td>
 							  	  	  	      	  	      <td class="cell"><span class="cell-data">{{removeGMT this.createdAt}}</td>
 							  	  	  	      	  	      <td class="cell"><span class="badge
 																						{{#if (isEqualTo this.paymentStatus 'Pending')}} bg-warning
@@ -134,6 +136,7 @@
 																		<th class="cell">User</th>
 							  	  	  	      		<th class="cell">Billing Name</th>
 							  	  	  	      		<th class="cell">Payment Method</th>
+																		<th class="cell">Items</th>
 							  	  	  	      		<th class="cell">Date</th>
 							  	  	  	      		<th class="cell">Payment Status</th>
 							  	  	  	      		<th class="cell">Status</th>
@@ -150,6 +153,7 @@
 							  	  	  	      	    	  <td class="cell"><span class="truncate">
 							  	  	  	      	    	  	  {{this.shippingAddress.firstname}} {{this.shippingAddress.lastname}}</span></td>
 							  	  	  	      	    	  <td class="cell">{{this.paymentMethod}}</td>
+																					<td class="cell text-center">{{this.orderItems.length}}</td>
 							  	  	  	      	    	  <td class="cell"><span class="cell-data">{{removeGMT this.createdAt}}</td>
 							  	  	  	      	    	  <td class="cell"><span class="badge 
 																					{{#if (isEqualTo this.paymentStatus 'Pending')}} bg-warning
@@ -225,6 +229,7 @@
 																				<th class="cell">User</th>
 							  	  	  	      		    <th class="cell">Billing Name</th>
 							  	  	  	      		    <th class="cell">Payment Method</th>
+																				<th class="cell">Items</th>
 							  	  	  	      		    <th class="cell">Date</th>
 							  	  	  	      		    <th class="cell">Payment Status</th>
 							  	  	  	      		    <th class="cell">Status</th>
@@ -241,6 +246,7 @@
 							  	  	  	      	      	  <td class="cell"><span class="truncate">
 							  	  	  	      	      	  	  {{this.shippingAddress.firstname}} {{this.shippingAddress.lastname}}</span></td>
 							  	  	  	      	      	  <td class="cell">{{this.paymentMethod}}</td>
+																						<td class="cell text-center">{{this.orderItems.length}}</td>
 							  	  	  	      	      	  <td class="cell"><span class="cell-data">{{removeGMT this.createdAt}}</td>
 							  	  	  	      	      	  <td class="cell"><span class="badge
 																						{{#if (isEqualTo this.paymentStatus 'Pending')}} bg-warning
@@ -313,6 +319,7 @@
 																				<th class="cell">User</th>
 							  	  	  	      		    <th class="cell">Billing Name</th>
 							  	  	  	      		    <th class="cell">Payment Method</th>
+																				<th class="cell">Items</th>
 							  	  	  	      		    <th class="cell">Date</th>
 							  	  	  	      		    <th class="cell">Payment Status</th>
 							  	  	  	      		    <th class="cell">Status</th>
@@ -329,6 +336,7 @@
 							  	  	  	      	  	      <td class="cell"><span class="truncate">
 							  	  	  	      	  	      	  {{this.shippingAddress.firstname}} {{this.shippingAddress.lastname}}</span></td>
 							  	  	  	      	  	      <td class="cell">{{this.paymentMethod}}</td>
+																						<td class="cell text-center">{{this.orderItems.length}}</td>
 							  	  	  	      	  	      <td class="cell"><span class="cell-data">{{removeGMT this.createdAt}}</td>
 							  	  	  	      	  	      <td class="cell"><span class="badge
 																						{{#if (isEqualTo this.paymentStatus 'Pending')}} bg-warning

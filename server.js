@@ -5,10 +5,11 @@ const dbConnect = require('./config/dbConnect');
 const exphbs = require('express-handlebars');
 const logger = require('morgan');
 const { notFound, errorHandler } = require('./middlewares/errorHandlers');
-const { removeGMT, isEqualTo, roleEquals, calculate,
+const { removeGMT, isEqualTo, roleEquals, calculate, 
       inc, loop, calculateTotal, uniqueColors, contains,
-      isLessThan, compareIds, momentsAgo, isInArray,
-      reviewFormat, getProperty, andFunction, orFunction } = require('./helpers');
+      isLessThan, compareIds, momentsAgo, isInArray,dec,
+      reviewFormat, getProperty, andFunction, orFunction,
+      ORDdate, findIdx, isGreaterThan } = require('./helpers');
 const session = require('express-session');
 const flash = require('express-flash');
 const cors = require('cors');
@@ -31,7 +32,8 @@ app.engine(
     helpers: { removeGMT, isEqualTo, inc, roleEquals, loop, contains,
               calculateTotal, uniqueColors, calculate, compareIds,
               isLessThan, momentsAgo, reviewFormat, getProperty,
-              isInArray, andFunction, orFunction }
+              isInArray, andFunction, orFunction, dec, ORDdate,
+              findIdx, isGreaterThan}
   }));
 
   

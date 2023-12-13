@@ -7,7 +7,6 @@ const { generateToken, generateAdminToken} = require('../config/jwToken');
 const authMiddleware = asyncHandler(async (req, res, next) => {
     const accessToken = req.cookies?.accessToken;
     const refreshToken = req.cookies?.refreshToken;
-
     try {
         if (!accessToken && !refreshToken) {
             throw new Error("Not authorized: no access token");

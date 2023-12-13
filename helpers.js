@@ -2,13 +2,15 @@ const moment = require('moment');
 
 const removeGMT = function(dateString) {
     //const formattedDate = moment(dateString).utcOffset('+05:30').format('DD/MM/YYYY hh:mm A');
-    const formattedDate = moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A');
-    return formattedDate;
+    return moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A');
 };
 
 const momentsAgo = function(dateString) {
-    const formattedDate = moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A').fromNow();
-    return formattedDate;
+    return moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A').fromNow();;
+};
+
+const ORDdate =  function(date) {
+    return moment(date).format('MMMM DD, YYYY h:mm A');
 };
 
 const reviewFormat = function(dateString) {
@@ -19,6 +21,7 @@ const reviewFormat = function(dateString) {
 const isEqualTo = function(value, targetValue) { return value === targetValue };
 const roleEquals = function (role) { return role === 'admin' }; 
 const inc = function(value) { return parseInt(value) + 1 };
+const dec = function(value) { return parseInt(value) - 1 };
 
 const loop = function(n, block){
     let accum = '';
@@ -70,11 +73,16 @@ const compareIds = function(id1, id2, options) {
 
 const isLessThan = function(a, b) { return a <= b; };
 
+const isGreaterThan = function(a, b) { return a > b; };
+
 const andFunction = function(a, b) { return (a && b) };
 
 const orFunction = function(a, b) { return (a || b) };
 
-const getProperty = function(obj, key) { return obj[key] };
+const getProperty = function(obj, key) {
+    if(obj) return obj[key];
+    else return false; 
+};
 
 const contains = function(array, target){
     if( new Set(array).has(target)){ return true; }
@@ -86,12 +94,17 @@ const isInArray = function(element, ...arrayElements) {
     return arrayElements.includes(element);
 };
 
+const findIdx = function (arr, idx) {
+    return arr[idx];
+  };
+
 
 module.exports = { 
     removeGMT , 
     isEqualTo, 
     roleEquals, 
     inc, 
+    dec,
     loop, 
     calculateTotal,
     uniqueColors,
@@ -104,5 +117,8 @@ module.exports = {
     contains,
     isInArray,
     andFunction,
-    orFunction
+    orFunction,
+    ORDdate,
+    findIdx,
+    isGreaterThan,
 } ;
