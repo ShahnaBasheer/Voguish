@@ -81,7 +81,7 @@ const addNewAddress = asyncHandler( async (req, res) => {
       req.user.addresses.push(newAddress._id);
       await newAddress.save();
       await req.user.save();
-      res.redirect('/profile')
+      res.redirect(req.header('Referer'));
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });

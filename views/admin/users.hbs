@@ -4,8 +4,7 @@
           <div class="row my-5">
               <div class="col-12 py-5">
                   <div class="card py-4">
-                      <div class="card-body">
-                        
+                      <div class="card-body">                  
                           <h4 class="card-title pb-3">ALL USERS</h4>
                           {{#if user}}
                           <p class="text-danger">{{user}} has been successfully deleted!</p>
@@ -62,8 +61,8 @@
                                           <td>{{removeGMT this.createdAt}}</td>
                                           <td>{{removeGMT this.updatedAt}}</td>
                                           <td>
-                                              <a href="delete-user/{{this._id}}" 
-                                                 class="btn btn-danger deletebtn">Delete</a>
+                                              <a href="delete-user/{{this._id}}" class="btn btn-danger deletebtn">
+                                              <i class="fa-solid fa-trash text-danger"></i></a>
                                           </td>
                                       </tr>
                                       {{/unless}}

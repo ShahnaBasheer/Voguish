@@ -2,20 +2,19 @@ const moment = require('moment');
 
 const removeGMT = function(dateString) {
     //const formattedDate = moment(dateString).utcOffset('+05:30').format('DD/MM/YYYY hh:mm A');
-    return moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A');
+    return moment.utc(dateString).local().format('DD/MM/YYYY');
 };
 
 const momentsAgo = function(dateString) {
-    return moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A').fromNow();;
+    return moment.utc(dateString).local().fromNow();;
 };
 
-const ORDdate =  function(date) {
-    return moment(date).format('MMMM DD, YYYY h:mm A');
+const ORDdate =  function(dateString) {
+    return moment.utc(dateString).local().format('MMMM DD, YYYY h:mm A');
 };
 
 const reviewFormat = function(dateString) {
-    const formattedDate = moment.utc(dateString).local().format('DD/MM/YYYY hh:mm A').format('DD MMMM YYYY');
-    return formattedDate;
+    return moment.utc(dateString).local().format('DD MMMM YYYY');
 };
 
 const isEqualTo = function(value, targetValue) { return value === targetValue };

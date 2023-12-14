@@ -441,9 +441,20 @@ const invoiceHtml = async(invoiceData, _idx) => {
 
 
 
-
+const calculateDiscount = async (coupon, purchaseAmnt, res) => {
+    if (coupon.isForAllUsers && coupon.startDate <= new Date() && 
+        coupon.endDate >= new Date() && purchaseAmnt >= coupon.minPurchaseAmount) {
+        if (coupon.discount) {
+          // Percentage discount
+          const percentage = parseInt(coupon.discount, 10) / 100;
+          let disc = Math.min(Math.floor(percentage * purchaseAmnt), coupon.maxDiscountAmount) ;
+          return disc;
+        } 
+    }
+    return 0;//discount.endsWith('%')
+};
 
 module.exports = { createUniqueSlug, otpEmailSend, pagination,
        generateOrderId, findCart, cartQty, filterFunction,
        selectCartItem, genderBrandFilter, getAllBrands,
-       invoiceHtml }
+       invoiceHtml, calculateDiscount }

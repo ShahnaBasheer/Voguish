@@ -2,7 +2,9 @@ const asyncHandler = require('express-async-handler');
 const Orders = require('../models/ordersModel');
 const Cart = require('../models/cartModel');
 const CartItem = require('../models/cartItemModel');
-const { generateOrderId, cartQty, getAllBrands, invoiceHtml } = require('../helperfns');
+const Coupon = require('../models/couponModel');
+const { generateOrderId, cartQty, getAllBrands,
+    calculateDiscount, invoiceHtml } = require('../helperfns');
 const CryptoJS = require('crypto-js');
 const Razorpay = require('razorpay');
 const puppeteer = require('puppeteer');
@@ -10,9 +12,15 @@ const puppeteer = require('puppeteer');
 
 //Display Orders in admin side
 const getOrders = asyncHandler( async (req,res) => {
-    const orders = await Orders.find().sort({ createdAt: -1 })
-    .populate('shippingAddress').populate('user').lean();
-    res.render('admin/orders',{admin:true,adminInfo:req.user,orders});
+    try {
+        const orders = await Orders.find().sort({ createdAt: -1 })
+        .populate('shippingAddress').populate('user').lean();
+        res.render('admin/orders',{admin:true,adminInfo:req.user,orders});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    
 });
 
 //Display Orders in user side
@@ -35,11 +43,8 @@ const getOrdersPage = asyncHandler( async(req,res) => {
         }
         if(req?.query?.orderDate){
             const orderDateYears = req.query.orderDate.map(year => parseInt(year));
-            console.log(orderDateYears)
             matchCondition.$expr =  { $in: [ { $year: { date: '$createdAt'} },orderDateYears]}
         }
-
-        console.log(matchCondition)
 
         const myordersCount = await Orders.aggregate([
             { $match: matchCondition },
@@ -110,8 +115,8 @@ const getOrdersPage = asyncHandler( async(req,res) => {
         fromOrder, toOrder, pageSize, orderBy, orderDate, orderStatus,
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
     } catch (error) {
-         console.log(error);
-         res.status(500).json({error: error})
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -136,7 +141,6 @@ const getOrdersDetails = asyncHandler( async (req,res) => {
         if(order){
             let index = order?.orderItems.findIndex(pro => pro.item._id.toString() === proItem);
             order.index = index;
-            console.log(index)
             res.render('users/orderDetails',{user,totalQty,order,Brands,
                 bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
         } 
@@ -170,15 +174,17 @@ const orderDetails = asyncHandler( async (req,res) => {
     }
 });
     
-
+//create Order details in user side
 const createOrders = asyncHandler(async (req, res) => {
     try {
-        let paymentMethod = req.body.paymentMethod;
-        const cart = await Cart.findOne({ user: req.user?._id });
+        console.log(req.body)
+        let paymentMethod = req?.body?.paymentMethod;
+        const cart = await Cart.findOne({ user: req?.user?._id });
         const orderItems = []; // Array to store the order items
         let totalPrice = 0;
+        const coupon = await Coupon.findOne({code: req?.body?.couponcode});
         
-        for (const item of cart.items) {
+        for (const item of cart?.items) {
           const cartitem = await CartItem.findById(item.cartItem).populate('product');
           const itemTotalPrice = cartitem.product.price * item.quantity;
           
@@ -190,10 +196,17 @@ const createOrders = asyncHandler(async (req, res) => {
           totalPrice += itemTotalPrice;
         }
         
-        if (req.body.shippingMethod === 'Fast delivery') {
+        if(coupon){
+            const discountAmount = await calculateDiscount(coupon, totalPrice , res);
+            totalPrice -= discountAmount;
+            req.body.couponApplied = coupon;
+            req.body.couponPrice = discountAmount;
+        }  
+
+        if (req?.body?.shippingMethod === 'Fast delivery') {
             totalPrice +=25;
         }
-    
+            
         req.body.user = req.user;
         req.body.orderItems = orderItems;
         req.body.totalPrice = totalPrice;
@@ -224,10 +237,14 @@ const createOrders = asyncHandler(async (req, res) => {
         }
 
         const user = req.user, totalQty = await cartQty(user);
-        console.log({ razorpayOrderData },"wekmmkmgdrk")
+
         if (order) {
             if (paymentMethod === 'Razorpay') res.json({ razorpayOrderData })
-            else res.render('users/orderConfirmation', { user, totalQty });  
+            else {
+              coupon.timesUsed++;
+              await coupon.save();
+              res.render('users/orderConfirmation', { user, totalQty }); 
+            } 
         } else res.status(500).json({ error: 'Failed to create order' });
         
     } catch (error) {
@@ -254,8 +271,17 @@ const razorpayPayment = asyncHandler( async(req,res) => {
 
             if (order) {
                 cart.items = [];
+                const coupon = await Coupon.findById(order?.couponApplied);
+                console.log(coupon)
+                if (coupon && coupon.endDate >= new Date() && coupon.status =='Active') {
+                    coupon.timesUsed++;
+                    await coupon.save();
+                } else {
+                    console.error('Coupon is expired or not valid.');
+                    throw new Error('Coupon Expired or Cancelled!');
+                }  
                 await cart.save();
-                res.render('users/orderConfirmation');
+                res.render('users/orderConfirmation');    
             } else {
                 res.status(404).json({ error: error });
             }

@@ -5,52 +5,43 @@
                 <form method="POST" action="/checkout/orders/" id="checkoutCart">
                 <div class="row">
                     <div class="col-xl-8">
-                        <div id="checkout-nav" class="">
+                        <div id="checkout-nav">
                             <ul class="nav nav-pills d-flex justify-content-center">
                                 <li class="nav-item">
-                                    <a href="#delivery-address" class="nav-link active" data-bs-toggle="pill"
-                                        id="delivery-nav-item">
+                                    <a href="#delivery-address" class="nav-link active" id="delivery-nav-item">
                                         <span class="number">01</span>
                                         <span class="d-none d-sm-inline">Delivery Address</span>
                                     </a>
                                 </li>
                                  <li class="nav-item">
-                                    <a href="#shipping-method" class="nav-link" data-bs-toggle="pill"
-                                        id="shipping-nav-item">
+                                    <a href="#shipping-method" class="nav-link" id="shipping-nav-item">
                                         <span class="number">02</span>
                                         <span class="d-none d-sm-inline">Shipping Method</span>
                                     </a>
                                 </li>
                                 
                                 <li class="nav-item">
-                                    <a href="#payment-info" class="nav-link" data-bs-toggle="pill"
-                                        id="payment-nav-item">
+                                    <a href="#payment-info" class="nav-link" id="payment-nav-item">
                                         <span class="number">03</span>
                                         <span class="d-none d-sm-inline">Payment Info</span>
                                     </a>
                                 </li>
                             </ul>
+                            
 
+                            <p class="text-danger" id="checkout-alert"></p>
                             <!-- tab-content starts here -->
                             <div class="tab-content">
-                                <div class="tab-pane container active" id="delivery-address">
+                                <div class="tab-pane container active" id="delivery-address" data-nav="delivery-nav-item">
                                     <div>
                                         <div class="py-3">
                                             <span class="fw-bold text-primary border border-primary d-inline-block px-2" 
-                                                data-bs-toggle="collapse" data-bs-target="#shipping-address">
-                                                <i class="fa fa-plus"></i> Add New Address</span> 
-                                            <div class="collapse py-3" id="shipping-address">
-                                                <div class="bg-light p-5 mb-5">
-                                                    <div id="newaddressForm" class="addressForm">
-                                                       {{> addressForm}}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                data-bs-toggle="modal" data-bs-target="#shipping-address">
+                                                <i class="fa fa-plus"></i> Add New Address
+                                            </span> 
                                         </div>
                                         <h4 class="header-title">Saved Address</h4>
-                                        <p class="sub-header">Fill the form below in order to
-                                            send you the order's invoice.</p>
-    
+
                                         <div class="row">
                                             {{#each user.addresses}}
                                             <div class="col-md-4">
@@ -81,17 +72,17 @@
                                             </li>
                                             <li class="next list-inline-item float-end">
                                                 <button type="button" class="btn btn-success proceed-btn" 
-                                                  data-proceed="shipping-nav-item">
+                                                  data-proceed-nav="shipping-nav-item" data-next="shipping-method">
                                                 <i class="fa-solid fa-truck-fast me-1"></i> Proceed to Shipping </button>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="tab-pane container fade" id="shipping-method">
+
+                                <div class="tab-pane container fade" id="shipping-method" data-nav="shipping-nav-item">
                                     <div>
                                         <h4 class="header-title mt-4">Shipping Method</h4>
-                                        <p class="text-muted mb-3">Fill the form below in order to
-                                            send you the order's invoice.</p>
+                                       
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="border p-3 rounded mb-3">
@@ -115,24 +106,23 @@
                                     </div>
                                     <ul class="pager wizard list-inline mt-3">
                                         <li class="previous list-inline-item">
-                                            <button type="button" class="btn btn-secondary">
+                                            <button type="button" class="btn btn-secondary backBtn"
+                                                data-back-nav="delivery-nav-item" data-prev="delivery-address">
                                                 <i class="fa-solid fa-arrow-left me-1"></i> Back to Billing</button>
                                         </li>
                                         <li class="next list-inline-item float-end">
                                             <button type="button" class="btn btn-success proceed-btn"
-                                                 data-proceed="payment-nav-item">
+                                                data-proceed-nav="payment-nav-item" data-next="payment-info">
                                                 <i class="fa-solid fa-money-bill-wave me-1"></i></i> Continue to Payment </button>
                                         </li>
                                     </ul>
                                 </div>
                                 <!-- end row-->
-                                <div class="tab-pane container fade" id="payment-info">
+                                <div class="tab-pane container fade" id="payment-info" data-nav="payment-nav-item">
                                     <div>
                                         <h4 class="header-title">Payment Selection</h4>    
-                                        <p class="sub-header">Fill the form below in order to
-                                            send you the order's invoice.</p>
 
-                                        <!-- Pay with Paypal box-->
+                                        <!-- Pay with Razorpay box-->
                                         <div class="border p-3 mb-3 rounded">
                                             <div class="float-end">
                                                 <i class="fab fa-cc-paypal font-24 text-primary"></i>
@@ -145,7 +135,159 @@
                                             <p class="mb-0 ps-3 pt-1">
                                                You will be redirected to Razorpay website to complete your purchase securely.</p>                                           
                                         </div>
-                                        <!-- end Pay with Paypal box-->
+                                        
+    
+                                        <!-- Cash on Delivery box-->
+                                        <div class="border p-3 mb-3 rounded">
+                                            <div class="float-end">
+                                                <i class="fas fa-money-bill-alt font-24 text-primary"></i>
+                                            </div>
+                                            <div class="form-check form-check-inline font-16 mb-0">
+                                                <input class="form-check-input" type="radio" name="paymentMethod" 
+                                                   value="Cash On Delivery" id="BillingOptRadio3">
+                                                <label class="form-check-label" for="BillingOptRadio3">Cash on Delivery</label>
+                                            </div>
+                                            <p class="mb-0 ps-3 pt-1">Pay with cash when your order is delivered.</p>
+                                        </div>
+                                        <!-- end Cash on Delivery box-->
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="text-black h5" for="coupon">Coupon</label>
+                                            <p>Enter your coupon code if you have one.</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <div id="applyCoupon">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control d-inline-block" 
+                                                       name="couponcode" placeholder="Coupon Code" id="coupon">
+                                                    <input type="hidden" name="cpnDsc" id="cpnDsc">
+                                                    <div class="input-group-append">
+                                                        <a class="btn btn-primary" id="applyCouponBtn">Apply Coupon</a>
+                                                        <a class="btn btn-danger" id="removeCouponBtn" 
+                                                           style="display:none;"> Remove Coupon</a>
+                                                    </div>
+                                                </div>
+                                                <p id="coupon-alert" class="text-danger"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="pager wizard list-inline mt-3">
+                                        <li class="previous list-inline-item">
+                                            <button type="button" class="btn btn-secondary backBtn"
+                                                data-back-nav="shipping-nav-item" data-prev="shipping-method">
+                                                <i class="fa-solid fa-arrow-left me-1"></i> Back to Billing
+                                            </button>
+                                        </li>
+                                        <li class="list-inline-item float-end">
+                                            <button type="submit" class="btn btn-success submitBtn">
+                                               <i class="fa-solid fa-money-bills me-1"></i> Complete Order 
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card border-0 ">
+                            <div class="card-header card-2">
+                                <p class="card-text text-muted mt-md-4  mb-2 space">YOUR ORDER</p>
+                                <hr class="my-2">
+                            </div>
+                            <div class="card-body pt-0">
+                                {{#each cartDetails.items}}
+                                <div class="row  justify-content-between">
+                                    <div class="col-auto col-md-7">
+                                        <div class="media flex-column flex-sm-row">
+                                            <img class=" img-fluid" src="/uploads/{{this.cartItem.product.images.img-1}}" width="62" height="62">
+                                            <div class="media-body  my-auto">
+                                                <div class="row ">
+                                                    <div class="col-auto"><p class="mb-0"><b>{{this.cartItem.product.title}}</b></p>
+                                                    <small class="text-muted">{{this.cartItem.size}},{{this.cartItem.color}}</small></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=" pl-0 flex-sm-col col-auto  my-auto"> <p class="boxed-1">{{this.quantity}}</p></div>
+                                    <div class=" pl-0 flex-sm-col col-auto  my-auto "><p>
+                                        <b>₹{{calculate 'multiply' this.cartItem.product.price this.quantity}}</b></p></div>
+                                </div>
+                                {{/each}}
+                                <hr class="my-2">
+                                <div class="row ">
+                                    <div class="col">
+                                        <div class="row justify-content-between">
+                                            <div class="col-6"><p class="mb-1"><b>Subtotal</b></p></div>
+                                            <div class="flex-sm-col col-auto"><p class="mb-1">
+                                                <b>₹{{cartDetails.totalPrice}}</b></p></div>
+                                                <input type="hidden" id="total-price" value="{{cartDetails.totalPrice}}">
+                                        </div>
+                                        <div class="row justify-content-between" style="display:none;" id="coupon-applied">
+                                            <div class="col-6"><p class="mb-1"><b>Coupon Applied</b></p></div>
+                                            <div class="flex-sm-col col-auto"><b id="couponAmnt"></b></div>
+                                        </div>
+                                        <div class="row justify-content-between">
+                                            <div class="col-6"><p class="mb-1"><b>Shipping</b></p></div>
+                                            <div class="flex-sm-col col-auto">
+                                                <p class="mb-1"><b>
+                                                    {{#if cartDetails.deliveryCharge}}
+                                                      ₹{{cartDetails.deliveryCharge}}
+                                                    {{else}}FREE{{/if}}</b>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-between" style="display:none;" id="fast-delivery">
+                                            <div class="col-6"><p class="mb-1"><b>Fast Delivery</b></p></div>
+                                            <div class="flex-sm-col col-auto"><b>₹25</b></div>
+                                        </div>
+                                        <div class="row justify-content-between">
+                                            <div class="col-6"><p ><b>Total</b></p></div>
+                                            <div class="flex-sm-col col-auto"><p  class="mb-1">
+                                                <input type="hidden" id="total-value" value="{{cartDetails.totalAmount}}">
+                                                <b>₹</b><b id="total">{{cartDetails.totalAmount}}</b></p></div>
+                                        </div><hr class="my-0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="shipping-address" tabindex="-1" aria-labelledby="shipping-addressLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="/profile/add-address" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="shipping-addressLabel">Add Address</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{> addressForm}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+                                    <!-- end Pay with Paypal box-->
 
                                         <!-- Pay with Paypal box
                                         <div class="border p-3 mb-3 rounded">
@@ -207,102 +349,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><!-- end row -->
-                                        <!-- end Credit/Debit Card box--> <!-- end row -->
-    
-                                        <!-- Cash on Delivery box-->
-                                        <div class="border p-3 mb-3 rounded">
-                                            <div class="float-end">
-                                                <i class="fas fa-money-bill-alt font-24 text-primary"></i>
-                                            </div>
-                                            <div class="form-check form-check-inline font-16 mb-0">
-                                                <input class="form-check-input" type="radio" name="paymentMethod" 
-                                                   value="Cash On Delivery" id="BillingOptRadio3">
-                                                <label class="form-check-label" for="BillingOptRadio3">Cash on Delivery</label>
-                                            </div>
-                                            <p class="mb-0 ps-3 pt-1">Pay with cash when your order is delivered.</p>
                                         </div>
-                                        <!-- end Cash on Delivery box-->
-                                    </div>
-                                    <ul class="pager wizard list-inline mt-3">
-                                        <li class="previous list-inline-item">
-                                            <button type="button" class="btn btn-secondary">
-                                                <i class="fa-solid fa-arrow-left me-1"></i> Back to Billing</button>
-                                        </li>
-                                        <li class="list-inline-item float-end">
-                                            <button type="submit" class="btn btn-success">
-                                               <i class="fa-solid fa-money-bills me-1"></i> Complete Order </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4">
-                        <div class="card border-0 ">
-                            <div class="card-header card-2">
-                                <p class="card-text text-muted mt-md-4  mb-2 space">YOUR ORDER <span class=" small text-muted ml-2 cursor-pointer">EDIT SHOPPING BAG</span> </p>
-                                <hr class="my-2">
-                            </div>
-                            <div class="card-body pt-0">
-                                {{#each cartDetails.items}}
-                                <div class="row  justify-content-between">
-                                    <div class="col-auto col-md-7">
-                                        <div class="media flex-column flex-sm-row">
-                                            <img class=" img-fluid" src="/uploads/{{this.cartItem.product.images.img-1}}" width="62" height="62">
-                                            <div class="media-body  my-auto">
-                                                <div class="row ">
-                                                    <div class="col-auto"><p class="mb-0"><b>{{this.cartItem.product.title}}</b></p>
-                                                    <small class="text-muted">{{this.cartItem.size}},{{this.cartItem.color}}</small></div>
+                                        
+
+                                        <div class="collapse py-3" id="shipping-address">
+                                                <div class="bg-light p-5 mb-5">
+                                                    <div id="newaddressForm" class="addressForm">
+                                                      
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class=" pl-0 flex-sm-col col-auto  my-auto"> <p class="boxed-1">{{this.quantity}}</p></div>
-                                    <div class=" pl-0 flex-sm-col col-auto  my-auto "><p>
-                                        <b>₹{{calculate 'multiply' this.cartItem.product.price this.quantity}}</b></p></div>
-                                </div>
-                                {{/each}}
-                                <hr class="my-2">
-                                <div class="row ">
-                                    <div class="col">
-                                        <div class="row justify-content-between">
-                                            <div class="col-4"><p class="mb-1"><b>Subtotal</b></p></div>
-                                            <div class="flex-sm-col col-auto"><p class="mb-1">
-                                                <b>₹{{cartDetails.totalPrice}}</b></p></div>
-                                        </div>
-                                        <div class="row justify-content-between">
-                                            <div class="col"><p class="mb-1"><b>Shipping</b></p></div>
-                                            <div class="flex-sm-col col-auto"><p class="mb-1"><b>
-                                                {{#if cartDetails.deliveryCharge}}
-                                                  ₹{{cartDetails.deliveryCharge}}
-                                                {{else}}
-                                                   FREE
-                                                {{/if}}
-                                            </b></p></div>
-                                        </div>
-                                        <div class="row justify-content-between" style="display:none;" id="fast-delivery">
-                                            <div class="col"><p class="mb-1"><b>Fast Delivery</b></p></div>
-                                            <div class="flex-sm-col col-auto"><b>₹25</b></div>
-                                        </div>
-                                        <div class="row justify-content-between">
-                                            <div class="col-4"><p ><b>Total</b></p></div>
-                                            <div class="flex-sm-col col-auto"><p  class="mb-1">
-                                                <input type="hidden" id="total-value" value="{{cartDetails.totalAmount}}">
-                                                <b>₹</b><b id="total">{{cartDetails.totalAmount}}</b></p></div>
-                                        </div><hr class="my-0">
-                                    </div>
-                                </div>
-                                <div class="row mb-5 mt-4 ">
-                                    <div class="col-md-7 col-lg-6 mx-auto"><button type="button" class="btn btn-block btn-outline-primary btn-lg">ADD GIFT CODE</button></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end row -->
+                                            </div>-->

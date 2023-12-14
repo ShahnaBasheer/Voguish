@@ -16,6 +16,7 @@ const { createOrders, getOrdersPage, razorpayPayment,
         getOrdersDetails, generateInvoice} = require('../controllers/ordersController');
 const { addToWishList, getWishList, deleteWishList,
         moveToCart } = require('../controllers/wishListController');
+const { applyCoupon } = require('../controllers/couponsController');
 const { getBrand } = require('../controllers/brandController');
 const { filterProducts } = require('../controllers/filterController');
 const { getReviewsPage, addNewReview } = require('../controllers/reviewsController');
@@ -53,6 +54,7 @@ router.get('/cart/qty-plus/:id', nocache(), authMiddleware, isUser, quantityPlus
 router.get('/cart/qty-minus/:id', nocache(), authMiddleware, isUser, quantityMinus);
 router.get('/checkout', nocache(), authMiddleware, isUser, getCheckoutPage);
 router.post('/checkout/orders/', nocache(), authMiddleware, isUser, removeEmptyStrings, createOrders);
+router.post('/checkout/apply-coupon',nocache() ,authMiddleware , isUser, applyCoupon);
 router.get('/orders', nocache(), authMiddleware, isUser, getOrdersPage);
 router.get('/orders/order-details', nocache(), authMiddleware, isUser, getOrdersDetails);
 router.get('/orders/generate-invoice', nocache(), authMiddleware, isUser, generateInvoice)

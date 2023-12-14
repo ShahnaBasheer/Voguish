@@ -62,6 +62,13 @@ const orderSchema = new mongoose.Schema({
         required: true,
         default: 0,
     },
+    couponApplied: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coupon',
+    },
+    couponPrice: {
+        type: Number,
+    },
     paymentStatus: {
         type: String,
         enum: ['Pending', 'Paid', 'Failed', 'Refund', 'Cancelled'],
