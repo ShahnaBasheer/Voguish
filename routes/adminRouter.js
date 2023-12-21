@@ -14,7 +14,8 @@ const { getAllCategories, getAddCategory, addCategory,
         restoreCategory } = require('../controllers/categoryContoller');
 const { getCartList } = require('../controllers/cartController');
 const { getCoupons, addCoupons } = require('../controllers/couponsController');
-const { getOrders, orderDetails, changeOrderStatus } = require('../controllers/ordersController');
+const { getOrders, orderDetails, changeOrderStatus, 
+        generateSalesReport } = require('../controllers/ordersController');
 const { adminAuth, isAdmin, isLoggedInAdmin } = require('../middlewares/authMiddlewares');
 const { removeEmptyStrings } = require('../middlewares/otherMiddlewares');
 const { upload, processImages } = require('../config/multerConfig');
@@ -55,6 +56,7 @@ router.get('/view-cartlist', nocache(), adminAuth, isAdmin, getCartList);
 router.get('/orders', nocache(), adminAuth, isAdmin, getOrders);
 router.get('/order-details', nocache(), adminAuth, isAdmin, orderDetails);
 router.get('/change-order-status/', nocache(), adminAuth, isAdmin, changeOrderStatus);
+router.post('/dashboard/generate-sales-report', nocache(), adminAuth, isAdmin, generateSalesReport);
 router.get('/coupons', nocache(), adminAuth, isAdmin, getCoupons);
 router.post('/add-coupons', nocache(), adminAuth, isAdmin, addCoupons)
 router.get('/logout', nocache(), adminAuth, isAdmin, adminLogout);

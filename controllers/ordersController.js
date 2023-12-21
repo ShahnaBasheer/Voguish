@@ -1,10 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const Orders = require('../models/ordersModel');
 const Cart = require('../models/cartModel');
+const User = require('../models/userModel');
 const CartItem = require('../models/cartItemModel');
+const Wallet = require('../models/walletModel');
 const Coupon = require('../models/couponModel');
 const { generateOrderId, cartQty, getAllBrands,
-    calculateDiscount, invoiceHtml } = require('../helperfns');
+    calculateDiscount, invoiceHtml, findCart,
+    salesReportGenerator } = require('../helperfns');
 const CryptoJS = require('crypto-js');
 const Razorpay = require('razorpay');
 const puppeteer = require('puppeteer');
@@ -15,6 +18,7 @@ const getOrders = asyncHandler( async (req,res) => {
     try {
         const orders = await Orders.find().sort({ createdAt: -1 })
         .populate('shippingAddress').populate('user').lean();
+        console.log(orders)
         res.render('admin/orders',{admin:true,adminInfo:req.user,orders});
     } catch (error) {
         console.log(error);
@@ -34,7 +38,6 @@ const getOrdersPage = asyncHandler( async(req,res) => {
               skipPage = (page - 1) * pageSize,
               orderDate =  req?.query?.orderDate,
               orderStatus =  req?.query?.orderStatus;
-        
         
         let matchCondition = { user: user?._id };
         // Check if orderstatus is provided in the query
@@ -173,153 +176,106 @@ const orderDetails = asyncHandler( async (req,res) => {
         console.log(error)
     }
 });
-    
-//create Order details in user side
+
+
 const createOrders = asyncHandler(async (req, res) => {
     try {
-        console.log(req.body)
-        let paymentMethod = req?.body?.paymentMethod;
-        const cart = await Cart.findOne({ user: req?.user?._id });
-        const orderItems = []; // Array to store the order items
-        let totalPrice = 0;
-        const coupon = await Coupon.findOne({code: req?.body?.couponcode});
+        const paymentMethod = req?.body?.paymentMethod;
+        const user = req?.user, totalQty = await cartQty(user);
+        const cart = await Cart.findOne({ user: user?._id });
+        const wallet = await Wallet.findOne({ user: user?.id });
+        const orderItems = [];
+        let totalPrice = shippingCharge = couponRedeemed = 0;
+        let order, razorpayOrderData;
+        const coupon = await Coupon.findOne({ code: req?.body?.couponcode });
         
         for (const item of cart?.items) {
-          const cartitem = await CartItem.findById(item.cartItem).populate('product');
-          const itemTotalPrice = cartitem.product.price * item.quantity;
-          
-          orderItems.push({
-              item: cartitem.id,
-              quantity: item.quantity,
-              price: itemTotalPrice,
-          });
-          totalPrice += itemTotalPrice;
-        }
-        
-        if(coupon){
-            const discountAmount = await calculateDiscount(coupon, totalPrice , res);
-            totalPrice -= discountAmount;
-            req.body.couponApplied = coupon;
-            req.body.couponPrice = discountAmount;
-        }  
+            const cartItem = await CartItem.findById(item.cartItem).populate('product');
+            const itemTotalPrice = cartItem?.product?.price * item?.quantity;
 
-        if (req?.body?.shippingMethod === 'Fast delivery') {
-            totalPrice +=25;
+            orderItems.push({
+                item: cartItem?.id,
+                quantity: item?.quantity,
+                price: itemTotalPrice,
+            });
+            totalPrice += itemTotalPrice;
         }
-            
+
+
+        if (coupon) {
+            couponRedeemed = await calculateDiscount(coupon, totalPrice, res);
+            req.body.couponApplied = coupon;
+            req.body.couponPrice = couponRedeemed;
+        }
+
+        if (req?.body?.shippingMethod === 'FastDelivery') {
+            shippingCharge = 25;
+            req.body.shippingCharge = shippingCharge;
+        }
+
+        let GrandTotal = totalPrice + cart?.deliveryCharge + shippingCharge - couponRedeemed;
+        let redeemAmount = 0;
+        req.body.GrandTotal = GrandTotal;
+
+        if(req?.body?.wallet){
+            redeemAmount = Math.min(GrandTotal, wallet.balance);
+            req.body.walletPayment = redeemAmount;
+            req.body.paymentMethod = 'Wallet';
+            GrandTotal -= redeemAmount;
+        }
+
         req.body.user = req.user;
         req.body.orderItems = orderItems;
         req.body.totalPrice = totalPrice;
-        req.body.GrandTotal = totalPrice + cart.deliveryCharge;
-        req.body.delivery =  cart.deliveryCharge;
+        req.body.delivery = cart.deliveryCharge;
         req.body.orderId = generateOrderId();
 
-        let order,razorpayOrderData;  ;
-        
+
         if (paymentMethod === 'Razorpay') {
             const options = {
-                amount: req.body.GrandTotal * 100,
+                amount: GrandTotal * 100,
                 currency: 'INR',
             };
-           
+
             const razorpayInstance = new Razorpay({
-                key_id: process.env.RAZOR_KEY_ID ,
+                key_id: process.env.RAZOR_KEY_ID,
                 key_secret: process.env.RAZOR_KEY_SECRET,
-            }); 
-        
-            req.body.paymentStatus = 'Pending';
-            razorpayOrderData = await razorpayInstance.orders.create(options);     
-            order = await Orders.create({ ...req.body,paymentInfo:razorpayOrderData});
-        } else {
-            order = await Orders.create(req.body);
-            cart.items = [];
-            await cart.save();
-        }
-
-        const user = req.user, totalQty = await cartQty(user);
-
-        if (order) {
-            if (paymentMethod === 'Razorpay') res.json({ razorpayOrderData })
-            else {
-              coupon.timesUsed++;
-              await coupon.save();
-              res.render('users/orderConfirmation', { user, totalQty }); 
-            } 
-        } else res.status(500).json({ error: 'Failed to create order' });
-        
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-
-const razorpayPayment = asyncHandler( async(req,res) => {
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
-    try {
-        const cart = await Cart.findOne({ user: req.user?._id });
-        // Verify the payment signature (using your key secret)
-        const generatedSignature = CryptoJS.HmacSHA256(`${razorpay_order_id}|${razorpay_payment_id}`, 
-            process.env.RAZOR_KEY_SECRET).toString();
-
-        if (generatedSignature === razorpay_signature) {
-             const order = await Orders.findOneAndUpdate({ 'paymentInfo.id': razorpay_order_id }, {
-                $set: {
-                    paymentStatus: 'Paid', 
-                },
             });
-
-            if (order) {
-                cart.items = [];
-                const coupon = await Coupon.findById(order?.couponApplied);
-                console.log(coupon)
-                if (coupon && coupon.endDate >= new Date() && coupon.status =='Active') {
-                    coupon.timesUsed++;
-                    await coupon.save();
-                } else {
-                    console.error('Coupon is expired or not valid.');
-                    throw new Error('Coupon Expired or Cancelled!');
-                }  
-                await cart.save();
-                res.render('users/orderConfirmation');    
+            
+            req.body.paymentStatus = 'Pending';
+            req.body.paymentMethod = 'Razorpay';
+            razorpayOrderData = await razorpayInstance.orders.create(options);
+            razorpayOrderData.amount_paid = GrandTotal;
+            req.body.paymentInfo = razorpayOrderData;
+        }
+        
+        order = await Orders.create(req.body);
+        
+        if (order) {
+            if (paymentMethod === 'Razorpay') {
+                res.json({ razorpayOrderData });
             } else {
-                res.status(404).json({ error: error });
+                req.body.paymentMethod = 'CashOnDelivery';
+                wallet.balance -= redeemAmount;
+                wallet.transactionHistory.unshift({
+                    type: 'debit',
+                    amount: redeemAmount,
+                    method: 'purchase_debit',
+                    transactionInfo: {
+                        orderId : order._id
+                    },
+                });
+                await wallet.save();
+                cart.items = [];
+                await cart.save();
+                coupon.timesUsed++;
+                await coupon.save();
+                res.render('users/orderConfirmation', { user, totalQty });
             }
         } else {
-           console.log('Payment failed!');
-           res.status(404).json({erro: "something is wrong"});
-        }   
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error)
-    }
-   
-});
-
-
-
-const changeOrderStatus = asyncHandler(async(req,res) => {
-    try {
-        const { orderId, action } = req.query;
-        let status, paymentStatus;
-
-        if(action == 'restore'){
-            status = "Pending";
-            paymentStatus = "Pending";
-        } else if(action == 'shipped') {
-            status = "Shipped";
-        } else if(action == 'delivered') {
-            status = "Delivered";
-            paymentStatus = "Paid";
-        } else if(action == 'cancel') {
-            status = "Cancelled";
-            const order = await Orders.findOne({ orderId });
-            if(order.paymentStatus == "Paid") paymentStatus = "Refund";
-            else paymentStatus = "Cancelled";
+            res.status(500).json({ error: 'Failed to create order' });
         }
-        
-        await Orders.updateOne({orderId},{status, paymentStatus});
-        return res.redirect('/admin/orders')
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
@@ -327,6 +283,108 @@ const changeOrderStatus = asyncHandler(async(req,res) => {
 });
 
 
+
+const razorpayPayment = asyncHandler(async (req, res) => {
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+
+    try {
+        const cart = await Cart.findOne({ user: req.user?._id });
+        const order = await Orders.findOne({ 'paymentInfo.id': razorpay_order_id});
+
+        // Verify the payment signature
+        const generatedSignature = CryptoJS.HmacSHA256(`${razorpay_order_id}|${razorpay_payment_id}`, 
+            process.env.RAZOR_KEY_SECRET).toString();
+
+        if (generatedSignature === razorpay_signature) {
+            order.paymentStatus = 'Paid';
+            await order.save();
+
+            if (order) {
+                cart.items = [];
+
+                const coupon = await Coupon.findById(order?.couponApplied);
+                const wallet = await Wallet.findOne({ user: req?.user?.id });
+
+                if (coupon && coupon.endDate >= new Date() && coupon.status === 'Active') {
+                    coupon.timesUsed++;
+                    await coupon.save();
+                } else {
+                    console.error('Coupon is expired or not valid.');
+                    throw new Error('Coupon Expired or Cancelled!');
+                }
+                
+
+                if(wallet){
+                    wallet.balance = wallet.balance - order.walletPayment;
+                    wallet.transactionHistory.unshift({
+                        type: 'debit',
+                        amount: order.walletPayment,
+                        method: 'purchase_debit',
+                        transactionInfo: {
+                            orderId : order._id
+                        },
+                    })
+                    await wallet.save();
+
+                }else{
+                    console.error('Something wrong has happened with the wallet!');
+                    throw new Error('Something wrong has happened with the wallet!');
+                }
+
+                await cart.save();
+                res.render('users/orderConfirmation');
+            } else {
+                res.status(404).json({ error: 'Order not found' });
+            }
+        } else {
+            order.paymentStatus = 'Failed';
+            order.status = 'Failed';
+            console.log('Payment failed!');
+            res.status(400).json({ error: 'Invalid signature' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+const changeOrderStatus = asyncHandler(async (req, res) => {
+    try {
+        const { orderId, action } = req.query;
+        let status, paymentStatus;
+    
+        switch (action) {
+          case 'restore':
+            status = 'Pending';
+            paymentStatus = 'Pending';
+            break;
+          case 'shipped':
+            status = 'Shipped';
+            break;
+          case 'delivered':
+            status = 'Delivered';
+            paymentStatus = 'Paid';
+            break;
+          case 'cancel':
+            status = 'Cancelled';
+            const order = await Orders.findOne({ orderId });
+            paymentStatus = order?.paymentStatus === 'Paid' ? 'Refund' : 'Cancelled';
+            break;
+          default:
+            // Handle the default case if needed
+        }
+    
+        await Orders.findOneAndUpdate({ orderId }, { status, paymentStatus });
+        return res.redirect('/admin/orders');
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+//generate invoice for user side
 const generateInvoice = asyncHandler(async (req, res) => {
     try {
         const { orderId, _idx } = req?.query;
@@ -351,7 +409,15 @@ const generateInvoice = asyncHandler(async (req, res) => {
         await page.setContent(htmlContent);
       
         // Generate a PDF file from the HTML content
-        const pdfBuffer = await page.pdf({ format: 'A4'});
+        const pdfBuffer = await page.pdf({
+             format: 'A4',
+             margin: {
+                top: '30px',
+                right: '30px',
+                bottom: '30px',
+                left: '30px',
+            },
+            });
         await browser.close();
 
         // Set the response headers for PDF download
@@ -364,8 +430,90 @@ const generateInvoice = asyncHandler(async (req, res) => {
     }
 });
 
+
+
+// generate sales report in the admin side
+const generateSalesReport = asyncHandler( async(req, res) => {
+    try {
+        const { startDate, endDate } = req.body;
+
+        const allorders = await Orders.find({
+            createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) }
+        }).populate('user')
+        .populate({
+            path: 'orderItems.item',
+            populate: {
+              path: 'product',
+              model: 'Product'
+            }
+        }).lean();
+
+        let totalGrandTotal = 0;
+        allorders.forEach(order => {
+            totalGrandTotal += order.GrandTotal || 0;
+        });
+        totalGrandTotal = totalGrandTotal.toLocaleString('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          });
+    
+        const htmlContent = await salesReportGenerator(allorders,totalGrandTotal,startDate,endDate)
+
+        // Launch a headless browser using Puppeteer with the 'new' headless mode
+        const browser = await puppeteer.launch({ headless: 'new' });
+        const page = await browser.newPage();
+
+        // Set the HTML content of the page
+        await page.setContent(htmlContent);
+      
+        // Generate a PDF file from the HTML content
+        const pdfBuffer = await page.pdf({
+             format: 'A4',
+             margin: {
+                top: '30px',
+                right: '30px',
+                bottom: '30px',
+                left: '30px',
+            },
+            });
+        await browser.close();
+
+        // Set the response headers for PDF download
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=sales_report.pdf');
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Error generating sales report:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+ 
+
+//get Contact page 
+const getCheckoutPage = asyncHandler( async (req,res) => {
+    try {
+        const user = await User.findById(req?.user?.id)
+        .populate('addresses').populate('defaultAddress').lean();
+        const cartDetails = await findCart(user);
+        const Brands = await getAllBrands();
+        const totalQty = await cartQty(user);
+        const wallet = await Wallet.findOne({ user }).lean();
+        console.log(wallet,"tgyhu")
+        res.render('users/checkout',{user,cartDetails,totalQty,wallet,Brands,
+            bodycss:'/css/checkout.css',bodyjs:'/js/checkout.js'});      
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
   
 module.exports = { getOrders, orderDetails,
      createOrders, getOrdersPage, getOrdersDetails,
-     razorpayPayment, changeOrderStatus, generateInvoice
+     razorpayPayment, changeOrderStatus, generateInvoice,
+     getCheckoutPage,  generateSalesReport
      }

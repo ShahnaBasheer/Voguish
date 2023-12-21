@@ -96,8 +96,8 @@
                                                 <div class="border p-3 rounded">
                                                     <div class="form-check form-check-inline font-16 mb-0">
                                                         <input class="form-check-input" type="radio" name="shippingMethod" 
-                                                          value="Fast delivery" id="fastDelivery">
-                                                        <label class="form-check-label" for="fastDelivery">Fast Delivery - 25</label>
+                                                          value="FastDelivery" id="fastDelivery">
+                                                        <label class="form-check-label" for="fastDelivery">Fast Delivery - ₹25</label>
                                                     </div>
                                                     <p class="mb-0 ps-3 pt-1">Estimated 1-2 days shipping (Duties and tax may be due upon delivery)</p>
                                                 </div>
@@ -120,19 +120,30 @@
                                 <!-- end row-->
                                 <div class="tab-pane container fade" id="payment-info" data-nav="payment-nav-item">
                                     <div>
-                                        <h4 class="header-title">Payment Selection</h4>    
+                                        <h4 class="header-title">Payment Selection</h4>
+
+                                        <!-- Pay with Wallet box-->
+                                        <div class="border p-3 mb-3 rounded">
+                                            <div class="form-check form-check-inline font-16 mb-0">
+                                                <input class="form-check-input" type="checkbox" name="wallet" 
+                                                  value="{{wallet.balance}}" id="walletOption" {{#unless wallet.balance}}disabled{{/unless}}>
+                                                <label class="form-check-label" for="walletOption">Wallet</label>
+                                                <input type="hidden" id="available" name="balanceNow" value="{{wallet.balance}}">
+                                            </div>
+                                            <p class="mb-0 py-1 px-2 bg-success d-inline-block text-white">
+                                               available balance: <b>₹</b><b id="walletBalance">{{wallet.balance}}</b>
+                                            </p> 
+                                            <p id="wallet-alert" class="text-primary"></p>                                          
+                                        </div>                                           
 
                                         <!-- Pay with Razorpay box-->
                                         <div class="border p-3 mb-3 rounded">
-                                            <div class="float-end">
-                                                <i class="fab fa-cc-paypal font-24 text-primary"></i>
-                                            </div>
                                             <div class="form-check form-check-inline font-16 mb-0">
                                                 <input class="form-check-input" type="radio" name="paymentMethod" 
                                                   value="Razorpay" id="razorpayOption">
                                                 <label class="form-check-label" for="razorpayOption">Pay with Razorpay</label>
                                             </div>
-                                            <p class="mb-0 ps-3 pt-1">
+                                            <p class="mb-0 ps-3 pt-1" id="rzrP">
                                                You will be redirected to Razorpay website to complete your purchase securely.</p>                                           
                                         </div>
                                         
@@ -144,10 +155,10 @@
                                             </div>
                                             <div class="form-check form-check-inline font-16 mb-0">
                                                 <input class="form-check-input" type="radio" name="paymentMethod" 
-                                                   value="Cash On Delivery" id="BillingOptRadio3">
-                                                <label class="form-check-label" for="BillingOptRadio3">Cash on Delivery</label>
+                                                   value="CashOnDelivery" id="CODoption">
+                                                <label class="form-check-label" for="CODoption">Cash on Delivery</label>
                                             </div>
-                                            <p class="mb-0 ps-3 pt-1">Pay with cash when your order is delivered.</p>
+                                            <p class="mb-0 ps-3 pt-1" id="codP">Pay with cash when your order is delivered.</p>
                                         </div>
                                         <!-- end Cash on Delivery box-->
                                     </div>
@@ -168,7 +179,7 @@
                                                            style="display:none;"> Remove Coupon</a>
                                                     </div>
                                                 </div>
-                                                <p id="coupon-alert" class="text-danger"></p>
+                                                <p id="coupon-alert" class=""></p>
                                             </div>
                                         </div>
                                     </div>
@@ -221,7 +232,6 @@
                                             <div class="col-6"><p class="mb-1"><b>Subtotal</b></p></div>
                                             <div class="flex-sm-col col-auto"><p class="mb-1">
                                                 <b>₹{{cartDetails.totalPrice}}</b></p></div>
-                                                <input type="hidden" id="total-price" value="{{cartDetails.totalPrice}}">
                                         </div>
                                         <div class="row justify-content-between" style="display:none;" id="coupon-applied">
                                             <div class="col-6"><p class="mb-1"><b>Coupon Applied</b></p></div>
@@ -241,10 +251,16 @@
                                             <div class="col-6"><p class="mb-1"><b>Fast Delivery</b></p></div>
                                             <div class="flex-sm-col col-auto"><b>₹25</b></div>
                                         </div>
+                                        <div class="row justify-content-between" style="display:none;" id="wallet-redeemed">
+                                            <div class="col-6"><p class="mb-1"><b>Wallet</b></p></div>
+                                            <input type="hidden" value="{{wallet.balance}}" id="redeemedValue">
+                                            <div class="flex-sm-col col-auto"><b id="redeemedAmnt"></b></div>
+                                        </div>
                                         <div class="row justify-content-between">
                                             <div class="col-6"><p ><b>Total</b></p></div>
                                             <div class="flex-sm-col col-auto"><p  class="mb-1">
-                                                <input type="hidden" id="total-value" value="{{cartDetails.totalAmount}}">
+                                                <input type="hidden" id="totalWithDelivery" value="{{cartDetails.totalAmount}}">
+                                                <input type="hidden" id="grand-total" value="{{cartDetails.totalAmount}}">
                                                 <b>₹</b><b id="total">{{cartDetails.totalAmount}}</b></p></div>
                                         </div><hr class="my-0">
                                     </div>

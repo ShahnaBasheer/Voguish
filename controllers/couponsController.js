@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Coupon = require('../models/couponModel');
-const { calculateDiscount } = require('../helperfns')
+const { calculateDiscount, findCart } = require('../helperfns')
 
 
 const getCoupons = asyncHandler(async (req, res) => {
@@ -49,13 +49,18 @@ const addCoupons = asyncHandler(async (req, res) => {
 
 const applyCoupon = asyncHandler(async (req, res) => {
     try {
-        const { couponCode, purchaseAmnt } = req.body;
+        const { couponCode } = req.body;
+        const cart = await findCart(req?.user); 
+
+        if(!cart){
+            res.status(500).json({ success: false, message: 'Something went wrong with the cart!' });
+        }
 
         // Find the coupon based on the provided code
         const coupon = await Coupon.findOne({ code: couponCode });
         // Check if the coupon exists and is active
         if (coupon?.status === 'Active') {
-            const discountAmount = await calculateDiscount(coupon, Number(purchaseAmnt), res);
+            const discountAmount = await calculateDiscount(coupon, Number(cart?.totalPrice), res);
             if (discountAmount){
                 res.status(200).json({ success: true, discAmt:discountAmount, coupon });
             } else {

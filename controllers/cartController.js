@@ -1,9 +1,6 @@
 const asyncHandler = require('express-async-handler');
-const Product = require('../models/productModel');
 const Cart = require('../models/cartModel');
-const User = require('../models/userModel');
 const { findCart, cartQty, selectCartItem } = require('../helperfns');
-const CartItem = require('../models/cartItemModel');
 
 
 //get Cart page
@@ -18,15 +15,6 @@ const getCartList = asyncHandler( async (req,res) => {
     res.render('admin/cartlist',{admin:true,adminInfo:req.user});
   });
 
-//get Contact page 
-const getCheckoutPage = asyncHandler( async (req,res) => {
-    const user = await User.findById(req.user.id)
-    .populate('addresses').populate('defaultAddress').lean();
-    const cartDetails = await findCart(user);
-    const totalQty = await cartQty(user);
-    res.render('users/checkout',{user,cartDetails,totalQty,
-        bodycss:'/css/checkout.css',bodyjs:'/js/checkout.js'});
-  });
   
   
 const addToCart = asyncHandler(async (req, res) => {
@@ -114,6 +102,6 @@ module.exports = {
     quantityPlus,
     quantityMinus,
     getCartList,
-    getCheckoutPage,
+    
 
 }

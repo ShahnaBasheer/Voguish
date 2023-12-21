@@ -38,9 +38,9 @@
 				    <a class="flex-sm-fill text-sm-center nav-link active" id="orders-delivered-tab" 
 						   data-bs-toggle="tab" href="#orders-delivered" role="tab" aria-controls="orders-delivered" 
 							 aria-selected="true">Delivered</a>
-				    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-pending-tab" 
-						   data-bs-toggle="tab" href="#orders-pending" role="tab" aria-controls="orders-pending"
-							 aria-selected="false">Pending</a>
+				    <a class="flex-sm-fill text-sm-center nav-link"  id="orders-Processing-tab" 
+						   data-bs-toggle="tab" href="#orders-Processing" role="tab" aria-controls="orders-Processing"
+							 aria-selected="false">Processing</a>
 				    <a class="flex-sm-fill text-sm-center nav-link" id="orders-shipped-tab" 
 						   data-bs-toggle="tab" href="#orders-shipped" role="tab" 
 							 aria-controls="orders-shipped" aria-selected="false">Shipped</a>
@@ -125,7 +125,7 @@
 						    </nav><!--//app-pagination-->
 			      </div><!--//tab-pane-->
 			        
-			      <div class="tab-pane fade" id="orders-pending" role="tabpanel" aria-labelledby="orders-pending-tab">
+			      <div class="tab-pane fade" id="orders-Processing" role="tabpanel" aria-labelledby="orders-Processing-tab">
 					      <div class="app-card app-card-orders-table shadow-sm mb-5">
 						        <div class="app-card-body">
 							          <div class="table-responsive">
@@ -146,7 +146,7 @@
 							  	  	  	      </thead>
 							  	  	  	      <tbody>
 							  	  	  	        {{#each orders}}
-																    {{#if (isEqualTo this.status 'Pending')}}
+																    {{#if (isEqualTo this.status 'Processing')}}
 							  	  	  	      	    <tr>
 							  	  	  	      	    	  <td class="cell">{{this.orderId}}</td>
 																					<td class="cell">{{this.user.firstname}} {{this.user.lastname}}</td>
@@ -163,7 +163,7 @@
 																					{{else if (isEqualTo this.paymentStatus 'Refund')}} bg-primary
 																					{{/if}}">{{this.paymentStatus}}</td>
 							  	  	  	      	    	  <td class="cell"><span class="badge 
-																	  			    {{#if (isEqualTo this.status 'Pending')}} bg-warning{{/if}}">
+																	  			    {{#if (isEqualTo this.status 'Processing')}} bg-warning{{/if}}">
 																	  					{{this.status}}</span>
 																	  		  </td>
 							  	  	  	      	    	  <td class="cell">₹{{this.GrandTotal}}</td>

@@ -132,14 +132,18 @@
                                                       <th scope="row">Shipping Charge :</th>
                                                       <td>₹{{orderdetails.delivery}}</td>
                                                   </tr>
+                                                  {{#if (isEqualTo orderdetails.shippingMethod "FastDelivery")}}
                                                   <tr>
-                                                      <th scope="row">Fast Delivery Charge :</th>
-                                                      {{#if (isEqualTo orderdetails.shippingMethod "fast delivery")}}
-                                                         <td>₹25</td>
-                                                      {{else}}
-                                                          <td>₹0</td>
-                                                      {{/if}}
+                                                      <th scope="row">FastDelivery Charge :</th>
+                                                      <td>₹25</td>                                                      
                                                   </tr>
+                                                  {{/if}}
+                                                  {{#if orderdetails.couponApplied}}
+                                                  <tr>
+                                                      <th scope="row">Coupon Applied :</th>
+                                                      <td>-₹{{orderdetails.couponPrice}}</td>
+                                                  </tr>
+                                                  {{/if}}
                                                   <tr>
                                                       <th scope="row">GrandTotal :</th>
                                                       <td>₹{{orderdetails.GrandTotal}}</td>

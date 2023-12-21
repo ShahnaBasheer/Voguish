@@ -1,12 +1,12 @@
 const asyncHandler = require('express-async-handler');
-const User = require('../models/userModel');
 const Product = require('../models/productModel');
 const WishList = require('../models/wishListModel');
-const { cartQty, selectCartItem } = require('../helperfns');
+const { cartQty, selectCartItem, getAllBrands } = require('../helperfns');
 
 
 const getWishList = asyncHandler( async (req,res) => {
     const user = req.user, totalQty = await cartQty(user);
+    const Brands = await getAllBrands();
     const wishlist = await WishList.findOne({user:user._id})
     .populate({
         path: 'products',
@@ -16,7 +16,7 @@ const getWishList = asyncHandler( async (req,res) => {
         }
     }).lean();
        console.log(wishlist)
-    res.render('users/wishList',{user,wishlist,totalQty,
+    res.render('users/wishList',{user,wishlist,totalQty,Brands,
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
 

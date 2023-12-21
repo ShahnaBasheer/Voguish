@@ -38,19 +38,23 @@ const orderSchema = new mongoose.Schema({
     },
     shippingMethod: {
         type: String,
-        enum: ['Standard', 'Fast delivery'],
+        enum: ['Standard', 'FastDelivery'],
         default: 'Standard', // Default value is 'standard'
         required: true
     },
-    status: {
-        type: String,
-        enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'],
-        default: 'Pending'
+    shippingCharge: {
+        type: Number,
+        default: 0,
+        required: true,
     },
     paymentMethod: {
         type: String,
-        enum: ['Credit Card', 'PayPal', 'Cash On Delivery', 'Razorpay'],
-        required: true
+        enum: ['Razorpay', 'CashOnDelivery', 'Wallet'],
+    },
+    walletPayment: {
+        type: Number,
+        default: 0,
+        required: true,
     },
     delivery: {
         type: Number,
@@ -74,12 +78,18 @@ const orderSchema = new mongoose.Schema({
         enum: ['Pending', 'Paid', 'Failed', 'Refund', 'Cancelled'],
         default: function () {
             // Set paymentStatus as 'Pending' if paymentMethod is 'Cash on Delivery'
-            return this.paymentMethod === 'Cash On Delivery' ? 'Pending' : 'Paid';
+            return this.paymentMethod === 'CashOnDelivery' ? 'Pending' : 'Paid';
         }
     },
     paymentInfo: {
         type: mongoose.Schema.Types.Mixed,
         // You can add any other specific properties based on the payment method
+    },
+    status: {
+        type: String,
+        enum: ['Processing', 'Shipped', 'Failed', 'Delivered', 'Cancelled'],
+        default: 'Processing',
+        required: true,
     },
     createdAt: {
         type: Date,
@@ -87,8 +97,9 @@ const orderSchema = new mongoose.Schema({
     }
 });
 
+
 orderSchema.pre('save', async function (next) {
-    next();
+    next()
 });
 
 

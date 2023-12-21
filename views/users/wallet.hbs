@@ -1,0 +1,65 @@
+<section class="px-5 py-3">
+        <div class="row">
+               {{> profileSideBar}}
+            <div class="col-md-9">
+                <div class="shadows rounded bg-white p-4 ms-2" id="v-pills-settings" role="tabpanel">
+                    <h4 class="font-italic mb-4">My Wallet</h4>
+                        <div class="container">
+                            <p class="h6 py-4 text-primary">Wallet Balance: ₹{{wallet.balance}}{{#unless wallet.balance}}0{{/unless}}</p>
+                            <form action="/wallet/add-wallet-money" method="POST" id="walletForm">
+                                <div class="mb-3 row">
+                                    <label for="amount" class="col-sm-2 col-form-label">Amount:</label>
+                                    <div class="col-sm-4 d-flex align-items-center">
+                                        <input type="number" class="form-control" id="amount" name="amount" required>
+                                        <input type="hidden" name="method" value="manual_credit">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="submit" class="btn btn-success" onclick="creditWallet()">ADD</button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <h5 class="mt-4 mb-4">Transaction History</h5>
+                            
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>SL.No</th>
+                                  <th>Type</th>
+                                  <th>Amount</th>
+                                  <th>Method</th>
+                                  <th>Date</th>
+                                </tr>
+                              </thead>
+                              <tbody id="transactionHistoryBody">
+                                  {{#each wallet.transactionHistory}}
+                                      <tr>
+                                          <td>{{inc @index}}</td>
+                                          <td>{{this.type}}</td>
+                                          <td>₹{{this.amount}}</td>
+                                          <td>{{this.method}}</td>
+                                          <td>{{removeGMT this.addedDate}}</td>
+                                      </tr>
+                                  {{/each}}
+                              </tbody>
+                            </table>
+                        </div>
+                    </div>
+            </div>
+        </div>
+</section>
+
+
+
+  <!--
+
+    <div class="mb-3">
+                                        <label for="method" class="form-label">Method:</label>
+                                        <select class="form-select" id="method" name="method" required>
+                                            <option value="manual_credit">Manual Credit</option>
+                                            <option value="online_top_up_credit">Online Top-up Credit</option>
+                                            <option value="purchase_debit">Purchase Debit</option>
+                                            <option value="order_cancel_refund">Order Cancel Refund</option>
+                                        </select>
+                                    </div>
+  -->

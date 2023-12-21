@@ -86,7 +86,7 @@ const cartQty = async (user) => {
     cartDetails = await findCart(user);
     let qty = 0;
     if (cartDetails) {
-       qty = cartDetails.items.reduce((total, cartitem) => total + cartitem.quantity, 0);
+       qty = cartDetails?.items?.reduce((total, cartitem) => total + cartitem.quantity, 0);
     }
     return qty;
 }
@@ -295,6 +295,18 @@ const getFieldCounts = async (fieldName, matchStage, categoryMatch) => {
     }    
 }
 
+const calculateDiscount = async (coupon, purchaseAmnt, res) => {
+    if (coupon.isForAllUsers && coupon.startDate <= new Date() && 
+        coupon.endDate >= new Date() && purchaseAmnt >= coupon.minPurchaseAmount) {
+        if (coupon.discount) {
+          // Percentage discount
+          const percentage = parseInt(coupon.discount, 10) / 100;
+          let disc = Math.min(Math.floor(percentage * purchaseAmnt), coupon.maxDiscountAmount) ;
+          return disc;
+        } 
+    }
+    return 0;//discount.endsWith('%')
+};
 
 const pagination = async() => {
      
@@ -310,7 +322,7 @@ const invoiceHtml = async(invoiceData, _idx) => {
             <title>Invoice</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
             <style>
-                body{ overflow-x: hidden;margin: 0;padding: 0;}
+                body{ overflow-x: hidden;}
                 .text-danger strong {color: #9f181c;}
                 .receipt-main {
                     background: #ffffff none repeat scroll 0 0;
@@ -441,20 +453,124 @@ const invoiceHtml = async(invoiceData, _idx) => {
 
 
 
-const calculateDiscount = async (coupon, purchaseAmnt, res) => {
-    if (coupon.isForAllUsers && coupon.startDate <= new Date() && 
-        coupon.endDate >= new Date() && purchaseAmnt >= coupon.minPurchaseAmount) {
-        if (coupon.discount) {
-          // Percentage discount
-          const percentage = parseInt(coupon.discount, 10) / 100;
-          let disc = Math.min(Math.floor(percentage * purchaseAmnt), coupon.maxDiscountAmount) ;
-          return disc;
-        } 
-    }
-    return 0;//discount.endsWith('%')
-};
+const salesReportGenerator = async(ordersData, totalGrandTotal, startDate, endDate) => {
+
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                color: #333; 
+            }
+    
+            h2 { color: #0366d1; }
+            h6{ font-size: 0.9rem; }
+    
+            .report-header h5 {
+                color: #964b00;
+                margin-bottom: 0;
+            }
+    
+            .report-header p {
+                margin-bottom: 5px;
+                font-size: 0.8em;
+            }
+    
+            .table th,.table td {
+                text-align: center;
+                vertical-align: middle;
+                font-size: 0.9em;
+            }
+    
+            .table thead th {
+                background-color: #964b00;
+                color: #fff;
+            }
+    
+            .table tfoot td {
+                background-color: #e2e3e5;
+                font-weight: bold;
+            }
+    
+            .table-secondary {background-color: #e2e3e5;}
+        </style>
+    </head>
+    
+    <body>
+        <div class="mt-4">
+            <h2 class="text-center fw-bolder">Sales Report</h2>
+            <h6 class="text-center text-decoration-underline fw-bold mb-4">
+             ${moment.utc(startDate).local().format('DD/MM/YYYY')}  -  
+             ${moment.utc(endDate).local().format('DD/MM/YYYY')}</h6>
+    
+            <div class="row">
+                <div class="col-md-7 col-6">
+                    <div class="report-header">
+                        <h5>VOGUISH FASHION</h5>
+                        <p>+91 8848357834</p>
+                        <p>voguish@gmail.com</p>
+                        <p>India</p>
+                    </div>
+                </div>
+                <div class="col-md-5 col-6">
+                    <div class="report-header">
+                        <p>SALES AMOUNT: <b>${totalGrandTotal}</b></p>
+                        <p>TOTAL ORDERS: <b>${ordersData.length}</b></p>
+                    </div>
+                </div>
+            </div>
+    
+            <table class="table table-bordered mt-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>SLNo.</th>
+                        <th>OrderId</th>
+                        <th>Order Date</th>
+                        <th>Customer Name</th>
+                        <th>Items</th>
+                        <th>Grand Total</th>
+                        <th>Payment Method</th>
+                        <th>Payment Status</th>
+                        <th>Shipping Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Sample data rows -->
+                    
+                    ${ordersData.map((order,index) => `
+                    <tr>
+                        <td>${index+1}</td>
+                        <td>${order.orderId}</td>
+                        <td>${moment.utc(order.createdAt).local().format('DD/MM/YYYY')}</td>
+                        <td>${order.user.firstname} ${order.user.lastname}</td>
+                        <td>${order.orderItems.length}</td>
+                        <td>₹${order.GrandTotal}</td>
+                        <td>${order.paymentMethod}</td>
+                        <td>${order.paymentStatus}</td>
+                        <td>${order.status}</td>
+                    </tr>
+                    `).join('')}
+                    
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    
+    </html>
+    `
+}
+
+
+/* <td>${order.orderItems.map(item => `${item.product}`).join(',')}</td> */
+
 
 module.exports = { createUniqueSlug, otpEmailSend, pagination,
        generateOrderId, findCart, cartQty, filterFunction,
        selectCartItem, genderBrandFilter, getAllBrands,
-       invoiceHtml, calculateDiscount }
+       invoiceHtml, calculateDiscount, salesReportGenerator }

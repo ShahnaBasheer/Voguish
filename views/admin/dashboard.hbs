@@ -82,71 +82,33 @@
 	  	  	              <div class="app-card-header p-3">
 	  	  	  	              <div class="row justify-content-between align-items-center">
 	  	  	  	  	              <div class="col-auto">
-	  	  	  	                      <h4 class="app-card-title">Progress</h4>
-	  	  	  	  	              </div><!--//col-->
-	  	  	  	  	              <div class="col-auto">
-	  	  	  	  		               <div class="card-header-action">
-	  	  	  	  			               <a href="#">All projects</a>
-	  	  	  	  		               </div><!--//card-header-actions-->
+	  	  	  	                      <h4 class="app-card-title text-center">Sales Report</h4>
 	  	  	  	  	              </div><!--//col-->
 	  	  	  	              </div><!--//row-->
 	  	  	              </div><!--//app-card-header-->
 	  	  	              <div class="app-card-body">
-	  	  	  	  	          <div class="item p-3">
-	  	  	  	  		            <div class="row align-items-center">
-	  	  	  	  			              <div class="col">
-	  	  	  	  			      	          <div class="title mb-1 ">Project lorem ipsum dolor sit amet</div>
-	  	  	  	  			      	          <div class="progress">
-                                           <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" 
-                                              aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+	  	  	  	  	          <div class="item py-5 px-3">
+	  	  	  	  		            <form action="/admin/dashboard/generate-sales-report" class="row" method="POST" autocomplete="off">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="input_from">From</label>
+                                            <input type="text" class="form-control" id="input_from" placeholder="Start Date"
+																						name="startDate" required>
                                         </div>
-	  	  	  	  			              </div><!--//col-->
-	  	  	  	  			              <div class="col-auto"></div><!--//col-->
-	  	  	  	  		            </div><!--//row-->
-	  	  	  	  		            <a class="item-link-mask" href="#"></a>
-	  	  	  	  	          </div><!--//item-->
-	  	  	     
-	  	  	  	  	          <div class="item p-3">
-	  	  	  	  		            <div class="row align-items-center">
-	  	  	  	  			              <div class="col">
-	  	  	  	  			     	            <div class="title mb-1 ">Project duis aliquam et lacus quis ornare</div>
-	  	  	  	  			     	            <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 34%;" 
-                                            aria-valuenow="34" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="input_to">To</label>
+                                            <input type="text" class="form-control" id="input_to" placeholder="End Date"
+																						name="endDate" required>
                                         </div>
-	  	  	  	  			              </div><!--//col-->
-	  	  	  	  			              <div class="col-auto"></div><!--//col-->
-	  	  	  	  		            </div><!--//row-->
-	  	  	  	  		            <a class="item-link-mask" href="#"></a>
+                                    </div>
+																		<div class="col-12 my-4 text-center">
+                                        <button type="submit" class="btn btn-sm btn-success">Download Sales Report</button>
+																		</div>
+                                </form>
 	  	  	  	  	          </div><!--//item-->
-	  	  	  	  	      
-	  	  	  	  	          <div class="item p-3">
-	  	  	  	  		            <div class="row align-items-center">
-	  	  	  	  			              <div class="col">
-	  	  	  	  			      	          <div class="title mb-1 ">Project sed tempus felis id lacus pulvinar</div>
-	  	  	  	  			      	          <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 68%;" 
-                                                aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-	  	  	  	  			              </div><!--//col-->
-	  	  	  	  			              <div class="col-auto"></div><!--//col-->
-	  	  	  	  		            </div><!--//row-->
-	  	  	  	  		            <a class="item-link-mask" href="#"></a>
-	  	  	  	  	          </div><!--//item-->
-	  	  	  	  	      
-	  	  	  	  	          <div class="item p-3">
-	  	  	  	  		            <div class="row align-items-center">
-	  	  	  	  			              <div class="col">
-	  	  	  	  			      	          <div class="title mb-1 ">Project sed tempus felis id lacus pulvinar</div>
-	  	  	  	  			      	          <div class="progress">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: 52%;"
-                                              aria-valuenow="52" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-	  	  	  	  			              </div><!--//col-->
-	  	  	  	  			              <div class="col-auto"></div><!--//col-->
-	  	  	  	  		            </div><!--//row-->
-	  	  	  	  		            <a class="item-link-mask" href="#"></a>
-	  	  	  	  	          </div><!--//item-->
+	  	  	  	  	          
 	  	  	              </div><!--//app-card-body-->
 	  	              </div><!--//app-card-->
 	              </div><!--//col-->   
@@ -155,14 +117,30 @@
 		</div>
 </div>  <!--//app-wrapper-->    					
     
+
+<script src="https://cdn.jsdelivr.net/npm/pikaday@1.8.2/pikaday.min.js"></script>
 <script defer>
+
+	  /* sales report */
+		
+		let fromPicker = new Pikaday({
+    field: document.getElementById('input_from'),
+    maxDate: new Date(),  // Restrict to today and past dates
+    });
+    
+    let toPicker = new Pikaday({
+        field: document.getElementById('input_to'),
+        maxDate: new Date(),  // Restrict to today and past dates
+    });
+
+
+		/* sales line chart */
+		
     let weeklySales = {{{WeeklySales}}};
     let yearlySales = {{{YearlySales}}};
     let monthlySales = {{{MonthlySales}}};
 
-    /* Random number generator for demo purpose */
-    var randomDataPoint = function(){ return Math.round(Math.random()*10000)};
-    //Chart.js Line Chart Example 
+
     chartColors = {
         green: '#75c181',
         text: '#252930',
@@ -258,7 +236,6 @@
                 break;
         }
 
-				console.log(window.myLine)
 
        if (window.myLine) {
             // Update chart data
@@ -276,5 +253,9 @@
     timeRangeSelect.addEventListener('change', function () {
         updateChart(this.value);
     });
+
+
+
+
 </script>
 

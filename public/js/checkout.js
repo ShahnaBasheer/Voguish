@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const removeCouponBtn = document.getElementById('removeCouponBtn');
     const checkoutAlert = document.getElementById('checkout-alert'); 
     const couponAlert = document.getElementById('coupon-alert');
+    const walletOption = document.getElementById('walletOption');
    
 
     proceedToBtn?.forEach(function (button) {
@@ -75,19 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }) 
     })
 
-
-    fastDeliveryInput?.addEventListener('change', function(){
-        const totalValue = document.getElementById('total-value');
-        fsDelivery.style.display = 'flex';
-        totalElement.textContent = parseInt(totalValue.value) + 25; 
-    });
-
-    standardDelivery?.addEventListener('change', function(){
-        const totalValue = document.getElementById('total-value');
-        fsDelivery.style.display = 'none';
-        totalElement.textContent = parseInt(totalValue.value);
-    });
-
     
     checkoutCartForm?.addEventListener( 'submit',async function(event){
         event.preventDefault();
@@ -134,34 +122,70 @@ document.addEventListener('DOMContentLoaded', function () {
         }    
     });
 
+    
+    fastDeliveryInput?.addEventListener('change', function(){
+        const totalWithDelivery = document.getElementById('totalWithDelivery');
+        const grandTotal = document.getElementById('grand-total');
+        if(walletOption.checked){
+            walletOption.checked = false;
+            const changeEvent = new Event('change');
+            walletOption.dispatchEvent(changeEvent);
+        }
+        fsDelivery.style.display = 'flex';
+        grandTotal.value = parseInt(totalWithDelivery.value) + 25;
+        totalElement.textContent = grandTotal.value;
+
+    });
+
+    standardDelivery?.addEventListener('change', function(){
+        const totalWithDelivery = document.getElementById('totalWithDelivery');
+        const grandTotal = document.getElementById('grand-total');
+        if(walletOption.checked){
+            walletOption.checked = false;
+            const changeEvent = new Event('change');
+            walletOption.dispatchEvent(changeEvent);
+        }
+        fsDelivery.style.display = 'none';
+        totalElement.textContent = parseInt(totalWithDelivery.value);
+        grandTotal.value = parseInt(totalWithDelivery.value);
+        
+    });
+
 
     applyCouponBtn?.addEventListener('click', async function() {
         const couponCode = document.getElementById('coupon').value;
-        const totalPrice = document.getElementById('total-price');
-        const totalValue = document.getElementById('total-value');
+        const totalWithDelivery = document.getElementById('totalWithDelivery');
+        const grandTotal = document.getElementById('grand-total');
        
         const response = await fetch('/checkout/apply-coupon', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ purchaseAmnt: parseInt(totalPrice.value), couponCode }),
+            body: JSON.stringify({ couponCode }),
         });
         const result = await response.json();
   
         if(response.ok){
-  
-          let totalDSC = (parseInt(totalValue.value) - parseInt(result.discAmt));
-          totalValue.value = totalDSC;
-          document.getElementById('coupon-applied').style.display = 'flex';
-          document.getElementById('couponAmnt').innerHTML = `-₹${result.discAmt}`;
-          document.getElementById('cpnDsc').value = result.discAmt;
-          if(fastDeliveryInput.checked) totalDSC = totalDSC + 25;
 
-          totalElement.textContent = parseInt(totalDSC);
-          applyCouponBtn.style.display = 'none';
-          removeCouponBtn.style.display = 'block';
-          couponAlert.innerHTML = "Coupon Added Successfully!";   
+            if(walletOption.checked){
+               walletOption.checked = false;
+               const changeEvent = new Event('change');
+               walletOption.dispatchEvent(changeEvent);
+           }
+
+           let totalDSC = (parseInt(totalWithDelivery.value) - parseInt(result.discAmt));
+           totalWithDelivery.value = totalDSC;
+           totalDSC +=  (fastDeliveryInput?.checked)?25:0
+           grandTotal.value = totalDSC ;
+           document.getElementById('coupon-applied').style.display = 'flex';
+           document.getElementById('couponAmnt').innerHTML = `-₹${result.discAmt}`;
+           document.getElementById('cpnDsc').value = result.discAmt;
+           totalElement.textContent = grandTotal.value;
+           applyCouponBtn.style.display = 'none';
+           removeCouponBtn.style.display = 'block';
+           couponAlert.classList.add('text-success');
+           couponAlert.innerHTML = "Coupon Added Successfully!";   
         } else{
             couponAlert.innerHTML = result.message;
         }
@@ -169,32 +193,196 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     removeCouponBtn?.addEventListener('click', function() {
-        const totalValue = document.getElementById('total-value');
-        const cpnDSCamnt = document.getElementById('cpnDsc');      
-        let totalDSC = parseInt(totalValue.value) + parseInt(cpnDSCamnt.value);
-        totalValue.value = totalDSC;
-
-        if(fastDeliveryInput.checked) totalDSC = totalDSC + 25;
-
-        totalElement.textContent = totalDSC; 
-        document.getElementById('coupon').value = '';
+        const totalWithDelivery = document.getElementById('totalWithDelivery');
+        const cpnDSCamnt = document.getElementById('cpnDsc');     
+        const grandTotal = document.getElementById('grand-total');
+        totalWithDelivery.value = parseInt(totalWithDelivery.value) + parseInt(cpnDSCamnt.value);
+        grandTotal.value = parseInt(grandTotal.value) + parseInt(cpnDSCamnt.value); 
+        totalElement.textContent = grandTotal.value; 
         cpnDSCamnt.value = 0;
+        document.getElementById('coupon').value = '';
         document.getElementById('coupon-applied').style.display = 'none';
         applyCouponBtn.style.display = 'block';
         removeCouponBtn.style.display = 'none';
-
+        couponAlert.classList.remove('text-success');
+        couponAlert.classList.add('text-danger');
         couponAlert.innerHTML = 'Coupon Removed Successfully!';
+    });
 
-    })
+    walletOption?.addEventListener('change', async function () {
+        try {
+            const grandTotal = document.getElementById('grand-total');
+            const razorpayOption = document.getElementById('razorpayOption');
+            const available = document.getElementById('available');
+            const redeemedAmnt = document.getElementById('redeemedAmnt');
+            const walletBlnc = document.getElementById('walletBalance');
+            const redeemedValue = document.getElementById('redeemedValue');
+            const walletAlert = document.getElementById('wallet-alert'); 
+            const walletRedeemed = document.getElementById('wallet-redeemed');
+            const totalElement = document.getElementById('total');
+            const codP = document.getElementById('codP');
+            const rzrP = document.getElementById('rzrP');
+            
+            if(walletOption.checked){
+                const response = await fetch('/wallet/redeem-wallet-money', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ grandTotal: grandTotal.value }),
+                });
+    
+                if (response.ok) {
+                    const result = await response.json();
+
+                    if(result?.isWalletUsedFull){
+                        razorpayOption.disabled = true;
+                        CODoption.disabled = true;
+                        codP.classList.remove('opacity-100');
+                        rzrP.classList.remove('opacity-100');
+                        codP.classList.add('opacity-50');
+                        rzrP.classList.add('opacity-50');
+                    }
+    
+                    if(result?.isWalletUsedPartial){
+                        CODoption.disabled = true;
+                        codP.classList.remove('opacity-100');
+                        codP.classList.add('opacity-50');
+                    }
+         
+                    walletRedeemed.style.display = 'flex';
+                    redeemedAmnt.innerHTML = `-₹${result.redeemAmount}`;
+                    walletBlnc.innerHTML = `${result.walletBalance}`;
+                    redeemedValue.value = result.redeemAmount;
+                    walletAlert.innerHTML = `-₹${result.redeemAmount} redeemed!`;
+                    grandTotal.value = parseInt(result.GrandTotal);
+                    totalElement.innerHTML = `${result.GrandTotal}`;
+                } else {
+
+                }
+            }else{
+                codP.classList.remove('opacity-50');
+                rzrP.classList.remove('opacity-50');
+                codP.classList.add('opacity-100');
+                rzrP.classList.add('opacity-100');
+                razorpayOption.disabled = false;
+                CODoption.disabled = false;
+                walletAlert.innerHTML = '';
+                walletRedeemed.style.display = 'none';
+                grandTotal.value = (parseInt(grandTotal.value) + parseInt(redeemedValue.value));
+                walletBlnc.innerHTML = available.value;
+                totalElement.innerHTML = `${grandTotal.value}`;
+            }
+            
+        } catch (error) {
+            console.error('An error occurred during wallet redemption:', error);
+            // You can show an error message to the user or take appropriate action
+        }
+    });
+    
+     
 });
   
   
 
 
+async function handleWalletRedemption() {
+    try {
+        const grandTotal = document.getElementById('grand-total');
+        const razorpayOption = document.getElementById('razorpayOption');
+        const CODoption = document.getElementById('CODoption');
+        const available = document.getElementById('available');
+        const redeemedAmnt = document.getElementById('redeemedAmnt');
+        const walletBlnc = document.getElementById('walletBalance');
+        const redeemedValue = document.getElementById('redeemedValue');
+        const walletAlert = document.getElementById('wallet-alert');
+        const walletRedeemed = document.getElementById('wallet-redeemed');
+        const totalElement = document.getElementById('total');
+        const codP = document.getElementById('codP');
+        const rzrP = document.getElementById('rzrP');
+
+        if (walletOption.checked) {
+            const response = await fetch('/wallet/redeem-wallet-money', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ grandTotal: grandTotal.value }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+
+                if (result?.isWalletUsedFull) {
+                    razorpayOption.disabled = true;
+                    CODoption.disabled = true;
+                    codP.classList.remove('opacity-100');
+                    rzrP.classList.remove('opacity-100');
+                    codP.classList.add('opacity-50');
+                    rzrP.classList.add('opacity-50');
+                }
+
+                if (result?.isWalletUsedPartial) {
+                    CODoption.disabled = true;
+                    codP.classList.remove('opacity-100');
+                    codP.classList.add('opacity-50');
+                }
+
+                walletRedeemed.style.display = 'flex';
+                redeemedAmnt.innerHTML = `-₹${result.redeemAmount}`;
+                walletBlnc.innerHTML = `${result.walletBalance}`;
+                redeemedValue.value = result.redeemAmount;
+                walletAlert.innerHTML = `-₹${result.redeemAmount} redeemed!`;
+                grandTotal.value = parseInt(result.GrandTotal);
+                totalElement.innerHTML = `${result.GrandTotal}`;
+            } else {
+                // Handle error response
+                console.error('Wallet redemption failed:', response.status);
+                // You can show an error message to the user or take appropriate action
+            }
+        } else {
+            codP.classList.remove('opacity-50');
+            rzrP.classList.remove('opacity-50');
+            codP.classList.add('opacity-100');
+            rzrP.classList.add('opacity-100');
+            razorpayOption.disabled = false;
+            CODoption.disabled = false;
+            walletAlert.innerHTML = '';
+            walletRedeemed.style.display = 'none';
+            grandTotal.value = (parseInt(grandTotal.value) + parseInt(redeemedValue.value));
+            walletBlnc.innerHTML = available.value;
+            totalElement.innerHTML = `${grandTotal.value}`;
+        }
+
+    } catch (error) {
+        console.error('An error occurred during wallet redemption:', error);
+        // You can show an error message to the user or take appropriate action
+    }
+}
 
 
-    /*
+
+
+
+    /*if(walletOption.checked){
+            let available = document.getElementById('available');
+            let walletBalance = parseInt(available.value);
+            let totalAmountToPay = parseInt(grand.value);
     
+            console.log(parseInt(walletBalance) - parseInt(totalAmountToPay))
+    
+            if (validateWalletBalance(walletBalance, totalAmountToPay)) {
+                document.getElementById('wallet-alert').innerHTML = `-₹${totalAmountToPay} redeemed!`;
+                available.value = parseInt(walletBalance) - parseInt(totalAmountToPay);
+                console.log('Payment successful');
+            } else {
+                // Insufficient balance, show an error message or take appropriate action
+                document.getElementById('wallet-alert').innerHTML = `You have Insufficient balance! Go for another payment methods`;
+                console.log('Insufficient balance');
+            }
+        }
+        
+
     const shippingAddressCollapse = document.getElementById('shipping-address'); 
     let navItems = document.querySelectorAll('.nav-item');
     const formElements = document.querySelectorAll('#newaddressForm input, #newaddressForm select, #newaddressForm textarea');

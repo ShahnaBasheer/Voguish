@@ -11,14 +11,15 @@ const { getWomenPage, getMenPage, getKidsPage,
         otpVerify, getContactPage} = require('../controllers/pageController');
 const { getProduct }  = require('../controllers/productController');
 const { getCartPage, addToCart, checkSize, removeCartItem,
-        quantityPlus, quantityMinus, getCheckoutPage } = require('../controllers/cartController');
+        quantityPlus, quantityMinus } = require('../controllers/cartController');
 const { createOrders, getOrdersPage, razorpayPayment,
-        getOrdersDetails, generateInvoice} = require('../controllers/ordersController');
+        getOrdersDetails, generateInvoice, getCheckoutPage } = require('../controllers/ordersController');
 const { addToWishList, getWishList, deleteWishList,
         moveToCart } = require('../controllers/wishListController');
 const { applyCoupon } = require('../controllers/couponsController');
 const { getBrand } = require('../controllers/brandController');
 const { filterProducts } = require('../controllers/filterController');
+const { getWallet, addToWallet, redeemFromWallet } = require('../controllers/walletController');
 const { getReviewsPage, addNewReview } = require('../controllers/reviewsController');
 const { authMiddleware, isUser, isLoggedInUser} = require('../middlewares/authMiddlewares');
 const { removeEmptyStrings, limiter } = require('../middlewares/otherMiddlewares');
@@ -71,6 +72,9 @@ router.get('/wishlist', nocache(), authMiddleware, isUser, getWishList);
 router.get('/wishlist/add-to-wishlist/:slug', nocache(), authMiddleware, isUser, addToWishList)
 router.get('/wishList/delete-item/:slug', nocache(), authMiddleware, isUser, deleteWishList);
 router.get('/wishList/moveToCart/:slug', nocache(), authMiddleware, isUser, moveToCart);
+router.get('/wallet', nocache(), authMiddleware, isUser, getWallet);
+router.post('/wallet/add-wallet-money', nocache(), authMiddleware, isUser, addToWallet);
+router.post('/wallet/redeem-wallet-money', nocache(), authMiddleware, isUser, redeemFromWallet);
 router.get('/profile/reviews', nocache(), authMiddleware, isUser, getReviewsPage);
 router.post('/reviews/add-review', nocache(), authMiddleware, isUser, removeEmptyStrings, addNewReview );
 router.get('/brand/', nocache(), authMiddleware, isUser, getBrand);

@@ -34,7 +34,8 @@
                             <div class="d-flex flex-column align-items start"><b class="mb-2"></b>
                                 {{#if (isEqualTo order.status 'Delivered')}}
                                 <div>
-                                    <a href="/orders/generate-invoice?orderId={{order.orderId}}&_idx={{order.index}}" class="btn btn-primary">Invoice Download</a>
+                                    <a href="/orders/generate-invoice?orderId={{order.orderId}}&_idx={{order.index}}" 
+                                      class="btn btn-primary">Invoice Download</a>
                                 </div>
                                 {{/if}}
                             </div>

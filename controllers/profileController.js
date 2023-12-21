@@ -3,21 +3,23 @@ const Address = require('../models/addressModel');
 const asyncHandler = require('express-async-handler');
 const { validateMobile } = require('../utils/validatePhone');
 const { isEmailValid } = require('../utils/validateEmail');
-const { otpEmailSend, cartQty } = require('../helperfns');
+const { otpEmailSend, cartQty, getAllBrands } = require('../helperfns');
 
 
 const getProfilePage =  asyncHandler( async(req,res) => {
     const user = req.user, totalQty = await cartQty(user);
+    const Brands = await getAllBrands();
     const userprofile  = await User.findById(req.user.id).lean();
-    res.render('users/profileInfo',{user,userprofile,totalQty,
+    res.render('users/profileInfo',{user,userprofile,totalQty,Brands,
        bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
 
 
 const getAddressPage = asyncHandler( async(req,res) => {
     const user = req.user, totalQty = await cartQty(user);
+    const Brands = await getAllBrands();
     const userprofile  = await User.findById(req.user.id).populate('addresses').populate('defaultAddress').lean();
-    res.render('users/addressInfo',{user,userprofile,totalQty,
+    res.render('users/addressInfo',{user,userprofile,totalQty,Brands,
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
 

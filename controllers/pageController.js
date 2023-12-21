@@ -3,7 +3,6 @@ const Product = require('../models/productModel');
 const Brand = require('../models/brandModel');
 const Order = require('../models/ordersModel');
 const Users = require('../models/userModel');
-const moment = require('moment');
 const { cartQty, genderBrandFilter, getAllBrands } = require('../helperfns');
 
 
