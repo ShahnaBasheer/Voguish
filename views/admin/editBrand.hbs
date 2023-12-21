@@ -7,25 +7,24 @@
                     <form action="/admin/edit-brand" method="POST">
                         <div class="form-body">
                             <h4 class="card-title pb-3">EDIT BRANDS</h4>
-                             
+       
                             <div class="form-group mb-3">
-                                <label for="brand">Category Name</label>
+                                <label for="brand">Brand Name</label>
                                 <input type="text" class="form-control" id="brand" required
-                                  name="brand" value={{#each brand}}{{this.brand}}{{/each}}>
+                                  name="brand" value={{brand.brand}}>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="brand_description">Description</label>
                                 <textarea  class="form-control" id="brand_description" 
-                                  name="description">{{#each brand}}{{this.description}}{{/each}}
-                                </textarea>
+                                  name="description">{{brand.description}}</textarea>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="brand_country">Country</label>
                                 <input type="text" class="form-control" id="brand_country" required
-                                  name="country" value={{#each brand}}{{this.country}}{{/each}}>
+                                  name="country" value={{brand.country}}>
                             </div>
 
-                            <input type="hidden" value={{#each brand}} {{this._id}}{{/each}}>
+                            <input type="hidden" name="brandId" value={{brand._id}}>
                             
                             
                             <button type="submit" class="btn btn-primary">Edit Brand</button>

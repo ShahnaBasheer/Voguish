@@ -57,7 +57,7 @@ const getEditBrand = asyncHandler( async (req,res) => {
   const { id } = req.params;
   validateMongodbId(id);
   try{
-      const brand = await Brand.findById(id);
+      const brand = await Brand.findById(id).lean();
       res.render('admin/editBrand',{admin:true,brand,adminInfo:req.user});
   } catch(error){
       throw new Error(error);
@@ -67,7 +67,10 @@ const getEditBrand = asyncHandler( async (req,res) => {
 //edit Brand
 const editBrand = asyncHandler( async (req,res) => {
   try{
-      const brand = await Brand.findOneAndUpdate(req.body.id,req.body);
+    const { brandId } = req?.body;
+    console.log(req.body.brand)
+      const brand = await Brand.updateOne({_id: brandId},req.body);
+      console.log(brand)
       res.redirect('/admin/brands')
   } catch(error){
       throw new Error(error);

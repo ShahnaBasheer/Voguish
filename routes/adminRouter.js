@@ -48,7 +48,7 @@ router.get('/restore-category/:id', nocache(), adminAuth, isAdmin, restoreCatego
 router.get('/brands', nocache(), adminAuth, isAdmin,  getAllBrands);
 router.get('/add-brand', nocache(), adminAuth, isAdmin,  getAddBrand);
 router.post('/add-brand', nocache(), adminAuth, isAdmin,  removeEmptyStrings, addBrand);
-router.get('/edit-brand/:slug', nocache(), adminAuth, isAdmin,  getEditBrand);
+router.get('/edit-brand/:id', nocache(), adminAuth, isAdmin,  getEditBrand);
 router.post('/edit-brand', nocache(), adminAuth, isAdmin,  removeEmptyStrings, editBrand);
 router.get('/delete-brand/:id', nocache(), adminAuth, isAdmin,  deleteBrand);
 router.get('/restore-brand/:id', nocache(), adminAuth, isAdmin, restoreBrand);

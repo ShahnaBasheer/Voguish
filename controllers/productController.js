@@ -5,9 +5,8 @@ const { createUniqueSlug } = require('../helperfns')
 const asyncHandler = require('express-async-handler');
 const fs = require('fs').promises;
 const Review = require('../models/reviewModel');
-const { cartQty } = require('../helperfns');
-const { validateMongodbId } = require('../utils/validateMongodbId');
-const CartItem = require('../models/cartItemModel')
+const { cartQty,getAllBrands } = require('../helperfns');
+
 
 
 //get a product
@@ -28,6 +27,7 @@ const getProduct = asyncHandler(async (req, res) => {
         const reviews = await Review.find({product: product?._id}).populate('postedBy').lean();
         const userReview = await Review.findOne({product:product._id,postedBy : user?.id}).lean();
         const totalReviews = reviews.length;
+        const Brands = await getAllBrands();
 
         const reviewsData = await Review.aggregate([
             { $match: { product: product._id } },
@@ -56,7 +56,7 @@ const getProduct = asyncHandler(async (req, res) => {
         });
 
         res.render('users/product_details', { user,product,reviews,
-            userReview,totalQty,ratingData,totalReviews,
+            userReview,totalQty,ratingData,totalReviews,Brands,
             bodycss: '/css/product_details.css', bodyjs: '/js/product_details.js'
         });
     } catch (error) {

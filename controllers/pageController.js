@@ -225,8 +225,6 @@ const getDashboard = asyncHandler( async (req,res) => {
 
 
 
-
-
 //Display Admin Login
 const getAdminLogin = asyncHandler( async (req,res) => {
    res.render('admin/adminLogin',{admin:true,adminlogin:true,bodycss:'/css/login_signup.css'});
