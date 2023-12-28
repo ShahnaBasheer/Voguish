@@ -4,7 +4,8 @@ const cookieParser = require('cookie-parser');
 const dbConnect = require('./config/dbConnect');
 const exphbs = require('express-handlebars');
 const logger = require('morgan');
-const { notFound, errorHandler } = require('./middlewares/errorHandlers');
+const nocache = require('nocache');
+const { notFound, errorHandler, internalError } = require('./middlewares/errorHandlers');
 const { removeGMT, isEqualTo, roleEquals, calculate, 
       inc, loop, calculateTotal, uniqueColors, contains,
       isLessThan, compareIds, momentsAgo, isInArray,dec,
@@ -53,12 +54,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
+
+app.use(nocache());
 app.use('/',userRouter);
 app.use('/admin',adminRouter);
 
 // Custom Handlebars Helper
 app.use(notFound);
-app.use(errorHandler);
+app.use(internalError);
 
 
 

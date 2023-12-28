@@ -23,8 +23,7 @@ const addToCart = asyncHandler(async (req, res) => {
         await selectCartItem(slug,req);
         return res.redirect(req.header('Referer'))
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        next(error);
     }
 });
 
@@ -50,8 +49,7 @@ const checkSize = asyncHandler(async (req, res) => {
     if (!productExistsInCart) cartExist = false
     res.status(200).json({cartExist});
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        next(error);
     }
 });
 

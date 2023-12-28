@@ -52,10 +52,10 @@ const resendOtpCode = asyncHandler(async (req, res) => {
 
 //OTP verification
 const otpVerification = asyncHandler( async (req,res) => {
-    const {txt1,txt2,txt3,txt4,txt5,txt6,email} = req.body;
-    const otp = [txt1, txt2, txt3, txt4, txt5, txt6].join(''); 
-    const user = await User.findOne({ email, otp });
-    try{    
+    const {txt1,txt2,txt3,txt4,txt5,txt6,email} = req.body,
+        otp = [txt1, txt2, txt3, txt4, txt5, txt6].join(''),
+        user = await User.findOne({ email, otp });
+
         if (user && user?.otpTimestamp) {
             const currentTime = new Date();
             const otpTimestamp = new Date(user.otpTimestamp);
@@ -78,133 +78,104 @@ const otpVerification = asyncHandler( async (req,res) => {
         } else {
             res.render('users/otpverification', { email, bodyjs: 'js/otp.js', message: 'Invalid OTP!' });
         }
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ success: false, message: 'Internal Server Error.' });
-    }
-  });
+
+});
 
 //login user from login form
 const loginUser = asyncHandler(async (req, res) =>{
-    const { email,password } = req.body;
-    try{
-        const findUser = await User.findOne({ email });
-        if(findUser?.isBlocked) return res.redirect('/account-blocked');
+    const { email,password } = req.body,
+        findUser = await User.findOne({ email });
+
+    if(findUser?.isBlocked) return res.redirect('/account-blocked');
     
-        if(findUser && await findUser?.comparePassword(password) && findUser?.role =='user' && findUser.isVerified){
-            const accessToken = generateToken(findUser?.id);
-            const refreshToken = generateRefreshToken(findUser?.id);
-            await User.findByIdAndUpdate(findUser.id,{refreshToken:refreshToken});
+    if(findUser && await findUser?.comparePassword(password) && findUser?.role =='user' && findUser?.isVerified){
+        const accessToken = generateToken(findUser?.id);
+        const refreshToken = generateRefreshToken(findUser?.id);
+        await User.findByIdAndUpdate(findUser.id,{refreshToken:refreshToken});
     
-            res.cookie('accessToken', accessToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 15 * 60 * 1000,
-                sameSite: 'Lax' ,
-            });
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 3 * 24 * 60 * 60 * 1000, 
-                sameSite: 'Lax' ,
-            });
-            res.redirect('/');
-        }else{
-            console.log("Invalid Credentials");
-            res.redirect('/login')
-        }
-    }catch(error){
-        console.log(error);
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 15 * 60 * 1000,
+            sameSite: 'Lax' ,
+        });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 3 * 24 * 60 * 60 * 1000, 
+            sameSite: 'Lax' ,
+        });
+        res.redirect('/');
+    }else{
+        console.log("Invalid Credentials");
+        res.redirect('/login')
     }
 });
 
 
 //Update a user
 const updateUser = asyncHandler( async (req,res) => {
-    const { _id } = req.user;
+    const { _id } = req?.user;
     validateMongodbId(_id);
-    try{
-        const getUsers = await User.findByIdAndUpdate(_id,
-            {
-                firstname: req?.body?.firstname,
-                lastname: req?.body?.lastname,
-                email: req?.body?.email,
-                phone: req?.body?.phone,
-                password: req?.body?.password,
-            },
-            {new : true, }
-        );
-        res.json(getUsers)
-    } catch(error){
-        throw new Error(error);
-    }
+    const getUsers = await User.findByIdAndUpdate(_id,
+        {
+            firstname: req?.body?.firstname,
+            lastname: req?.body?.lastname,
+            email: req?.body?.email,
+            phone: req?.body?.phone,
+            password: req?.body?.password,
+        },
+        {new : true, }
+    );
+    res.json(getUsers)
 });
 
 //get All users
 const getAllUsers = asyncHandler( async (req,res) => {
-    try{
-        const users = await User.find().populate('addresses').lean();
-        res.render('admin/users',{admin:true,adminInfo:req.user,users});
-    } catch(error){
-        throw new Error(error);
-    }
+    const users = await User.find().populate('addresses').lean();
+    res.render('admin/users',{admin:true,adminInfo:req?.user,users});
 });
 
 //get a single user
 const getUser = asyncHandler( async (req,res) => {
     const { id } = req.params;
     validateMongodbId(id);
-    try{
-        const getUsers = await User.findById(id);
-        res.json({getUsers})
-    } catch(error){
-        throw new Error(error);
-    }
+    const getUsers = await User.findById(id);
+    res.json({getUsers})
 });
 
 //get delete a user
 const deleteUser = asyncHandler( async (req,res) => {
     const { id } = req.params;
     validateMongodbId(id);
-    try{
-        const deleted = await User.findByIdAndDelete(id);
-        const fullname = deleted?.firstname + " " + deleted?.lastname;
-        res.redirect('/admin/users');
-    } catch(error){
-        throw new Error(error);
-    }
+
+    const deleted = await User.findByIdAndDelete(id);
+    const fullname = deleted?.firstname + " " + deleted?.lastname;
+    res.redirect('/admin/users');
 });
 
 //Block user
 const blockUser = asyncHandler( async (req,res,next)=> {
     const { id } = req.params;
     validateMongodbId(id);
-    try{
-        const users = await User.find().lean();
-        await User.findByIdAndUpdate(id,{isBlocked : true},{new:true});
-        req.flash('success', 'User successfully blocked');
+    const users = await User.find().lean();
+    await User.findByIdAndUpdate(id,{isBlocked : true},{new:true});
+    req.flash('success', 'User successfully blocked');
        
-       res.redirect('/admin/users')
-    } catch(error) {
-        throw new Error(error);
-    }
+    res.redirect('/admin/users')
 });
 
 //Unblock user
 const unblockUser = asyncHandler( async (req,res,next)=> {
     const { id } = req.params;
-    try{
-        await User.findByIdAndUpdate(id,{isBlocked : false},{new:true});
-        req.flash('success', 'User successfully unblocked');
-        res.redirect('/admin/users');
-    } catch(error) {
-        throw new Error(error);
-    }
+    await User.findByIdAndUpdate(id,{isBlocked : false},{new:true});
+    req.flash('success', 'User successfully unblocked');
+    res.redirect('/admin/users');
 });
 
 //logout user
 const logout = asyncHandler(async (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req?.cookies?.refreshToken;
 
     if (!refreshToken) {
         throw new Error("No Refresh Token in Cookies");
@@ -221,28 +192,28 @@ const logout = asyncHandler(async (req, res) => {
     });
 
     await User.findOneAndUpdate({ refreshToken }, { refreshToken: "" });
-    const redirectUrl = req.query.redirect || '/';
+    const redirectUrl = req?.query?.redirect || '/';
     return res.redirect(redirectUrl);
 });
 
 
 //Email checking to know if already exist
 const emailCheck = asyncHandler( async (req,res) => {
-    const email = req.query.email;
+    const email = req.query?.email;
     const isEmailValid = await isValidEmail(email);
     res.json({exists : isEmailValid});    
 });
 
 //phone number checking to know if already exist
 const phoneCheck = asyncHandler( async (req,res) => {
-    const phone = req.query.phone;
+    const phone = req.query?.phone;
     const isValid = await validatePhoneNumber(phone);
     res.json({exists : isValid});    
 });
 
 //Display Admin Login
 const adminLogin = asyncHandler( async (req,res) => {
-    const { email, password } = req.body;
+    const { email, password } = req?.body;
     const findadmin = await User.findOne({ email });
 
     try {
@@ -276,9 +247,8 @@ const adminLogin = asyncHandler( async (req,res) => {
 });
 
 const adminLogout = asyncHandler (async(req,res) => {
-    const refreshToken = req.cookies.adminRefreshToken;
+    const refreshToken = req?.cookies?.adminRefreshToken;
     
-    console.log(refreshToken)
     if (!refreshToken) throw new Error("No Refresh Token in Cookies");
     
     res.clearCookie("adminAccessToken", {

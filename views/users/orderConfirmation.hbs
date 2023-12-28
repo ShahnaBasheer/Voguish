@@ -1,6 +1,150 @@
 
+         <div id="orderConfirm">
+        <div class="thankyou-page">
+            <div class="_header">
+                <div class="mb-4 text-center">
+                    <i class="fa-solid fa-circle-check" style="color: #28a93e; font-size: 4rem;"></i>
+                </div>
+                <h1>Thank You!</h1>
+                <h4>Your order is confirmed!</h4>
+            </div>
 
-<h2>ORDER CONFIRMATION</h2>
+            <div class="_body">
+                <div class="_box pb-5">
+                    <h5 class="bg-primary text-center text-white p-3">Order Summary</h5>
+                    <div class="row justify-content-center px-5 py-3">
+                        <div class="col-md-4">
+                            <div class="shadow border border-primary p-4 text-center" id="shipAddress">
+                                <h5 class="mb-3"><b>Shipping Address</b></h5>
+                                {{#if order.shippingAddress}}
+                                   <p><b>{{order.shippingAddress.firstname}} {{order.shippingAddress.lastname}}</b></p>
+                                   <p>{{order.shippingAddress.address}}</p>
+                                   <p>{{order.shippingAddress.city}},{{order.shippingAddress.state}}</p>
+                                   <p>{{order.shippingAddress.zipCode}}</p>
+                                   <p>{{order.shippingAddress.phone}}</p>
+                                {{/if}}
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" 
+                                   data-bs-target="#changeAddress">Change Address</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8 border border-1 border-primary">
+                            <!-- Header Section -->
 
-<a href="/home">Home</a>
-<a href="/women">Back to shopping</a>
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Product</th>
+                                        <th>Qty</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each order.orderItems}}
+                                        <tr>
+                                            <td><img src="/uploads/{{this.item.product.images.img-1}}"
+                                               width="60" height="auto">
+                                            </td>
+                                            <td>{{this.item.product.title}}</td>
+                                            <td>{{this.quantity}}</td>
+                                            <td>₹{{this.price}}</td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+
+                            <hr>
+                            <!-- Total Section -->
+                            <div class="total">     
+                                
+                                <div class="row">
+                                    <div class="col"> <b>Sub Total</b> </div>
+                                    <div class="col d-flex justify-content-end"> <b>₹{{order.totalPrice}}</b> </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col"> <b>Shipping Charge</b> </div>
+                                    <div class="col d-flex justify-content-end"> <b>₹{{order.delivery}}</b> </div>
+                                </div>                 
+                                {{#if (isEqualTo order.shippingMethod "FastDelivery")}}            
+                                    <div class="row">
+                                        <div class="col"> <b>FastDelivery Charge</b> </div>
+                                        <div class="col d-flex justify-content-end"> <b>₹25</b> </div>
+                                    </div>
+                                {{/if}}
+                                {{#if order.couponApplied}}                 
+                                    <div class="row">
+                                        <div class="col"> <b>Coupon Applied</b> </div>
+                                        <div class="col d-flex justify-content-end"> <b>-₹{{order.couponPrice}}</b> </div>
+                                    </div>
+                                {{/if}}
+                                <div class="row">
+                                    <div class="col"> <b> Grand Total</b> </div>
+                                    <div class="col d-flex justify-content-end"> <b>₹{{order.GrandTotal}}</b> </div>
+                                </div>
+                            </div>
+                            <!-- End Total Section -->
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <a href="/home" class="btn btn-danger">Back Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    
+      
+      <!-- Modal -->
+      <div class="modal fade" id="changeAddress" data-bs-backdrop="static" data-bs-keyboard="false"
+          tabindex="-1" aria-labelledby="changeAddressLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header border-0">
+                <h4 class="modal-title">Delivery Address</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <div class="card p-3 py-3 mt-1 card-1 text-center">
+                    <div class="p-3 card-2">
+                        
+                        {{#each user.addresses}}
+                        <div class="p-3 card-child mb-4">
+                            <div class="d-flex flex-row align-items-center">
+                                <input type="radio" name="deliveryAddress" id="add{{@index}}">
+                                <label for="add{{@index}}">
+                                <div class="d-flex flex-column ms-3">
+                                    <h6 class="fw-bold">{{this.firstname}} {{this.lastname}}</h6>
+                                    <span>{{this.address}}, <br>{{this.city}},{{this.status}}<br>
+                                        PIN:{{this.zipCode}},{{this.phone}}
+                                    </span>
+                                </div>
+                            </label>
+                            </div>
+                        </div>
+                        {{/each}}
+                
+                        <!-- Add New Address -->
+                        <div class="p-3 card-child mt-4 py-4">
+                            <div class="d-flex flex-row align-items-center">
+                                <div for="newAddress" class="circle">
+                                    <i class="fa fa-plus"></i>
+                                </div>
+                                <div class="d-flex flex-column ms-3 mt-1">
+                                    <h6 class="fw-bold text-primary">Add New Address</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Change</button>
+            </div>
+          </div>
+        </div>
+      </div>

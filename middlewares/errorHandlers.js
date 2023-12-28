@@ -5,16 +5,10 @@ const notFound = (req, res, next) =>{
    res.status(404).render('404Page', {errorPage:true});
    
 }
-
 // Error Handler
+const internalError = (err, req, res, next) => {
+  console.log(err);
+  res.status(500).render('500Page', { errorPage: true });
+};
 
-const errorHandler = (err, req, res, next) =>{
-  const statuscode = res.statusCode == 200 ? 500 : res.statusCode; //500 Internal Server Error
-  res.status(statuscode).render('500Page', {errorPage: true});
-  /*res.json({
-      message : err?.message,
-      stack : err?.stack,
-  });*/
-}
-
-module.exports = { notFound, errorHandler }
+module.exports = { notFound, internalError}

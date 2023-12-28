@@ -284,3 +284,62 @@
 .colorlib-nav ul li.has-dropdown:focus a {
   color: #FFC300;
 }
+
+
+/* Order Confirmation Page*/
+
+#orderConfirm .thankyou-page ._header {
+  background: #f2df65;
+  padding: 100px 30px;
+  text-align: center;
+
+}
+
+#orderConfirm .thankyou-page ._header h1 {
+  font-size: 65px;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+}
+
+#orderConfirm .thankyou-page ._body {
+  margin: -70px 0 30px;
+}
+
+.thankyou-page ._body ._box {
+  margin: auto;
+  max-width: 80%;
+  background: white;
+  border-radius: 3px;
+  box-shadow: 0 0 35px rgba(10, 10, 10, 0.12);
+}
+#changeAddress .card-1{
+ width:450px;
+ border-radius:18px;
+ border:none;
+}
+#changeAddress .card-2{ border-radius:20px; }
+  
+#changeAddress .card-child{
+  border:3px solid blue;
+  border-radius:16px;
+  
+}
+ 
+#changeAddress .circle{
+  background-color:blue;
+  height:50px;
+  width:50px;
+  border-radius:50%;
+  display:flex;
+  color:#fff;
+  justify-content:center;
+  align-items:center;
+  font-size:20px;
+      
+}
+
+#shipAddress p{
+    margin: .5rem auto;
+    font-size: 0.9rem;
+}

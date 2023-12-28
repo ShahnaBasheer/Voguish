@@ -12,8 +12,8 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
             throw new Error("Not authorized: no access token");
         }
 
-        const decodedAccessToken = jwt.verify(accessToken, process.env.JWT_SECRET);
-        const user = await User.findById(decodedAccessToken.id);
+        const decodedAccessToken = jwt.verify(accessToken, process.env?.JWT_SECRET);
+        const user = await User.findById(decodedAccessToken?.id);
 
         if (!user) {
             return res.status(401).json({ message: "User not found!" });
@@ -34,7 +34,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
                 const user = await User.findOne({ _id: decodedRefreshToken.id });
 
                 if (!user) {
-                    throw new Error("No Refresh token present in db or not matched");
+                    throw new Error("User not found!");
                 }
 
                 const newAccessToken = generateToken(user);
@@ -58,11 +58,10 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
 // check user is authorized
 const isUser = asyncHandler(async (req, res, next) => {
     if(req?.user){
-        const { email } = req.user;
-        const user = await User.findOne({email});
+        const { email, role, isBlocked } = req.user;
     
-        if(user && user.role === 'user'){
-            if(!user.isBlocked) next();
+        if(role === 'user'){
+            if(!isBlocked) next();
             else{
                 res.clearCookie("accessToken")
                 res.clearCookie("refreshToken")
@@ -78,12 +77,18 @@ const isUser = asyncHandler(async (req, res, next) => {
 });
 
 // check user is loggedin already
-const isLoggedInUser = asyncHandler(async (req, res, next) => {
+const isUserLoggedIn = asyncHandler(async (req, res, next) => {
     if (req?.user) {
-        const { email } = req.user;
-        const user = await User.findOne({email});
+        const { email, role, isBlocked } = req.user;
         console.log("user with token")
-        if(user && user.role === 'user')return res.redirect('/home');
+        if(role === 'user'){
+            if(!isBlocked) return res.redirect('/home');
+            else{
+                res.clearCookie("accessToken")
+                res.clearCookie("refreshToken")
+                return res.render('users/account-blocked')
+            }   
+        }
         else next();
     }
     console.log("user without token")
@@ -116,11 +121,11 @@ const adminAuth = asyncHandler(async (req, res, next) => {
                     throw new Error("No Refresh Token in Cookies");
                 }
 
-                const decodedRefreshToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_ADMIN_SECRET);
-                const user = await User.findOne({ _id: decodedRefreshToken.id });
+                const decodedRefreshToken = jwt.verify(refreshToken, process.env?.JWT_REFRESH_ADMIN_SECRET);
+                const user = await User.findOne({ _id: decodedRefreshToken?.id });
 
                 if (!user) {
-                    throw new Error("No Refresh token present in db or not matched");
+                    throw new Error("Admin not found!");
                 }
 
                 const newAccessToken = generateAdminToken(user);
@@ -146,20 +151,20 @@ const adminAuth = asyncHandler(async (req, res, next) => {
 // check user is admin
 const isAdmin = asyncHandler(async (req, res, next) => {
     if(req?.user){
-        const { email } = req.user;
-        const user = await User.findOne({email});
-        if(user && user.role == 'admin') next();
+        const { role } = req.user;
+
+        if(role == 'admin') next();
         else throw new Error('You are not an Admin!');
+        
     }else return res.redirect('/admin');
 });
 
 // check user is loggedin already
-const isLoggedInAdmin = asyncHandler(async (req, res, next) => {  
+const isAdminLoggedIn = asyncHandler(async (req, res, next) => {  
     if (req?.user) {
-        const { email } = req.user;
-        const user = await User.findOne({email});
-    
-        if(user && user.role === 'admin') return res.redirect('/admin/dashboard');
+        const { role } = req.user;
+
+        if(role === 'admin') return res.redirect('/admin/dashboard');
         else next();
     } 
     console.log("admin without token")
@@ -170,5 +175,5 @@ const isLoggedInAdmin = asyncHandler(async (req, res, next) => {
 
 module.exports = { 
     authMiddleware, isAdmin, isUser,
-    isLoggedInUser, isLoggedInAdmin, adminAuth,
+    isUserLoggedIn, isAdminLoggedIn, adminAuth,
 };

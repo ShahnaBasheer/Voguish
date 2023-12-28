@@ -381,15 +381,15 @@ const invoiceHtml = async(invoiceData, _idx) => {
                 <div class="col-12">
                     <div class="receipt-main px-5 py-4">
                         <h5 class="text-center fw-bolder">INVOICE</h5>
-                        <h6 class="text-center orderId">ORDERID : ${invoiceData.orderId}</h6>
+                        <h6 class="text-center orderId">ORDERID : ${invoiceData?.orderId}</h6>
                         <div class="row mt-5">
                             <div class="col-md-7 col-6">
                                 <div class="receipt-header">
-                                    <h5>${invoiceData.shippingAddress.firstname} ${invoiceData.shippingAddress.lastname}</h5>
-                                    <p><b>Mobile :</b> ${invoiceData.shippingAddress.phone}</p>
-                                    <p><b>Address :</b> ${invoiceData.shippingAddress.address}</p>
-                                    <p>${invoiceData.shippingAddress.city}, ${invoiceData.shippingAddress.status}</p>
-                                    <p><b>PIN :</b> ${invoiceData.shippingAddress.zipCode}</p>
+                                    <h5>${invoiceData?.shippingAddress?.firstname} ${invoiceData?.shippingAddress?.lastname}</h5>
+                                    <p><b>Mobile :</b> ${invoiceData?.shippingAddress?.phone}</p>
+                                    <p><b>Address :</b> ${invoiceData?.shippingAddress?.address}</p>
+                                    <p>${invoiceData?.shippingAddress?.city}, ${invoiceData?.shippingAddress?.status}</p>
+                                    <p><b>PIN :</b> ${invoiceData?.shippingAddress?.zipCode}</p>
                                 </div>
                             </div>
                             <div class="col-md-5 col-6">
@@ -413,9 +413,9 @@ const invoiceHtml = async(invoiceData, _idx) => {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="col-md-7">${invoiceData.orderItems[_idx].item.product.title}</td>
-                                        <td class="col-md-2">${invoiceData.orderItems[_idx].quantity}</td>
-                                        <td class="col-md-3">${invoiceData.orderItems[_idx].price}/-</td>
+                                        <td class="col-md-7">${invoiceData?.orderItems[_idx]?.item?.product?.title}</td>
+                                        <td class="col-md-2">${invoiceData?.orderItems[_idx]?.quantity}</td>
+                                        <td class="col-md-3">${invoiceData?.orderItems[_idx]?.price}/-</td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
@@ -424,13 +424,13 @@ const invoiceHtml = async(invoiceData, _idx) => {
                                         </td>
                                        
                                         <td>
-                                            <p><strong>${invoiceData.orderItems[_idx].price}/-</strong></p>
+                                            <p><strong>${invoiceData?.orderItems[_idx]?.price}/-</strong></p>
                                             <p><strong>0.0/-</strong></p>
                                         </td>
                                     </tr>
                                     <tr class="total">
                                         <td colspan="2"><h5 class="text-uppercase"><strong>Total: </strong></h5></td>
-                                        <td class="text-right text-danger"><h5><strong>${invoiceData.orderItems[_idx].price}/-</strong></h5></td>
+                                        <td class="text-right text-danger"><h5><strong>${invoiceData?.orderItems[_idx]?.price}/-</strong></h5></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -438,7 +438,7 @@ const invoiceHtml = async(invoiceData, _idx) => {
            
                         <div class="row reciept-footer">
                             <div class="col-8">
-                               <p class="mb-1"><b>OrderDate: ${moment.utc(invoiceData.createdAt).local().format('DD MMMM YYYY')} </b> </p>
+                               <p class="mb-1"><b>OrderDate: ${moment.utc(invoiceData?.createdAt).local().format('DD MMMM YYYY')} </b> </p>
                                <h6>Thanks for shopping.!</h6>
                             </div>
                             <div class="col-4"><h5 class="sign text-right">Voguish</h5></div>
@@ -454,116 +454,110 @@ const invoiceHtml = async(invoiceData, _idx) => {
 
 
 const salesReportGenerator = async(ordersData, totalGrandTotal, startDate, endDate) => {
-
-    return `
+   return `
     <!DOCTYPE html>
     <html lang="en">
-    <head>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body {
-                font-family: 'Arial', sans-serif;
-                color: #333; 
-            }
-    
-            h2 { color: #0366d1; }
-            h6{ font-size: 0.9rem; }
-    
-            .report-header h5 {
-                color: #964b00;
-                margin-bottom: 0;
-            }
-    
-            .report-header p {
-                margin-bottom: 5px;
-                font-size: 0.8em;
-            }
-    
-            .table th,.table td {
-                text-align: center;
-                vertical-align: middle;
-                font-size: 0.9em;
-            }
-    
-            .table thead th {
-                background-color: #964b00;
-                color: #fff;
-            }
-    
-            .table tfoot td {
-                background-color: #e2e3e5;
-                font-weight: bold;
-            }
-    
-            .table-secondary {background-color: #e2e3e5;}
-        </style>
-    </head>
-    
-    <body>
-        <div class="mt-4">
-            <h2 class="text-center fw-bolder">Sales Report</h2>
-            <h6 class="text-center text-decoration-underline fw-bold mb-4">
-             ${moment.utc(startDate).local().format('DD/MM/YYYY')}  -  
-             ${moment.utc(endDate).local().format('DD/MM/YYYY')}</h6>
-    
-            <div class="row">
-                <div class="col-md-7 col-6">
-                    <div class="report-header">
-                        <h5>VOGUISH FASHION</h5>
-                        <p>+91 8848357834</p>
-                        <p>voguish@gmail.com</p>
-                        <p>India</p>
+        <head>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body {
+                    font-family: 'Arial', sans-serif;
+                    color: #333; 
+                }
+        
+                h2 { color: #0366d1; }
+                h6{ font-size: 0.9rem; }
+        
+                .report-header h5 {
+                    color: #964b00;
+                    margin-bottom: 0;
+                }
+        
+                .report-header p {
+                    margin-bottom: 5px;
+                    font-size: 0.8em;
+                }
+        
+                .table th,.table td {
+                    text-align: center;
+                    vertical-align: middle;
+                    font-size: 0.9em;
+                }
+        
+                .table thead th {
+                    background-color: #964b00;
+                    color: #fff;
+                }
+        
+                .table tfoot td {
+                    background-color: #e2e3e5;
+                    font-weight: bold;
+                }
+        
+                .table-secondary {background-color: #e2e3e5;}
+            </style>
+        </head>
+        
+        <body>
+            <div class="mt-4">
+                <h2 class="text-center fw-bolder">Sales Report</h2>
+                <h6 class="text-center text-decoration-underline fw-bold mb-4">
+                 ${moment.utc(startDate).local().format('DD/MM/YYYY')}  -  
+                 ${moment.utc(endDate).local().format('DD/MM/YYYY')}</h6>
+        
+                <div class="row">
+                    <div class="col-md-7 col-6">
+                        <div class="report-header">
+                            <h5>VOGUISH FASHION</h5>
+                            <p>+91 8848357834</p>
+                            <p>voguish@gmail.com</p>
+                            <p>India</p>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-6">
+                        <div class="report-header">
+                            <p>SALES AMOUNT: <b>${totalGrandTotal}</b></p>
+                            <p>TOTAL ORDERS: <b>${ordersData?.length}</b></p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-5 col-6">
-                    <div class="report-header">
-                        <p>SALES AMOUNT: <b>${totalGrandTotal}</b></p>
-                        <p>TOTAL ORDERS: <b>${ordersData.length}</b></p>
-                    </div>
-                </div>
+        
+                <table class="table table-bordered mt-4">
+                    <thead class="table-light">
+                        <tr>
+                            <th>SLNo.</th>
+                            <th>OrderId</th>
+                            <th>Order Date</th>
+                            <th>Customer Name</th>
+                            <th>Items</th>
+                            <th>Grand Total</th>
+                            <th>Payment Method</th>
+                            <th>Payment Status</th>
+                            <th>Shipping Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sample data rows -->
+                        
+                        ${ordersData?.map((order,index) => `
+                        <tr>
+                            <td>${index+1}</td>
+                            <td>${order?.orderId}</td>
+                            <td>${moment.utc(order?.createdAt).local().format('DD/MM/YYYY')}</td>
+                            <td>${order?.user?.firstname} ${order?.user?.lastname}</td>
+                            <td>${order?.orderItems?.length}</td>
+                            <td>₹${order?.GrandTotal}</td>
+                            <td>${order?.paymentMethod}</td>
+                            <td>${order?.paymentStatus}</td>
+                            <td>${order?.status}</td>
+                        </tr>
+                        `).join('')}
+    
+                    </tbody>
+                </table>
             </div>
-    
-            <table class="table table-bordered mt-4">
-                <thead class="table-light">
-                    <tr>
-                        <th>SLNo.</th>
-                        <th>OrderId</th>
-                        <th>Order Date</th>
-                        <th>Customer Name</th>
-                        <th>Items</th>
-                        <th>Grand Total</th>
-                        <th>Payment Method</th>
-                        <th>Payment Status</th>
-                        <th>Shipping Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Sample data rows -->
-                    
-                    ${ordersData.map((order,index) => `
-                    <tr>
-                        <td>${index+1}</td>
-                        <td>${order.orderId}</td>
-                        <td>${moment.utc(order.createdAt).local().format('DD/MM/YYYY')}</td>
-                        <td>${order.user.firstname} ${order.user.lastname}</td>
-                        <td>${order.orderItems.length}</td>
-                        <td>₹${order.GrandTotal}</td>
-                        <td>${order.paymentMethod}</td>
-                        <td>${order.paymentStatus}</td>
-                        <td>${order.status}</td>
-                    </tr>
-                    `).join('')}
-                    
-                    <!-- Add more rows as needed -->
-                </tbody>
-            </table>
-        </div>
-    
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    
-    </html>
-    `
+        </body>  
+    </html>`    
 }
 
 

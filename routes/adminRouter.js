@@ -16,15 +16,15 @@ const { getCartList } = require('../controllers/cartController');
 const { getCoupons, addCoupons } = require('../controllers/couponsController');
 const { getOrders, orderDetails, changeOrderStatus, 
         generateSalesReport } = require('../controllers/ordersController');
-const { adminAuth, isAdmin, isLoggedInAdmin } = require('../middlewares/authMiddlewares');
+const { adminAuth, isAdmin, isAdminLoggedIn } = require('../middlewares/authMiddlewares');
 const { removeEmptyStrings } = require('../middlewares/otherMiddlewares');
 const { upload, processImages } = require('../config/multerConfig');
 const router = express.Router();
 const nocache = require('nocache');
 
 
-router.get('/', nocache(), adminAuth, isLoggedInAdmin, getAdminLogin);
-router.post('/login', nocache(), adminAuth, isLoggedInAdmin, adminLogin);
+router.get('/', nocache(), adminAuth, isAdminLoggedIn, getAdminLogin);
+router.post('/login', nocache(), adminAuth, isAdminLoggedIn, adminLogin);
 router.get('/dashboard', nocache(), adminAuth, isAdmin, getDashboard);
 router.get('/users', nocache(), adminAuth, isAdmin, getAllUsers);
 router.get('/delete-user/:id', nocache(), adminAuth, isAdmin, deleteUser);
