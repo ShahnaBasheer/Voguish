@@ -18,7 +18,7 @@ const getOrders = asyncHandler( async (req,res) => {
     const orders = await Orders.find().sort({ createdAt: -1 })
             .populate('shippingAddress').populate('user').lean();
     console.log(orders)
-    res.render('admin/orders',{admin:true,adminInfo:req.user,orders});
+    res.render('admin/orders',{admin:true,adminInfo:req.user,orders,__active: 'orders'});
     
 });
 

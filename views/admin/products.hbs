@@ -1,35 +1,39 @@
  <div class="app-wrapper">
       <!-- row -->
       <div class="container-fluid">
-          <div class="row my-5">
-              <div class="col-12 py-5">
-                  <div class="card py-4">
+          <div class="row app-wrapper-row">
+              <div class="col-12">
+                  <div class="d-flex justify-content-between align-items-start">
+                      <h4 class="app-page-title text-dark text-uppercase">PRODUCTS</h4>
+                      <a href="/admin/add-product" class="btn btn-primary d-flex align-items-center">
+                      <i class="fa-solid fa-circle-plus fs-5 pe-1"></i>Add Product</a>
+                  </div>
+                  <div class="card pb-4">
                       <div class="card-body">
-                        
-                          <h4 class="card-title pb-3">ALL PRODUCTS</h4>
                           {{#if user}}
                           <p class="text-danger">{{user}} has been successfully deleted!</p>
                           {{/if }}
-                          <div class="table-responsive">
-                              <table class="table table-striped table-bordered zero-configuration" id="myTable">
+                          <div class="table-responsive" id="productTable">
+                              <table class="table table-striped table-bordered" id="myTable">
                                   <thead>
                                       <tr>
                                           <th>Images</th>
-                                          <th>Product Title</th>
-                                          <th>Brand</th>
+                                          <th style="min-width:9rem;max-width:9rem;">Product Title</th>
+                                          <th style="min-width:5rem;max-width:5rem;">Brand</th>
                                           <th>Gender</th>
                                           <th>Category</th>
                                           <th>Price</th>
                                           <th>MRP</th>
-                                          <th>Discount</th>
+                                          <th>Dsc(%)</th>
                                           <th>Sizes</th>
-                                          <th>More ProductInfo</th>
+                                          <th>More</th>
                                           <th>Colors</th>
                                           <th>Stock</th>
-                                          <th>Created At</th>
-                                          <th>Updated At</th>
-                                          <th>IsDeletedBy</th>
-                                          <th>IsDeleted</th>
+                                          <th>Created</th>
+                                          <th>Updated</th>
+                                          <th style="min-width:4rem;max-width:4rem;" data-bs-toggle="tooltip"
+                                              title="isDeletedBy_Category_Brand">IsDeletedBy</th>
+                                          <th data-bs-toggle="tooltip" title="isDeleted Individually">IsDeleted</th>
                                           <th>Action</th>
                                       </tr>
                                   </thead>
@@ -39,7 +43,7 @@
                                         <tr>
                                            <td>            
                                               <div class="carousel slide" data-bs-ride="carousel" id="carousel{{@index}}">
-                                                  <div class="carousel-inner">
+                                                  <div class="carousel-inner d-flex align-items-center" style="width:70px;height:93px;">
                                                       {{#each this.images}}
                                                           <div class="carousel-item {{#if @first}}active{{/if}}">
                                                               <img src="/uploads/{{this}}" class="d-block w-100" alt="Image {{@index}}">
@@ -55,85 +59,54 @@
                                                       <span class="visually-hidden">Next</span>
                                                   </button>
                                               </div>  
-                                           </td>
-                                           <td>{{this.title}}</td>
-                                           <td>{{this.brand.brand}}</td>
-                                           <td>{{this.gender}}</td>
-                                           <td>{{this.category.category}}</td>
-                                           <td>₹{{this.price}}</td>
-                                           <td>₹{{this.mrp}}</td>
-                                           <td>{{this.discount}}%</td>
-                                           <td>
-                                               <div class="accordion border-0" id="sizes{{@index}}">
-                                                   <div class="accordion-item">
-                                                     <h2 class="accordion-header">
-                                                       <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-                                                          data-bs-target="#sizecollapse{{@index}}" aria-expanded="true" aria-controls="collapseOne">
-                                                          Sizes
-                                                       </button>
-                                                     </h2>
-                                                     <div id="sizecollapse{{@index}}" class="accordion-collapse collapse" data-bs-parent="#sizes{{@index}}">
-                                                       <div class="accordion-body">
-                                                         <table class="table">
-                                                           <thead>
-                                                             <tr>
-                                                               <th>Size</th>
-                                                               <th>Stocks</th>
-                                                             </tr>
-                                                           </thead>
-                                                           <tbody>
-                                                             {{#each this.sizes}}
-                                                               <tr>
-                                                                 <td>{{@key}}</td>
-                                                                 <td>{{calculateTotal this}}</td>
-                                                               </tr>
-                                                             {{/each}}
-                                                           </tbody>
-                                                         </table>
-                                                       </div>
-                                                     </div>
-                                                   </div>
+                                            </td>
+                                            <td style="min-width:10rem;max-width:10rem;" data-bs-toggle="tooltip" 
+                                               title="{{this.title}}">{{this.title}}</td>
+                                            <td>{{this.brand.brand}}</td>
+                                            <td class="text-center">{{this.gender}}</td>
+                                            <td>{{this.category.category}}</td>
+                                            <td>₹{{this.price}}</td>
+                                            <td>₹{{this.mrp}}</td>
+                                            <td class="text-center">{{this.discount}}%</td>
+                                            <td class="text-center">
+                                                <span class="sizes-tooltip-trigger">   
+                                                    <i class="fa-solid fa-circle-info ps-2 tooltip-icon" style="color: #4e85e3;"
+                                                       data-bs-toggle="tooltip"></i>
+                                                </span>
+
+                                                <div class="d-none">
+                                                    {{#each this.sizes}}
+                                                        <div class="sizerow">
+                                                            <div class="size">{{@key}}</div>
+                                                            <div class="stock">{{calculateTotal @this}}</div>
+                                                        </div>
+                                                    {{/each}}
                                                 </div>
-                                           </td>
-                                           <td>
-                                                <div class="accordion border-0" id="details{{@index}}">
-                                                   <div class="accordion-item">
-                                                     <h2 class="accordion-header">
-                                                       <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-                                                          data-bs-target="#collapse{{@index}}" aria-expanded="true" aria-controls="collapseOne">
-                                                         Product Details
-                                                       </button>
-                                                     </h2>
-                                                     <div id="collapse{{@index}}" class="accordion-collapse collapse" data-bs-parent="#details{{@index}}">
-                                                       <div class="accordion-body">
-                                                         <table class="table">
-                                                           <thead>
-                                                             <tr>
-                                                               <th>Key</th>
-                                                               <th>Value</th>
-                                                             </tr>
-                                                           </thead>
-                                                           <tbody>
-                                                             {{#each this.moreProductInfo}}
-                                                               <tr>
-                                                                 <td>{{@key}}</td>
-                                                                 <td>{{this}}</td>
-                                                               </tr>
-                                                             {{/each}}
-                                                           </tbody>
-                                                         </table>
-                                                       </div>
-                                                     </div>
-                                                   </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="moreinfo-tooltip-trigger">   
+                                                    <i class="fa-solid fa-circle-info ps-2 tooltip-icon" style="color: #4e85e3;"
+                                                       data-bs-toggle="tooltip"></i>
+                                                </span>
+
+                                                <div class="d-none">
+                                                    {{#each this.moreProductInfo}}
+                                                      {{#unless (orFunction (isEqualTo @key 'careInstructions') (isEqualTo @key 'packContains'))}}
+                                                        <div class="inforow">
+                                                            <div class="attribute">{{@key}}</div>
+                                                            <div class="value">{{this}}</div>
+                                                        </div>
+                                                      {{/unless}}
+                                                    {{/each}}
                                                 </div>
-                                           </td>
-                                           <td>{{uniqueColors this.sizes}}</td>
-                                           <td>{{this.totalStock}}</td>
-                                           <td>{{removeGMT this.createdAt}}</td>
-                                           <td>{{removeGMT this.updatedAt}}</td>
-                                           <td>{{this.isDeletedBy}}</td>
-                                           <td>{{this.isDeleted}}</td>
-                                           <td>
+                                            </td>
+                                            <td style="min-width:5rem;max-width:5rem;">{{uniqueColors this.sizes}}</td>
+                                            <td class="text-center">{{this.totalStock}}</td>
+                                            <td>{{removeGMT this.createdAt}}</td>
+                                            <td>{{removeGMT this.updatedAt}}</td>
+                                            <td class="text-center">{{#if this.isDeletedBy}}Yes{{else}}No{{/if}}</td>
+                                            <td class="text-center">{{this.isDeleted}}</td>
+                                            <td class="text-center">
                                                 <a href="/admin/edit-product/{{this.slug}}">
                                                     <i class="fa-solid fa-pen-to-square text-primary"></i>
                                                 </a>
@@ -146,8 +119,8 @@
                                                         <i class="fa-solid fa-trash text-danger"></i>
                                                     </a>
                                                 {{/if}}
-                                           </td>
-                                      </tr>
+                                            </td>
+                                        </tr>
                                      {{/each}}
                                   </tbody>    
                               </table>

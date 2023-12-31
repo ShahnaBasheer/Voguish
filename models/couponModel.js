@@ -58,6 +58,10 @@ const couponSchema = new mongoose.Schema(
       enum: ['Active', 'Expired', 'Cancelled'],
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

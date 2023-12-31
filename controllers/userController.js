@@ -84,7 +84,8 @@ const otpVerification = asyncHandler( async (req,res) => {
 //login user from login form
 const loginUser = asyncHandler(async (req, res) =>{
     const { email,password } = req.body,
-        findUser = await User.findOne({ email });
+        findUser = await User.findOne({ email, isDeleted: false });
+        
 
     if(findUser?.isBlocked) return res.redirect('/account-blocked');
     
@@ -133,7 +134,7 @@ const updateUser = asyncHandler( async (req,res) => {
 //get All users
 const getAllUsers = asyncHandler( async (req,res) => {
     const users = await User.find().populate('addresses').lean();
-    res.render('admin/users',{admin:true,adminInfo:req?.user,users});
+    res.render('admin/users',{admin:true,adminInfo:req?.user,users,__active: 'users'});
 });
 
 //get a single user
@@ -144,12 +145,21 @@ const getUser = asyncHandler( async (req,res) => {
     res.json({getUsers})
 });
 
+
+//get delete a user
+const restoreUser = asyncHandler( async (req,res) => {
+    const { id } = req?.params;
+    validateMongodbId(id);
+    const deleted = await User.findByIdAndUpdate(id, {isDeleted: false});
+    const fullname = deleted?.firstname + " " + deleted?.lastname;
+    res.redirect('/admin/users');
+});
+
 //get delete a user
 const deleteUser = asyncHandler( async (req,res) => {
-    const { id } = req.params;
+    const { id } = req?.params;
     validateMongodbId(id);
-
-    const deleted = await User.findByIdAndDelete(id);
+    const deleted = await User.findByIdAndUpdate(id, {isDeleted: true});
     const fullname = deleted?.firstname + " " + deleted?.lastname;
     res.redirect('/admin/users');
 });
@@ -270,6 +280,7 @@ module.exports = {
     updateUser, 
     getAllUsers, 
     getUser, 
+    restoreUser,
     deleteUser,
     blockUser,
     unblockUser,

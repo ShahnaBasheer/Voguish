@@ -1,130 +1,90 @@
-<div class="app-wrapper"> 
-	<div class="app-content pt-4 p-md-3 p-lg-4">
-	    <div class="container-xl pt-5">
-		    <div class="row g-3 mb-4 align-items-center justify-content-between">
-			    <div class="col-auto">
-		            <h1 class="app-page-title mb-0">Coupons</h1>
-			    </div>
-
-                <!-- Table starts here -->
-                <div class="page-content">
-                    <div id="couponsList">
-                        <div class="row">
-                            <div class="col-xxl-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row align-items-center">
-                                            <div class="col-xxl-3 col-md-5">
-                                                <div class="search-box mb-3 mb-md-0">
-                                                    <input type="text" class="form-control search" id="searchProductList" placeholder="Search by coupons code & name...">
-                                                    <i class="ri-search-line search-icon"></i>
-                                                </div>
-                                            </div><!--end col-->
-                                            <div class="col-md-auto ms-auto">
-                                                <button data-bs-target="#showModal" data-bs-toggle="modal" class="btn btn-success add-btn"><i class="bi bi-plus-circle me-1 align-middle"></i>Add Coupon</button>
-                                            </div><!--end col-->
-                                        </div><!--end row-->
-                                    </div>
-                                </div><!--end card-->
-                            </div><!--end col-->
-                        </div><!--end row-->
-
-                        <div class="row my-4">
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="table-responsive table-card">
-                                            <table class="table align-middle table-nowrap">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th scope="col">Discount</th>
-                                                        <th scope="col">Code</th>
-                                                        <th scope="col">Coupon Title</th>
-                                                        <th scope="col">MaxAmnt</th>
-                                                        <th scope="col">MinPurchase</th>
-                                                        <th scope="col">StartDate</th>
-                                                        <th scope="col">EndDate</th>
-                                                        <!--<th scope="col">UserGroups</th>-->
-                                                        <th scope="col">Limit</th>
-                                                        <th scope="col">TimesUsed</th>
-                                                        <th scope="col">AllUsers</th>
-                                                        <th scope="col">Status</th>
-                                                        <th scope="col">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="list">
-                                                  {{#each coupons}}
-                                                    <tr>
-                                                        <td class="discount text-center"><h5 class="mb-0 fs-16">{{this.discount}}%</h5></td>
-                                                        <td class="code text-center">{{this.code}}</td>
-                                                        <td class="couponTitle text-center">{{this.couponTitle}}</td>
-                                                        <td class="maxDscAmnt text-center">{{this.maxDiscountAmount}}</td>
-                                                        <td class="minPurchase text-center">{{this.minPurchaseAmount}}</td>
-                                                        <td class="startDate text-center">{{removeGMT this.startDate}}</td>
-                                                        <td class="endDate text-center">{{removeGMT this.endDate}}</td>
-                                                        <!--<td class="userGroups text-center">{{this.targetUserGroups}}</td>-->
-                                                        <td class="usageLimit text-center">{{this.usageLimit}}</td>
-                                                        <td class="timesUsed text-center">{{this.timesUsed}}</td>
-                                                        <td class="forAllUsers text-center">{{#if this.isForAllUsers}}Yes{{else}}No{{/if}}</td>
-                                                        <td class="status text-center"><span class="badge bg-success-subtle text-success">
-                                                            {{this.status}}</span></td>
-                                                        <td class="text-center">
-                                                            <ul class="hstack gap-2 list-unstyled mb-0">
-                                                                <li><a class="badge bg-primary-subtle text-primary edit-item-btn"
-                                                                   href="#showModal" data-bs-toggle="modal">
-                                                                   <i class="fa-solid fa-pen-to-square text-primary"></i>
-                                                                </a>
-                                                                </li>
-                                                                <li><a href="#deleteModal" data-bs-toggle="modal" 
-                                                                   class="badge bg-danger-subtle text-danger remove-item-btn">
-                                                                   <i class="fa-solid fa-trash text-danger"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                  {{/each}}
-                                                </tbody>
-                                            </table>
-                                            <div class="noresult" style="display: none">
-                                                <div class="text-center">
-                                                    <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
-                                                    <h5 class="mt-2">Sorry! No Result Found</h5>
-                                                    <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any orders for you search.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <nav class="d-flex justify-content-end mt-3" aria-label="Page navigation example">
-                                             <ul class="pagination">
-                                                 <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                                                 <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                 <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                 <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                 <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                             </ul>
-                                        </nav>
-                                    </div><!--end card-body-->
-                                </div><!--end card-->
-                            </div><!--end col-->
-                        </div><!--end row-->
+<div class="app-wrapper">
+      <!-- row -->
+    <div class="container-fluid">
+        <div class="row app-wrapper-row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h4 class="app-page-title text-dark text-uppercase">COUPONS</h4>
+                    <a href="#showModal" class="btn btn-primary d-flex align-items-center"
+                       data-bs-toggle="modal">
+                    <i class="fa-solid fa-circle-plus fs-5 pe-1"></i>Add Coupon</a>
+                </div>
+                <div class="card pb-4">
+                    <div class="card-body">
+                        <p class="alert py-1 " id="statusText"></p>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered" id="myTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No.</th>
+                                        <th scope="col">Dsc(%)</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Coupon Title</th>
+                                        <th scope="col" data-bs-toggle="tooltip" title="Maximum discount Amnt">Max Amnt</th>
+                                        <th scope="col" data-bs-toggle="tooltip" title="Minimum Purchase Amnt">Min Purchase</th>
+                                        <th scope="col">StartDate</th>
+                                        <th scope="col">EndDate</th>
+                                        <!--<th scope="col">UserGroups</th>-->
+                                        <th scope="col">Limit</th>
+                                        <th scope="col" data-bs-toggle="tooltip" title="Times Used">Used</th>
+                                        <th scope="col">AllUsers</th>
+                                        <th scope="col">isDeleted</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each coupons}}
+                                        <tr>
+                                            <td class="text-center">{{inc @index}}</td>
+                                            <td class="discount text-center">{{this.discount}}%</td>
+                                            <td class="code text-center">{{this.code}}</td>
+                                            <td class="couponTitle text-center">{{this.couponTitle}}</td>
+                                            <td class="maxDscAmnt text-center">₹{{this.maxDiscountAmount}}</td>
+                                            <td class="minPurchase text-center">₹{{this.minPurchaseAmount}}</td>
+                                            <td class="startDate text-center">{{removeGMT this.startDate}}</td>
+                                            <td class="endDate text-center">{{removeGMT this.endDate}}</td>
+                                            <!--<td class="userGroups text-center">{{this.targetUserGroups}}</td>-->
+                                            <td class="usageLimit text-center">{{this.usageLimit}}</td>
+                                            <td class="timesUsed text-center">{{this.timesUsed}}</td>
+                                            <td class="forAllUsers text-center">{{#if this.isForAllUsers}}Yes{{else}}No{{/if}}</td>
+                                            <td class="text-center">{{#if this.isDeleted}}Yes{{else}}No{{/if}}</td>
+                                            <td class="status text-center"><span class="badge bg-success-subtle text-success">
+                                                {{this.status}}</span></td>
+                                            <td>
+                                                <ul class="list-unstyled mb-0 d-flex justify-content-around">
+                                                    <li><a class="badge bg-primary-subtle text-primary edit-coupon-btn"
+                                                           data-couponId="{{this._id}}">
+                                                           <i class="fa-solid fa-pen-to-square text-primary"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        {{#if this.isDeleted}}
+                                                            <a  href="/admin/restore-coupon/{{this._id}}"
+                                                                class="badge bg-primary-subtle remove-item-btn">
+                                                                <i class="fa-solid fa-rotate-left text-primary"></i>
+                                                            </a>
+                                                        {{else}}
+                                                            <a href="/admin/delete-coupon/{{this._id}}" 
+                                                                class="deletebtn badge bg-danger-subtle">
+                                                                <i class="fa-solid fa-trash text-danger"></i>
+                                                            </a>
+                                                        {{/if}}
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>    
+                            </table>
+                        </div>
                     </div>
-                </div> <!-- container-fluid -->
-                <!-- Table end here -->
+                </div>
             </div>
-        </div><!-- END layout-wrapper -->
+        </div>
     </div>
+      <!--  container -->
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -137,14 +97,13 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0">
             <div class="modal-header px-4 pt-4">
-                <h5 class="modal-title fs-18" id="exampleModalLabel">Add Coupons</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+                <h5 class="modal-title fs-18">Add Coupons</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body px-5 py-4">
-                <form action="/admin/add-coupons" method="POST" id="couponForm">
+                <form action="/admin/add-coupon" method="POST" id="couponForm">
                     <div class="row">
-                        <div id="alert-error-msg" class="d-none alert alert-danger py-2"></div>
-                        <input type="hidden" id="id-field"/>                                
+                        <div id="alert-error-msg" class="d-none alert alert-danger py-2"></div>                              
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="couponTitle" class="form-label">Coupon Title</label>
@@ -161,7 +120,7 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="Discount" class="form-label">Discount(%)</label>
+                                <label for="couponDiscount" class="form-label">Discount(%)</label>
                                 <input type="text" name="discount" class="form-control" id="couponDiscount" 
                                 placeholder="Enter discount" required>
                             </div>
@@ -176,7 +135,7 @@
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="minAmount" class="form-label">min.Purchase Amount</label>
-                                <input type="text" name="minPurchaseAmount" class="form-control" id="maxAmount" 
+                                <input type="text" name="minPurchaseAmount" class="form-control" id="minAmount" 
                                  placeholder="Enter min purchase amount" required>
                             </div>
                         </div>
@@ -233,9 +192,127 @@
                         </div>
                         <div class="col-lg-12 modal-footer">
                             <div class="hstack gap-2 justify-content-end">
-                                <button type="button" class="btn btn-ghost-danger" data-bs-dismiss="modal">
-                                    <i class="ri-close-line align-bottom me-1"></i> Close</button>
-                                <button type="submit" class="btn btn-primary" id="add-btn">Add Coupons</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                    <i class="fa-regular fa-rectangle-xmark me-1"></i> Close</button>
+                                <button type="submit" class="btn btn-primary" id="add-btn">Add Coupon</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+<!-- edit Modal -->
+<div id="editCouponModal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0">
+            <div class="modal-header px-4 pt-4">
+                <h5 class="modal-title fs-18">Edit Coupons</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-5 py-4">
+                <form id="couponEditForm">
+                    <div class="row">
+                        <div id="alert-error-msg" class="d-none alert alert-danger py-2"></div>
+                        <input type="hidden" id="id-field" value=""/>                                
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="couponTitle2" class="form-label">Coupon Title</label>
+                                <input type="text" name="couponTitle" class="form-control" id="couponTitle2" 
+                                placeholder="Coupon title" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="couponCode2" class="form-label">Code</label>
+                                <input type="text" name="code" class="form-control" id="couponCode2" 
+                                placeholder="Enter coupon code" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="couponDiscount2" class="form-label">Discount(%)</label>
+                                <input type="text" name="discount" class="form-control" id="couponDiscount2" 
+                                placeholder="Enter discount" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="maxDiscount2" class="form-label">max.Discount Amount</label>
+                                <input type="text" name="maxDiscountAmount" class="form-control" id="maxDiscount2" 
+                                placeholder="Enter max dicount amount" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="minAmount2" class="form-label">min.Purchase Amount</label>
+                                <input type="text" name="minPurchaseAmount" class="form-control" id="minAmount2" 
+                                 placeholder="Enter min purchase amount" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="usageLimit2" class="form-label">Usage Limit</label>
+                                <input type="text" name="usageLimit" class="form-control" id="usageLimit2" 
+                                   placeholder="Enter UsageLimit">
+                            </div>
+                        </div>    
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="userGroups2" class="form-label">User Groups</label>
+                                <select class="form-control" name="targetUserGroups" id="userGroups2" multiple>
+                                    <option>Select Groups</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="GoldMembers">Gold Members</option>
+                                    <option value="Prime Members">Regular Users</option>
+                                </select>
+                            </div>
+                        </div>
+                         <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="isForAllUsers2" class="form-label">isForAllUsers?</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isForAllUsers2" 
+                                      name="isForAllUsers" value="yes" checked>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="startDate2" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate2"
+                                 name="startDate" placeholder="Select date" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="endDate2" class="form-label">END Date</label>
+                                <input type="date" class="form-control" id="endDate2" 
+                                name="endDate" placeholder="Select date" required>
+                            </div>
+                        </div>
+                                                 
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="statusField2" class="form-label">Status</label>
+                                <select class="form-control" name="status" id="statusField2">
+                                    <option>Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Expired">Expired</option>                                            
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 modal-footer">
+                            <div class="gap-2 justify-content-end">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modal-close">
+                                    <i class="fa-regular fa-rectangle-xmark me-1"></i> Close</button>
+                                <button type="button" class="btn btn-primary" id="edit-btn">Edit Coupon</button>
+                                
                             </div>
                         </div>
                     </div>

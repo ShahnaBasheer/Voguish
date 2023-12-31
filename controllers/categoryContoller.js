@@ -4,10 +4,10 @@ const validateMongodbId = require('../utils/validateMongodbId');
 const Product = require('../models/productModel');
 
 
-//get Category Page 
+//get Category Page in admin side
 const getAllCategories = asyncHandler (async (req, res) => {
     const categories = await Category.find().lean();
-    res.render('admin/category',{admin:true,categories,adminInfo:req?.user})
+    res.render('admin/category',{admin:true,categories,adminInfo:req?.user,__active: 'categories'})
 });
 
 //add Categories 

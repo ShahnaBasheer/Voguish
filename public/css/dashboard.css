@@ -1,4 +1,11 @@
-a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0}
+  *{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  
+  a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0}
   
   a.app-link{color:#252930;text-decoration:underline;text-decoration-color:rgba(37,41,48,.3)}
   a.app-link:hover{color:#15a362;text-decoration-color:rgba(21,163,98,.8)}
@@ -17,10 +24,16 @@ a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0
   .form-check-input:checked{background-color:#15a362;border-color:#15a362}
   .dropdown-menu{border-color:#e7e9ed}.dropdown-menu .dropdown-item{padding:.5rem 1rem}
   .dropdown-menu .dropdown-item:hover{color:#252930}
-  .dropdown-menu .dropdown-item:hover,.dropdown-menu .dropdown-item:focus{background:#fafbff}
+  .dropdown-menu .dropdown-item:hover,.dropdown-menu .dropdown-item:focus{background:#7a94ff}
   .dropdown-menu .dropdown-item.active,.dropdown-menu .dropdown-item:active{background:#fafbff}
   .dropdown-divider{border-top-color:#e7e9ed;-webkit-opacity:1;-moz-opacity:1;opacity:1}
   .dropdown-toggle.no-toggle-arrow:after{display:none !important}
+
+
+  .app-wrapper-row{
+      margin: 4.7rem .7rem;
+      position: relative; 
+  }
   .app-header{
       box-shadow:0 1px 4px 0 rgba(0,0,0,.1);
       border-bottom:1px solid #e7e9ed;
@@ -105,9 +118,10 @@ a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0
   #app-sidepanel .sidepanel-inner{
       position:relative;
       z-index:10;
-      background:#fff;box-shadow:rgba(0,0,0,.05) 0px 8px 15px;
+      background:#fff;
+      box-shadow:rgba(0,0,0,.05) 0px 8px 15px;
       width:250px;
-      height:100%
+      height:100%;
   }
     #app-sidepanel #sidepanel-close{
         display:none;
@@ -214,7 +228,7 @@ a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0
     .app-wrapper{transition:all .4s ease-in-out;}
 
     @media(prefers-reduced-motion: reduce){.app-wrapper{transition:none}}
-    .app-page-title{font-size:1.5rem;font-weight:bolder;margin-bottom:1.5rem}
+    .app-page-title{font-size:1.5rem;font-weight:bolder;margin-bottom: .8rem;}
     .app-card{position:relative;background:#fff;border-radius:.25rem}
     .app-card.border-left-decoration{border-left:3px solid #15a362}
     .app-card .app-card-header{border-bottom:1px solid #e7e9ed}
@@ -249,7 +263,8 @@ a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0
   
     .app-404-page{padding-top:2rem}
     .app-404-page .page-title{font-size:3rem;line-height:.8;font-weight:bold}
-    .app-404-page .page-title span{font-size:1.5rem}.chart-container{position:relative}
+    .app-404-page .page-title span{font-size:1.5rem}
+    .chart-container{position:relative}
     .app-table-hover>tbody>tr:hover{background-color:#fafbff}
    
     @media(min-width: 1200px){.table-search-form .form-control{min-width:300px}}
@@ -263,46 +278,93 @@ a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0
 
 
 /* Styling for DataTable Pagination */
-.dataTables_wrapper .dataTables_paginate {
-  margin-top: 10px; /* Adjust the top margin as needed */
-  font-size: 14px; /* Adjust the font size as needed */
-}
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-  padding: 8px 12px; /* Adjust the padding as needed */
-  margin: 0 4px; /* Adjust the margin as needed */
-  border: 1px solid #ccc; /* Border color */
-  border-radius: 4px; /* Optional: Round the corners */
-  cursor: pointer;
-}
+  .dataTables_wrapper .dataTables_paginate {
+    margin-top: 10px; /* Adjust the top margin as needed */
+    font-size: 14px; /* Adjust the font size as needed */
+  }
+  
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 8px 12px; /* Adjust the padding as needed */
+    margin: 0 4px; /* Adjust the margin as needed */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Optional: Round the corners */
+    cursor: pointer;
+  }
+  
+  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #f5f5f5; /* Background color on hover */
+  }
+  
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #007bff; /* Background color of the active page */
+    color: #fff; /* Text color of the active page */
+    border-color: #007bff; /* Border color of the active page */
+  }
+  
+  .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    cursor: not-allowed; /* Cursor style for disabled buttons */
+  }
+  
+  /* Optional: Center-align the pagination */
+  .dataTables_wrapper .dataTables_paginate {
+    text-align: center;
+  }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-  background-color: #f5f5f5; /* Background color on hover */
-}
+  #myTable.table {
+    width: 100%;
+    max-width: 100%;
+    padding-top: 2.3rem;
+    background-color: transparent;
+  }
+  #myTable.table th,#myTable.table td {  border-top: 1px solid #dee2e6; }
+  #myTable.table thead th { border-bottom: 2px solid #dee2e6; }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-  background-color: #007bff; /* Background color of the active page */
-  color: #fff; /* Text color of the active page */
-  border-color: #007bff; /* Border color of the active page */
-}
+  #myTable.table tbody td:not(#productTable #myTable td) {
+    max-height: 20px; /* Set your preferred height */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Prevent text from wrapping */
+  }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-  cursor: not-allowed; /* Cursor style for disabled buttons */
-}
+  #productTable #myTable td{
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+  }
 
-/* Optional: Center-align the pagination */
-.dataTables_wrapper .dataTables_paginate {
-  text-align: center;
-}
+ .tooltip-trigger i{
+    cursor: pointer;
+ }
 
+ .custom-tooltip-content{
+    width: 90px;
+ }
+
+ .custom-info-tooltip{
+    width: 180px;
+ }
+/*.tooltip-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1;
+  text-align: left;
+  white-space: wrap;
+  min-width: 150px;
+  font-size: .9rem;
+  max-width: 250px; 
+}*/
+
+
+
+/* size table in the product table */
 .deletebtn{
    padding:.3rem;
    font-size: .8rem;
    display: inline-block;
 }
-
-
-
 
 #sizeTable table {
     border-collapse: collapse;
@@ -381,5 +443,66 @@ a{color:#15a362;text-decoration:none}a:hover{color:#128c54}hr{background:#adb4c0
 }
 
 
-/* date picker for sales report */
+/* switch button for block */
 
+.switchToggle input[type=checkbox]{
+   height: 0; 
+   width: 0; 
+   visibility: hidden; 
+   position: absolute; 
+}
+.switchToggle label {
+   cursor: pointer; 
+   text-indent: -9999px; 
+   width: 50px;
+   max-width: 50px;
+   height: 20px;
+   margin: 0 auto;
+   background: #3e98d3; 
+   display: block; 
+   border-radius: 100px; 
+   position: relative; 
+}
+.switchToggle label:after {
+   content: ''; 
+   position: absolute; 
+   top: 2px; 
+   left: 2px; 
+   width: 16px; 
+   height: 16px; 
+   background: #fff; 
+   border-radius: 90px; 
+   transition: 0.3s; 
+}
+.switchToggle input:checked + label, .switchToggle input:checked + input + label {
+   background: #e06b6b; 
+}
+.switchToggle input + label:before, .switchToggle input + input + label:before {
+   content: 'No';
+   position: absolute; 
+   left: 25px; 
+   width: 16px; 
+   height: 16px; 
+   border-radius: 90px; 
+   transition: 0.3s;      
+   text-indent: 0;   
+   color: #fff; 
+   font-size: .8rem;
+}
+.switchToggle input:checked + label:before, .switchToggle input:checked + input + label:before {
+   content: 'Yes'; 
+   position: absolute; 
+   left: 10px; 
+   width: 16px; 
+   height: 16px; 
+   border-radius: 90px; 
+   transition: 0.3s; 
+   text-indent: 0; 
+   color: #fff; 
+   font-size: .8rem;
+}
+.switchToggle input:checked + label:after, .switchToggle input:checked + input + label:after {
+   left: calc(100% - 2px); 
+   transform: translateX(-100%); 
+}
+.switchToggle label:active:after {width: 60px; } 

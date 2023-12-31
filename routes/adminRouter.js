@@ -1,7 +1,7 @@
 const express = require('express');
 const { getAllUsers, getUser, deleteUser,
         updateUser, blockUser, unblockUser,
-        adminLogin, adminLogout } = require('../controllers/userController');
+        adminLogin, adminLogout, restoreUser } = require('../controllers/userController');
 const { addProduct, getProduct, getAllProducts,
         getAddProduct, deleteProduct, editProduct,
         getEditProduct, restoreProduct } = require('../controllers/productController');
@@ -13,7 +13,8 @@ const { getAllCategories, getAddCategory, addCategory,
         editCategory, deleteCategory, getEditCategory,
         restoreCategory } = require('../controllers/categoryContoller');
 const { getCartList } = require('../controllers/cartController');
-const { getCoupons, addCoupons } = require('../controllers/couponsController');
+const { getCoupons, addCoupons, fetchCoupon,
+        editCoupon, restoreCoupon, deleteCoupon } = require('../controllers/couponsController');
 const { getOrders, orderDetails, changeOrderStatus, 
         generateSalesReport } = require('../controllers/ordersController');
 const { adminAuth, isAdmin, isAdminLoggedIn } = require('../middlewares/authMiddlewares');
@@ -28,6 +29,7 @@ router.post('/login', nocache(), adminAuth, isAdminLoggedIn, adminLogin);
 router.get('/dashboard', nocache(), adminAuth, isAdmin, getDashboard);
 router.get('/users', nocache(), adminAuth, isAdmin, getAllUsers);
 router.get('/delete-user/:id', nocache(), adminAuth, isAdmin, deleteUser);
+router.get('/restore-user/:id', nocache(), adminAuth, isAdmin, restoreUser)
 router.put('/edit-user', nocache(), adminAuth, isAdmin, updateUser);
 router.get('/block-user/:id', nocache(), adminAuth, isAdmin,  blockUser);
 router.get('/unblock-user/:id', nocache(), adminAuth, isAdmin, unblockUser);
@@ -58,8 +60,12 @@ router.get('/order-details', nocache(), adminAuth, isAdmin, orderDetails);
 router.get('/change-order-status/', nocache(), adminAuth, isAdmin, changeOrderStatus);
 router.post('/dashboard/generate-sales-report', nocache(), adminAuth, isAdmin, generateSalesReport);
 router.get('/coupons', nocache(), adminAuth, isAdmin, getCoupons);
-router.post('/add-coupons', nocache(), adminAuth, isAdmin, addCoupons)
-router.get('/logout', nocache(), adminAuth, isAdmin, adminLogout);
+router.post('/add-coupon', nocache(), adminAuth, isAdmin, addCoupons);
+router.get('/fetch-coupon', nocache(), adminAuth, isAdmin, fetchCoupon);
+router.patch('/edit-coupon', nocache(), adminAuth, isAdmin, removeEmptyStrings, editCoupon);
+router.get('/restore-coupon/:id', nocache(), adminAuth, isAdmin, restoreCoupon);
+router.get('/delete-coupon/:id', nocache(), adminAuth, isAdmin, deleteCoupon)
+;router.get('/logout', nocache(), adminAuth, isAdmin, adminLogout);
 
 
 

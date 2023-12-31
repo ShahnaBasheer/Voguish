@@ -1,5 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", function() {
+
     const table = $('#myTable').DataTable({ responsive: true });
     const checkboxes = document.querySelectorAll('.flexSwitchCheck');
     const deletebtns = document.querySelectorAll('.deletebtn');
@@ -9,18 +10,18 @@ document.addEventListener("DOMContentLoaded", function() {
     const addSizeBtn = document.getElementById("addsize");
     const imageSelect = document.querySelectorAll(".imgSelect");
     const editProductForm = document.getElementById('editProductForm');
-    const productForm = document.getElementById('productForm');
+    const productForm = document.getElementById('productForm'); 
+    const editCouponButtons = document.querySelectorAll('.edit-coupon-btn');
+    const editCouponModal = document.getElementById('editCouponModal');
+    const couponEditForm = document.getElementById('couponEditForm');
+  
 
     
+    
     checkboxes?.forEach(checkbox => {
-        const spanElement = checkbox.closest('.form-check').querySelector('.form-switch span');;
-
         checkbox.addEventListener('change',async function() {
             const id = this.dataset.id;
             const route = this.checked ? `block-user/${id}` : `unblock-user/${id}`;
-            if(this.checked){ spanElement.textContent= 'Blocked'; }
-            else spanElement.textContent = '';
-            
             await fetch(route, {method: 'GET',});
         });
     });
@@ -181,25 +182,128 @@ document.addEventListener("DOMContentLoaded", function() {
                 }).catch(error => { console.error('Error:', error); });
         });
     }
+
+    editCouponButtons?.forEach(button => {
+        button.addEventListener('click', async function () {
+            const statusText = document.getElementById('statusText');
+            statusText.classList.remove('alert-primary','alert-danger');
+            statusText.textContent = '';
+            const couponId = this.dataset?.couponid;
+    
+            try {
+                const clonedModal = editCouponModal?.cloneNode(true);
+    
+                // Fetch coupon details using the couponId
+                const response = await fetch(`/admin/fetch-coupon?couponId=${couponId}`);
+    
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch coupon details: ${response?.message}`);
+                }
+    
+                const coupon = await response.json();
+                // Populate the cloned modal fields with the fetched details
+                populateModalFields(clonedModal, coupon);
+    
+                const editCpnBtn = clonedModal.querySelector('#edit-btn');
+    
+                editCpnBtn?.addEventListener('click', async function (e) {
+                    const updatedCoupon = {
+                        couponTitle: clonedModal.querySelector('#couponTitle2').value,
+                        code: clonedModal.querySelector('#couponCode2').value,
+                        discount: clonedModal.querySelector('#couponDiscount2').value,
+                        maxDiscountAmount: clonedModal.querySelector('#maxDiscount2').value,
+                        minPurchaseAmount: clonedModal.querySelector('#minAmount2').value,
+                        usageLimit: clonedModal.querySelector('#usageLimit2').value,
+                        targetUserGroups: clonedModal.querySelector('#userGroups2').value,
+                        isForAllUsers: clonedModal.querySelector('#isForAllUsers2').value,
+                        startDat: clonedModal.querySelector('#startDate2').value,
+                        endDate: clonedModal.querySelector('#endDate2').value,
+                        status: clonedModal.querySelector('#statusField2').value,
+                        id: clonedModal.querySelector('#id-field').value,
+                    };
+        
+                    // Send PATCH request to update the coupon
+                    const patchResponse = await fetch(`/admin/edit-coupon`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updatedCoupon),
+                    });
+                    
+                    const data = await patchResponse.json();
+
+                    if (patchResponse.ok) {
+                        clonedModal.querySelector('#modal-close').click();
+                        statusText.classList.remove('alert-primary','alert-danger');
+                        statusText.classList.add('alert-primary');
+                        statusText.textContent = data.message;
+                    } else {
+                        statusText.classList.remove('alert-primary','alert-danger');
+                        statusText.classList.add('alert-danger');
+                        statusText.textContent = data.message;
+                    }
+                });
+    
+                new bootstrap.Modal(clonedModal).show();
+            } catch (error) {
+                console.log(error);
+            }
+        });
+    });
+
+    
+
+
+
+    function colorStock(){
+        const sizeData = {};
+        const sizeDataInput = document.getElementById('sizeDataInput');
+        const sizeRows = Array.from(sizeTableBody.children);
+        
+        sizeRows?.forEach(row => {
+            const size = row.querySelector('td:first-child input').value.toUpperCase();
+            const colorCells = Array.from(row.querySelectorAll('.addInfo-text.color'));
+            const stockCells = Array.from(row.querySelectorAll('.addInfo-text.stock'));
+            const sizeInfo = [];
+    
+            for (let i = 0; i < colorCells.length; i++) {
+                const color = colorCells[i].value.trim();
+                const stock = parseInt(stockCells[i].value, 10);
+                sizeInfo.push({ color, stock });
+            }
+            sizeData[size] = sizeInfo;
+        }); 
+        sizeDataInput.value = JSON.stringify(sizeData);
+    }
+    
+    function populateModalFields(modal, coupon) {
+        modal.querySelector('#couponTitle2').value = coupon?.couponTitle;
+        modal.querySelector('#couponCode2').value = coupon?.code;
+        modal.querySelector('#couponDiscount2').value = coupon?.discount;
+        modal.querySelector('#maxDiscount2').value = coupon?.maxDiscountAmount;
+        modal.querySelector('#minAmount2').value = coupon?.minPurchaseAmount;
+        modal.querySelector('#usageLimit2').value = coupon?.usageLimit;
+        modal.querySelector('#userGroups2').value = coupon?.targetUserGroups; // Adjust based on your data structure
+        modal.querySelector('#isForAllUsers2').checked = coupon?.isForAllUsers;
+        const startDateInput = modal.querySelector('#startDate2');
+        startDateInput.value = formatAsYYYYMMDD(coupon?.startDate);
+    
+        const endDateInput = modal.querySelector('#endDate2');
+        endDateInput.value = formatAsYYYYMMDD(coupon?.endDate);
+        modal.querySelector('#statusField2').value = coupon?.status;
+        modal.querySelector('#id-field').value = coupon?._id;
+    }
+    
+    // Function to format a date as "yyyy-mm-dd"
+    function formatAsYYYYMMDD(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
 });
 
-function colorStock(){
-    const sizeData = {};
-    const sizeDataInput = document.getElementById('sizeDataInput');
-    const sizeRows = Array.from(sizeTableBody.children);
-    
-    sizeRows?.forEach(row => {
-        const size = row.querySelector('td:first-child input').value.toUpperCase();
-        const colorCells = Array.from(row.querySelectorAll('.addInfo-text.color'));
-        const stockCells = Array.from(row.querySelectorAll('.addInfo-text.stock'));
-        const sizeInfo = [];
 
-        for (let i = 0; i < colorCells.length; i++) {
-            const color = colorCells[i].value.trim();
-            const stock = parseInt(stockCells[i].value, 10);
-            sizeInfo.push({ color, stock });
-        }
-        sizeData[size] = sizeInfo;
-    }); 
-    sizeDataInput.value = JSON.stringify(sizeData);
-}

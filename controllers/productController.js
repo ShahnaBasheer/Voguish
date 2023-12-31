@@ -12,7 +12,7 @@ const { cartQty,getAllBrands } = require('../helperfns');
 //get a product
 const getAllProducts = asyncHandler(async (req,res) => {
     const products = await Product.find().populate('brand').populate('category').lean();
-    res.render('admin/products',{admin:true,products,adminInfo:req?.user})
+    res.render('admin/products',{admin:true,products,adminInfo:req?.user,__active: 'products'})
 });
 
 const getProduct = asyncHandler(async (req, res) => {

@@ -9,23 +9,14 @@ const { cartQty, genderBrandFilter } = require('../helperfns');
 //get a brand 
 const getBrand = asyncHandler( async(req,res) => {
     const { brand } = req?.query;
-    try {
-        const brandSelected = await Brand.findOne({ brand }).lean();
-        await genderBrandFilter('brand', brandSelected, req, res);      
-    } catch (error) {
-        next(error);
-
-    }        
+    const brandSelected = await Brand.findOne({ brand,isDeleted: false}).lean();
+    await genderBrandFilter('brand', brandSelected, req, res);       
 });
 
-//get Brand Page 
+//get Brand Page in admin side
 const getAllBrands = asyncHandler (async (req, res) => {
-    try{
-         const brands = await Brand.find().lean();
-         res.render('admin/brand',{admin:true,brands,adminInfo:req?.user})
-    } catch(error) {
-         throw new Error(error);
-    }
+      const brands = await Brand.find().lean();
+      res.render('admin/brand',{admin:true,brands,adminInfo:req?.user,__active: 'brands'})
 });
 
 //add Brands
@@ -67,14 +58,10 @@ const editBrand = asyncHandler( async (req,res) => {
 const deleteBrand = asyncHandler( async (req,res) => {
     const { id } = req.params;
     validateMongodbId(id);
-    try{
-        const brand = await Brand.findByIdAndUpdate(id,{isDeleted:true});
-        await Product.updateMany({ brand, isDeleted:false},
-            {$set : {isDeletedBy:true}});
-        res.redirect('/admin/brands');
-    } catch(error){
-        throw new Error(error);
-    }
+    const brand = await Brand.findByIdAndUpdate(id,{isDeleted:true});
+    await Product.updateMany({ brand, isDeleted:false},
+        {$set : {isDeletedBy:true}});
+    res.redirect('/admin/brands');
 });
 
 const restoreBrand = asyncHandler( async (req,res) =>{

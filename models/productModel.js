@@ -5,6 +5,15 @@ const productSchema = new mongoose.Schema({
     title: {
         type: String,
         trim: true,
+        validate: [
+            {
+                validator: function (value) {
+                    // Check if the title length exceeds the specified limit
+                    return value.length <= 70;
+                },
+                message: 'Title must not exceed 70 characters.',
+            },
+        ],
     },
     slug: {
         type: String,
@@ -96,6 +105,10 @@ const productSchema = new mongoose.Schema({
     { timestamps : true } 
 );
 
+
+
+
+
 // Pre-save hook to calculate price from mrp and discount before saving the product
 productSchema.pre('save', function(next) {
     if (this.isDeleted) {
@@ -110,31 +123,12 @@ productSchema.pre('save', function(next) {
         })
         this.totalStock = stock;
     }  
+
+    const validationError = this.validateSync();
+    if (validationError) next(validationError);
     next();
 });
 
 //Export the model
 module.exports = mongoose.model('Product', productSchema);
 
-/*
- sizes: [{
-        size: {
-            type: String,
-        },
-        stock: {
-            type: Number,
-            required: true,
-            default: 0,
-        },
-    }],
-     sizes: {
-        type: Map,
-        of: {
-          stock: {
-            type: Number,
-            required: true,
-          },
-        },
-        required: true,
-    },
-*/ 

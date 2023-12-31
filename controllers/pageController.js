@@ -184,6 +184,7 @@ const getDashboard = asyncHandler( async (req,res) => {
    });
  
    res.render('admin/dashboard',{admin:true,adminInfo:req?.user,
+        __active: 'dashboard',
         WeeklySales: JSON.stringify(updatedWeeklySales),
         YearlySales: JSON.stringify(YearlySales),
         MonthlySales: JSON.stringify(updatedMonthlySales),

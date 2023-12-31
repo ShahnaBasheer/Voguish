@@ -5,8 +5,38 @@ const { calculateDiscount, findCart } = require('../helperfns')
 
 const getCoupons = asyncHandler(async (req, res) => {
     const coupons = await Coupon.find().lean();
-    res.render('admin/coupons',{admin:true,adminInfo:req?.user,coupons});
+    res.render('admin/coupons',{admin:true,adminInfo:req?.user,coupons,__active: 'coupons'});
 });
+
+
+const fetchCoupon = asyncHandler(async (req, res) => {
+    try{
+        const { couponId } = req.query;
+        const coupon = await Coupon.findById(couponId).lean();
+        res.status(200).json(coupon);
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({statusText:error.message});
+    }
+});
+
+
+const editCoupon = asyncHandler( async(req, res) => {
+    try {
+        
+        const coupon = await Coupon.findByIdAndUpdate(req?.body?.id, req?.body);
+        if(coupon){
+            await coupon.save();
+            res.status(200).json({message: 'Coupon Updated Successfully!'});
+        }else{
+            res.status(404).json({message: 'Failed to update coupon!'});
+        } 
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+
+});
+
 
 const addCoupons = asyncHandler(async (req, res) => {
     const { couponTitle,code,startDate,endDate,discount,
@@ -37,6 +67,18 @@ const addCoupons = asyncHandler(async (req, res) => {
 });
 
 
+const restoreCoupon = asyncHandler( async (req, res) => {
+    const { id }  = req?.params;
+    const coupon = await Coupon.findByIdAndUpdate(id,{isDeleted:false});
+    res.redirect('/admin/coupons');
+});
+
+const deleteCoupon = asyncHandler( async (req, res) => {
+    const coupon = await Coupon.findByIdAndUpdate(id,{isDeleted:true});
+    res.redirect('/admin/coupons');
+});
+
+
 const applyCoupon = asyncHandler(async (req, res) => {
     const { couponCode } = req.body;
     const cart = await findCart(req?.user); 
@@ -47,7 +89,7 @@ const applyCoupon = asyncHandler(async (req, res) => {
 
     // Find the coupon based on the provided code
     const coupon = await Coupon.findOne({ code: couponCode });
-    // Check if the coupon exists and is active
+
     if (coupon?.status === 'Active') {
         const discountAmount = await calculateDiscount(coupon, Number(cart?.totalPrice), res);
         if (discountAmount){
@@ -64,5 +106,6 @@ const applyCoupon = asyncHandler(async (req, res) => {
 
 
 
-module.exports = { getCoupons, 
-    applyCoupon, addCoupons }
+module.exports = { getCoupons, fetchCoupon, 
+    applyCoupon, addCoupons, editCoupon,
+    restoreCoupon, deleteCoupon }

@@ -1,5 +1,7 @@
 const moment = require('moment');
 
+
+
 const removeGMT = function(dateString) {
     //const formattedDate = moment(dateString).utcOffset('+05:30').format('DD/MM/YYYY hh:mm A');
     return moment.utc(dateString).local().format('DD/MM/YYYY');
@@ -39,7 +41,7 @@ const calculateTotal = function(sizes) {
 const uniqueColors = function(sizes){
     let colors = new Set();
     for(let key in sizes) { 
-        Array.from(sizes[key]).forEach((item)=>{
+        Array.from(sizes[key])?.forEach((item)=>{
            colors.add(item.color);
         });
     }
