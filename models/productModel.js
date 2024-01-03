@@ -114,7 +114,7 @@ productSchema.pre('save', function(next) {
     if (this.isDeleted) {
         return next(new Error('Cannot save deleted document.'));
     }
-    this.price = Math.ceil(this.mrp - (this.mrp * (this.discount / 100)));
+    this.price = Math.ceil(this.mrp - (this.mrp * ((this?.discount || 0) / 100)));
 
     if(this.sizes){
         let stock = 0;

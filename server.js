@@ -12,6 +12,7 @@ const { removeGMT, isEqualTo, roleEquals, calculate,
       reviewFormat, getProperty, andFunction, orFunction,
       ORDdate, findIdx, isGreaterThan } = require('./helpers');
 const session = require('express-session');
+
 const flash = require('express-flash');
 const cors = require('cors');
 const dotenv = require('dotenv').config();
@@ -48,6 +49,7 @@ app.use(flash());
 
 app.use(cookieParser());
 app.use(logger('dev'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

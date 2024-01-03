@@ -1,6 +1,8 @@
 const Product = require('../models/productModel');
 const Brand = require('../models/brandModel');
 const Category = require('../models/categoryModel');
+const CartItem = require('../models/cartItemModel');
+const Cart = require('../models/cartModel');
 const { createUniqueSlug } = require('../helperfns')
 const asyncHandler = require('express-async-handler');
 const fs = require('fs').promises;
@@ -58,6 +60,7 @@ const getProduct = asyncHandler(async (req, res) => {
     });
 });
 
+
 //create a product
 const addProduct = asyncHandler(async (req,res) => {    
     const { 
@@ -80,12 +83,14 @@ const addProduct = asyncHandler(async (req,res) => {
     res.redirect('/admin/view-products');
 });
 
+
 //Display Add product-page
 const getAddProduct = asyncHandler( async (req,res) => {
     const categories = await Category.find().lean();
     const brands = await Brand.find().lean();
     res.render('admin/addProducts',{admin:true,categories,brands,adminInfo:req?.user});
 });
+
 
 //Update a product
 const getEditProduct = asyncHandler(async (req,res) => {
@@ -99,53 +104,116 @@ const getEditProduct = asyncHandler(async (req,res) => {
       {admin:true,product,brands,categories,adminInfo:req?.user,gender:gender});
 });
 
+
 //Update a product
 const editProduct = asyncHandler(async (req,res) => {
-    let { slug } = req?.params;
 
-    let existingProduct = await Product.findOne({ slug });
-    if(req?.body){
-        const propertiesToExtract = [
-            'material', 'type', 'occasion', 'pattern', 'neckline', 'sleeve', 'fit',
-            'closure', 'typeOfWork', 'legStyle', 'riseStyle', 'padding', 'coverage',
-            'wiring', 'careInstructions', 'packContains'
-        ];
+    try{
+        let { slug } = req?.params;
+        let selectedImg = JSON.parse(req?.body?.selectedImg);
+
+        let existingProduct = await Product.findOne({ slug });
+        if(req?.body){
+            const propertiesToExtract = [
+                'material', 'type', 'occasion', 'pattern', 'neckline', 'sleeve', 'fit',
+                'closure', 'typeOfWork', 'legStyle', 'riseStyle', 'padding', 'coverage',
+                'wiring', 'careInstructions', 'packContains'
+            ];  
         
-        propertiesToExtract?.forEach(property => {
-            const field = req?.body[property];
-            if (field !== undefined) {
-                existingProduct.moreProductInfo[property] = field !== '' ? field : undefined;
-                delete field;
+            propertiesToExtract?.forEach(property => {
+                const field = req?.body[property];
+                if(field){
+                    existingProduct.moreProductInfo[property] = (field !== '') ? field : undefined;
+                    delete req.body[field];
+                }  
+            });      
+           
+            if (req?.body?.sizeData) {
+                existingProduct.sizes = JSON.parse(req.body.sizeData);
             }
-        });        
-       
-        if (req.body?.sizeData) {
-            existingProduct.sizes = JSON.parse(req.body.sizeData);
-        }
-        if (req.body?.images) {
-            for (const key in req.body.images) {
-                await fs.writeFile('uploads/' + existingProduct?.images[key], req?.body?.images[key]);
-            }
-            delete req.body.images;
-        }        
-        if(req.body?.title){
-            existingProduct.title = req?.body?.title;
-            existingProduct.slug = await createUniqueSlug(req?.body?.title);
-            delete req?.body?.title;
-        }
-        for (const key in req?.body) {
-            existingProduct[key] = req?.body[key];
-        }
-    }
-    await existingProduct?.save();
-    if(req.body?.mrp || req.body?.discount){
-       //let cartitem = await CartItem.find({product: existingProduct.id});
-       //let cart = await Cart.find({items})
-       //await cartitem.save();
-    } 
-    res.json({ message: "Updated successfully", redirect: "/admin/view-products" });
 
+            if(req.body?.title){
+                existingProduct.title = req?.body?.title;
+                existingProduct.slug = await createUniqueSlug(req?.body?.title);
+                delete req?.body?.title;
+            }
+
+            if (selectedImg) {      
+                
+                let values = {};
+                if(existingProduct?.images) values = { ...existingProduct?.images };
+                
+                for (const img of selectedImg) {
+                    let imagePath;
+
+                    if(existingProduct?.images){
+                        const existImg = existingProduct?.images?.hasOwnProperty(img);
+                        const newFile = req?.body?.images?.hasOwnProperty(img)
+
+                        if ( existImg && newFile) {
+                            //Already existing file, replace
+                            try {                        
+                                await fs.unlink('uploads/' + existingProduct?.images[img]);
+                            } catch (err) {
+                                if (err) {
+                                    console.log(`File does not exist or something else`);
+                                }
+                            }
+
+                        } else if ((!existImg && !newFile) || !newFile) {
+                            continue;
+                        }
+                    }
+
+                    imagePath = `${Date.now()}-processed.webp`;
+                    values[img] = imagePath;
+
+                    await fs.writeFile('uploads/' + imagePath, req?.body?.images[img], (err) => {
+                        if(err){
+                            console.error(`Error writing file: ${err.message}`);
+                            return res.status(404).json({ message: `Error writing file: ${err.message}` });
+                        }
+                    });
+                }
+            
+                for (const key in existingProduct?.images) {
+                    if (!selectedImg.includes(key)) {
+                        try {                        
+                            await fs.unlink('uploads/' + existingProduct?.images[key]);
+                        } catch (err) {
+                            if (err) {
+                                console.log(`File does not exist or something else`);
+                            }
+                        }
+                        delete values[key];
+                    }
+                }
+                existingProduct.images = values;
+                delete req.body.images;
+            } else {
+                return res.status(422).json({ message: `Product should have images!` })
+            }
+                   
+            for (const key in req?.body) {
+                existingProduct[key] = req?.body[key];
+            }
+        }
+        await existingProduct?.save();
+        if(req.body?.mrp || req.body?.discount){
+           let cartItemIds = await CartItem.find({product: existingProduct?.id}).distinct('_id');
+
+           const carts = await Cart.find({ 'items.cartItem': { $in: cartItemIds } });
+           for (const item of carts){ await item.save();}
+           
+        } 
+        res.status(200).json({ message: "Updated successfully", redirect: "/admin/view-products" });
+    } catch(error){
+        console.log(error)
+        res.status(400).json({ message: "Somethings has happened"});
+    }
+    
 });
+
 
 //Delete a product
 const deleteProduct = asyncHandler(async (req,res) => {
@@ -158,6 +226,7 @@ const deleteProduct = asyncHandler(async (req,res) => {
     await product?.save();
     res.redirect('/admin/view-products');
 });
+
 
 //Retrieve the deleted  product
 const restoreProduct = asyncHandler(async (req,res) => {

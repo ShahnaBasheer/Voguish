@@ -12,73 +12,77 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label" for="title">Product Title</label>
-                                        <input type="text" id="title" class="form-control" name="title" placeholder="product title" required>
+                                        <input type="text" id="title" class="form-control" name="title" placeholder="product title">
                                     </div>
+                                    <div class="alert-message fw-semibold" id="title-message"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label" for="gender">Gender</label>
-                                        <select class="form-select" placeholder="Choose Gender" id="gender" name="gender" required>
+                                        <select class="form-select" placeholder="Choose Gender" id="gender" name="gender">
                                             <option value=>Select gender</option>
                                             <option value="women">Women</option>
                                             <option value="men">Men</option>
                                             <option value="girls">Girls</option>
                                             <option value="boys">Boys</option>
                                         </select>
-                                    </div>                                
+                                    </div>  
+                                    <div class="alert-message fw-semibold" id="gender-message"></div>                              
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label" for="category">Category</label>
-                                        <select class="form-select" placeholder="Choose a Category" id="category" name="category" required>
+                                        <select class="form-select" placeholder="Choose a Category" id="category" name="category">
                                             <option value=>Select a Category</option>
                                             {{#each categories}}
                                                 <option value={{this._id}}>
                                                   {{this.category}}</option>
                                             {{/each}}
-  
                                         </select>
                                     </div>
+                                    <div class="alert-message fw-semibold" id="category-message"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label" for="brand">Brand</label>
-                                        <select class="form-select" placeholder="Choose a brand" id="brand" name="brand" required>
+                                        <select class="form-select" placeholder="Choose a brand" id="brand" name="brand">
                                             <option value=>Select a brand</option>
                                             {{#each brands}}
                                                 <option value={{this._id}}>
                                                   {{this.brand}}</option>
                                             {{/each}}
-  
                                         </select>
                                     </div>
+                                    <div class="alert-message fw-semibold" id="brand-message"></div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Discount</label>
+                                        <label class="form-label" for="discount">Discount</label>
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text" id="basic-addon1">
+                                            <span class="input-group-text">
                                                 <i class="fa-solid fa-percent"></i></span>
                                             <input type="text" class="form-control" placeholder="discount"
-                                                aria-describedby="basic-addon1" name="discount" required>
+                                                id="discount" value="0" name="discount">
                                         </div>
                                     </div>
+                                    <div class="alert-message fw-semibold" id="discount-message"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">MRP</label>
+                                        <label class="form-label" for="mrp">MRP</label>
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text" id="basic-addon2">
+                                            <span class="input-group-text">
                                                 <i class="fa-solid fa-money-bill"></i>
                                             </span>
                                             <input type="text" class="form-control" placeholder="MRP Price"
-                                                aria-describedby="basic-addon2" name="mrp" required>
+                                                id="mrp" name="mrp">
                                         </div>
                                     </div>
+                                    <div class="alert-message fw-semibold" id="mrp-message"></div>
                                 </div>
                             </div>
                             <h5 class="py-3">Select Size and Set Stock Counts</h5>
@@ -88,7 +92,8 @@
                                         <div class="d-flex">
                                             <label for="sizes" class="pe-4 form-label">Select Size </label>
                                             <select class="form-select" id="sizes">
-                                                <option value=></option>
+                                                <option value="Free">Select a size</option>
+                                                <option value="Free">Free</option>
                                                 <option value="XS">XS</option>
                                                 <option value="S">S</option>
                                                 <option value="M">M</option>
@@ -96,7 +101,7 @@
                                                 <option value="XL">XL</option>
                                                 <option value="2XL">2XL</option>
                                                 <option value="3XL">3XL</option>
-                                                
+
                                                 <!-- Add more size options as needed -->
                                             </select>
                                         </div>
@@ -107,7 +112,8 @@
                                     </div>
 
                                     <div id="sizeTable" style="display: none;">
-                                        <h4>Stock Counts</h4>
+                                        <h6>Stock Counts</h6>
+                                        <div class="alert-message fw-semibold" id="size-message"></div>
                                         <table>
                                             <thead>
                                                 <tr>
@@ -129,94 +135,81 @@
                                             name="description" id="description"></textarea>
                                     </div>
                                 </div>
+                                <div class="alert-message fw-semibold" id="description-message"></div>
                             </div>
-                            <div class="row">
-                                <h5 class="card-title mb-3">Upload Image</h5>
-                                <div class="col-6 mb-3 d-md-flex">
-                                    <div class="imgSelect">
-                                        <div class="imagePreview" class="pe-5"></div>
-                                        <div class="product-img pt-4">
-                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
-                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i>
-                                                 <span class="fs-6"> Select Front Image</span></p>
-                                                <input type="file" class="upload" name="img-1" required>
-                                            </div>  
+                            
+                            <h5 class="card-title mb-3 mt-5 ">Upload Image</h5>
+                            <div class="row"> 
+                                <div class="col-12" id="file-upload">
+                                    <button class="file-upload-btn" type="button">Add Image</button>
+                                    <div class="image-upload-wrap py-5">
+                                        <!--<input class="file-upload-input" id="image" name="image" type="file" accept="image/*" multiple>-->
+                                        <div class="drag-text"><h3>Add Images As Per Your Needed Order</h3></div>
+                                        <div class="file-upload-content pb-5">
+                                            <!-- Images will be appended here -->
                                         </div>
-                                    </div>
+                                        <div class="limit-message" style="display:none;">Maximum limit reached (4 images)</div>
+                                    </div>   
                                 </div>
-                                <div class="col-6 mb-3 d-md-flex">
-                                    <div class="imgSelect">
-                                        <div class="imagePreview" class="pe-5"></div>
-                                        <div class="product-img pt-4">
-                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
-                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i> select other Image</p>
-                                                <input type="file" class="upload" name="img-2" required>
-                                            </div>  
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 mb-3 d-md-flex">
-                                    <div class="imgSelect">
-                                        <div class="imagePreview" class="pe-5"></div>
-                                        <div class="product-img pt-4">
-                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
-                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i> select other Image</p>
-                                                <input type="file" class="upload" name="img-3" required>
-                                            </div>  
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 mb-3 d-md-flex">
-                                    <div class="imgSelect">
-                                        <div class="imagePreview" class="pe-5"></div>
-                                        <div class="product-img pt-4">
-                                            <div class="file-upload btn btn-info waves-effect waves-light text-white">
-                                                <p><i class="fa-solid fa-upload bg-dark p-1"></i> select other Image</p>
-                                                <input type="file" class="upload" name="img-4">
-                                            </div>  
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="alert-message fw-semibold" id="image-message"></div>
                             </div>
-                            <h5 class="card-title mb-3">General Info</h5>
-                            <div class="table-responsive">
+
+                            <h5 class="card-title mt-5 mb-3">General Info</h5>
+                            <div class="table-responsive" id="moreInfo">
                                 <table class="table table-bordered">
                                     <tbody>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="material" placeholder="Material"></td>
-                                            <td><input type="text" class="form-control" name="type" placeholder="Type"></td>
+                                            <td><input type="text" class="form-control" id="material" name="material" placeholder="Material">
+                                                <div class="alert-message fw-semibold" id="material-message"></div></td>
+                                            <td><input type="text" class="form-control" id="type" name="type" placeholder="Type">
+                                                <div class="alert-message fw-semibold" id="type-message"></div></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="occassion" placeholder="Occassion"></td>
-                                            <td><input type="text" class="form-control" name="pattern" placeholder="Pattern"></td>
+                                            <td><input type="text" class="form-control" id="occassion" name="occassion" placeholder="Occassion">
+                                                <div class="alert-message fw-semibold" id="occassion-message"></div></td>
+                                            <td><input type="text" class="form-control" id="pattern" name="pattern" placeholder="Pattern">
+                                                <div class="alert-message fw-semibold" id="pattern-message"></div></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="neckline" placeholder="Neckline Type"></td>
-                                            <td><input type="text" class="form-control" name="sleeve" placeholder="Sleeve Type"></td>
+                                            <td><input type="text" class="form-control" id="neckline" name="neckline" placeholder="Neckline Type">
+                                                <div class="alert-message fw-semibold" id="neckline-message"></div></td>
+                                            <td><input type="text" class="form-control" id="sleeve" name="sleeve" placeholder="Sleeve Type">
+                                                <div class="alert-message fw-semibold" id="sleeve-message"></div></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="fit" placeholder="Fit"></td>
-                                            <td><input type="text" class="form-control" name="closure" placeholder="Closure"></td>
+                                            <td><input type="text" class="form-control" id="fit" name="fit" placeholder="Fit">
+                                                <div class="alert-message fw-semibold" id="fit-message"></div></td>
+                                            <td><input type="text" class="form-control" id="closure" name="closure" placeholder="Closure">
+                                                <div class="alert-message fw-semibold" id="closure-message"></div></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="typeOfWork" placeholder="Type Of Work"></td>
-                                            <td><input type="text" class="form-control" name="legStyle" placeholder="Leg Style"> </td>
+                                            <td><input type="text" class="form-control" id="typeOfWork" name="typeOfWork" placeholder="Type Of Work">
+                                                <div class="alert-message fw-semibold" id="typeOfWork-message"></div></td>
+                                            <td><input type="text" class="form-control" id="legStyle" name="legStyle" placeholder="Leg Style">
+                                                <div class="alert-message fw-semibold" id="legStyle-message"></div></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="riseStyle" placeholder="RiseStyle"></td>
-                                            <td><input type="text" class="form-control" name="padding" placeholder="Padding"></td>
+                                            <td><input type="text" class="form-control" id="riseStyle" name="riseStyle" placeholder="RiseStyle">
+                                                <div class="alert-message fw-semibold" id="riseStyle-message"></div></td>
+                                            <td><input type="text" class="form-control" id="padding" name="padding" placeholder="Padding">
+                                                <div class="alert-message fw-semibold" id="padding-message"></div></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="coverage" placeholder="Coverage"></td>
-                                            <td><input type="text" class="form-control" name="wiring" placeholder="Wiring"></td>
+                                            <td><input type="text" class="form-control" id="coverage" name="coverage" placeholder="Coverage">
+                                                <div class="alert-message fw-semibold" id="coverage-message"></div></td>
+                                            <td><input type="text" class="form-control" id="wiring" name="wiring" placeholder="Wiring">
+                                                <div class="alert-message fw-semibold" id="wiring-message"></div></td>
                                         </tr>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="packContains" placeholder="Packa Contains"></td>
+                                            <td><input type="text" class="form-control" id="packContains" name="packContains" placeholder="Packa Contains">
+                                                <div class="alert-message fw-semibold" id="packContains-message"></div></td>
                                             <td>
                                                 <div class="form-floating">
-                                                    <textarea class="form-control" name="careInstructions" id="floatingTextarea"></textarea>
-                                                    <label for="floatingTextarea">Care Instructions</label>
+                                                    <textarea class="form-control" id="careInstructions" name="careInstructions" id="careInstructions">
+                                                    </textarea>
+                                                    <label for="careInstructions">Care Instructions</label>
                                                 </div>
+                                                <div class="alert-message fw-semibold" id="careInstructions-message"></div>
                                             </td>
                                         </tr>
                                     </tbody>

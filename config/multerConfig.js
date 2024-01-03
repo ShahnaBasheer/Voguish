@@ -15,11 +15,14 @@ const imageFields = [
 
 const upload = multer({ storage: storage }).fields(imageFields);
 const processImages = async (req, res, next) => {
+  
   try {
-    if (req.files) {
+    
+    if (req?.files) {
+      
       const processedImages = {};
 
-      for (const key in req.files) {
+      for (const key in req?.files) {
         const file = req.files[key][0];
         const metadata = await sharp(file.buffer).metadata();
         const desiredWidth = 800;
@@ -30,19 +33,19 @@ const processImages = async (req, res, next) => {
           .webp()
           .toBuffer();
 
-        if (req.method === 'PATCH') {
-            processedImages[key] = processedImageBuffer;
-        }else{
-           const imagePath = `${Date.now()}-processed.webp`;
-           await fs.writeFile('uploads/' + imagePath, processedImageBuffer);
-           processedImages[key] = imagePath;
-        }  
+        if(req.method == "PATCH"){
+             processedImages[key] = processedImageBuffer;
+        } else {
+             const imagePath = `${Date.now()}-processed.webp`;
+             await fs.writeFile('uploads/' + imagePath, processedImageBuffer);
+             processedImages[key] = imagePath;
+        }    
       }
       req.body.images = processedImages;
     }
     next();
   } catch (error) {
-    next(error);
+      next(error);
   }
 };
 

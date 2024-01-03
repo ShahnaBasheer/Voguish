@@ -1,307 +1,316 @@
-<div class="app-wrapper">
-    <div class="row mx-3 my-5">
-        <!-- Column -->
-        <div class="col-lg-12 py-5">
-            <div class="card py-4">
-                <div class="card-body mx-3">
-                    <form enctype="multipart/form-data" id="editProductForm"
-                        class="needs-validation">
-                        <div class="form-body">
-                            <h4 class="card-title pb-3">EDIT PRODUCT</h4>
-                            <hr>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="title">Product Title</label>
-                                        <input type="text" id="title" class="form-control" name="title" 
-                                           value="{{product.title}}" placeholder="product title" required>
-                                        <div class="invalid-feedback">Please choose a title</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="gender">Gender</label>
-                                        <select class="form-select" placeholder="Choose Gender" id="gender" name="gender">
-                                            <option value={{product.gender}}>{{product.gender}}</option>
-                                            {{#each gender}}
-                                                 {{#unless (isEqualTo @root/product.gender this)}}
-                                                      <option value={{this}}>{{this}}</option>
-                                                 {{/unless}}  
-                                            {{/each}}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="category">Category</label>
-                                        <select class="form-select" placeholder="Choose a Category" id="category" name="category" required>
-                                            <option value={{product.category._id}}>{{product.category.category}}</option>
-                                            {{#each categories}}
-                                                 {{#unless (isEqualTo @root/product.category.category this.category)}}
-                                                      <option value={{this._id}}>{{this.category}}</option>
-                                                 {{/unless}}  
-                                            {{/each}} 
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="brand">Brand</label>
-                                        <select class="form-select" placeholder="Choose a brand" id="brand" name="brand" required>            
-                                            <option value={{product.brand._id}}>{{product.brand.brand}}</option>
-                                            {{#each brands}}
-                                                 {{#unless (isEqualTo @root/product.brand.brand this.brand)}}
-                                                      <option value={{this._id}}>{{this.brand}}</option>
-                                                 {{/unless}}  
-                                            {{/each}}                                           
-                                        </select>
-                                        <div class="invalid-feedback">Please choose a brand</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="hidden" name="slug" value="{{product.slug}}" id="slug" required>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Discount</label>
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text" id="basic-addon1">
-                                                <i class="ti-money"></i></span>
-                                            <input type="text" class="form-control" placeholder="discount"
-                                                aria-describedby="basic-addon1" name="discount" value="{{product.discount}}"required>
+
+                                                                                                       
+    <div class="app-wrapper">
+        <div class="row mx-3 my-5">
+            <!-- Column -->
+            <div class="col-lg-12 py-5">
+                <div class="card py-4">
+                    <div class="card-body mx-3">
+                        <form enctype="multipart/form-data" id="editProductForm"
+                            class="needs-validation">
+                            <div class="form-body">
+                                <h4 class="card-title pb-3">EDIT PRODUCTS</h4>
+                                <hr>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="title">Product Title</label>
+                                            <input type="text" id="title" class="form-control" name="title" placeholder="product title"
+                                               value="{{product.title}}">
                                         </div>
+                                        <div class="alert-message fw-semibold" id="title-message"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="gender">Gender</label>
+                                            <select class="form-select" placeholder="Choose Gender" id="gender" name="gender">
+                                                <option value="{{product.gender}}">{{product.gender}}</option>
+                                                {{#each gender}}
+                                                     {{#unless (isEqualTo @root/product.gender this)}}
+                                                          <option value={{this}}>{{this}}</option>
+                                                     {{/unless}}  
+                                                {{/each}}
+                                            </select>
+                                        </div>  
+                                        <div class="alert-message fw-semibold" id="gender-message"></div>                              
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">MRP</label>
-                                        <div class="input-group mb-3">
-                                            <span class="input-group-text" id="basic-addon2"><i class="ti-cut"></i></span>
-                                            <input type="text" class="form-control" placeholder="MRP Price"
-                                                aria-describedby="basic-addon2" name="mrp" value="{{product.mrp}}" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <h5 class="py-3">Select Size and Set Stock Counts</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <div class="d-flex flex-wrap flex-md-nowrap mb-5" id="size">
-                                        <div class="d-flex">
-                                            <label for="sizes" class="pe-4 form-label">Select Size </label>
-                                            <select class="form-select" id="sizes">
-                                                <option value=></option>
-                                                <option value="XS">XS</option>
-                                                <option value="S">S</option>
-                                                <option value="M">M</option>
-                                                <option value="L">L</option>
-                                                <option value="XL">XL</option>
-                                                <option value="2XL">2XL</option>
-                                                <option value="3XL">3XL</option>
-                                                <!-- Add more size options as needed -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="category">Category</label>
+                                            <select class="form-select" placeholder="Choose a Category" id="category" name="category">
+                                                <option value="{{product.category._id}}">{{product.category.category}}</option>
+                                                {{#each categories}}
+                                                     {{#unless (isEqualTo @root/product.category.category this.category)}}
+                                                          <option value="{{this._id}}">{{this.category}}</option>
+                                                     {{/unless}}  
+                                                {{/each}} 
                                             </select>
                                         </div>
-                                        <div class="input-group mt-sm-0 mt-4" id="addsizebtn">
-                                           <input type="text" class="form-control" placeholder="Add Size" id="newSizeInput">
-                                           <button class="btn btn-primary" type="button" id="addsize">Add</button>
-                                        </div>
+                                        <div class="alert-message fw-semibold" id="category-message"></div>
                                     </div>
-
-                                    <div id="sizeTable">
-                                        <h4>Stock Counts</h4>
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>Size</th>
-                                                    <th>Stock</th>
-                                            </thead>
-                                            <tbody id="sizeTableBody">
-                                                </tr> 
-                                                   {{#each product.sizes}}
-                                                <tr>
-                                                   <td><input type="text" value={{@key}}></td>
-                                                   <td>
-                                                        <div class="size-addInfo">
-                                                            <table cellpadding="0" cellspacing="0" border="0" class="addInfo-table">
-                                                                <tbody class="infoTableBody">
-                                                                    {{#each this}}
-                                                                    <tr>
-                                                                        <td class="addInfo-table-cell">
-                                                                            <input type="text" class="addInfo-text color" value="{{this.color}}" placeholder="{{this.color}}">
-                                                                        </td>
-                                                                        <td class="addInfo-table-cell">
-                                                                            <input type="text" class="addInfo-text stock" value="{{this.stock}}" placeholder="{{this.stock}}">
-                                                                        </td>
-                                                                        <td class="addInfo-table-cell">
-                                                                            <button class="del-row-btn">x</button>
-                                                                        </td>
-                                                                    </tr>
-                                                                    {{/each}}
-                                                                </tbody>
-                                                            </table>    
-                                                            <div class="addInfo-add-row">
-                                                                <span class="add-row-btn text-center">+</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="brand">Brand</label>
+                                            <select class="form-select" placeholder="Choose a brand" id="brand" name="brand">
+                                                <option value="{{product.brand._id}}">{{product.brand.brand}}</option>
+                                                {{#each brands}}
+                                                     {{#unless (isEqualTo @root/product.brand.brand this.brand)}}
+                                                          <option value="{{this._id}}">{{this.brand}}</option>
+                                                     {{/unless}}  
+                                                {{/each}}  
+                                            </select>
+                                        </div>
+                                        <div class="alert-message fw-semibold" id="brand-message"></div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="slug" value="{{product.slug}}" id="slug" required>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="discount">Discount</label>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">
+                                                    <i class="fa-solid fa-percent"></i></span>
+                                                <input type="text" class="form-control" placeholder="discount"
+                                                    id="discount" value="{{#if product.discount}}{{product.discount}}{{else}}0{{/if}}" name="discount">
+                                            </div>
+                                        </div>
+                                        <div class="alert-message fw-semibold" id="discount-message"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="mrp">MRP</label>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">
+                                                    <i class="fa-solid fa-money-bill"></i>
+                                                </span>
+                                                <input type="text" class="form-control" placeholder="MRP price"
+                                                    id="mrp" name="mrp" value="{{product.mrp}}">
+                                            </div>
+                                        </div>
+                                        <div class="alert-message fw-semibold" id="mrp-message"></div>
+                                    </div>
+                                </div>
+                                <h5 class="py-3">Select Size and Set Stock Counts</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <div class="d-flex flex-wrap flex-md-nowrap mb-5" id="size">
+                                            <div class="d-flex">
+                                                <label for="sizes" class="pe-4 form-label">Select Size </label>
+                                                <select class="form-select" id="sizes">
+                                                    <option>Select a size</option>
+                                                    <option value="Free">Free</option>
+                                                    <option value="XS">XS</option>
+                                                    <option value="S">S</option>
+                                                    <option value="M">M</option>
+                                                    <option value="L">L</option>
+                                                    <option value="XL">XL</option>
+                                                    <option value="2XL">2XL</option>
+                                                    <option value="3XL">3XL</option>
+                                                    <!-- Add more size options as needed -->
+                                                </select>
+                                            </div>
+                                            <div class="input-group mt-sm-0 mt-4" id="addsizebtn">
+                                               <input type="text" class="form-control" placeholder="Add Size" id="newSizeInput">
+                                               <button class="btn btn-primary" type="button" id="addsize">Add</button>
+                                            </div>
+                                        </div>
+    
+                                        <div id="sizeTable">
+                                            <h6>Stock Counts</h6>
+                                            <div class="alert-message fw-semibold" id="description-message"></div>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Size</th>
+                                                        <th>Stock</th>
+                                                </thead>
+                                                <tbody id="sizeTableBody">
+                                                    </tr> 
+                                                       {{#each product.sizes}}
+                                                    <tr>
+                                                       <td><input type="text" value={{@key}}></td>
+                                                       <td>
+                                                            <div class="size-addInfo">
+                                                                <table cellpadding="0" cellspacing="0" border="0" class="addInfo-table">
+                                                                    <tbody class="infoTableBody">
+                                                                        {{#each this}}
+                                                                        <tr>
+                                                                            <td class="addInfo-table-cell">
+                                                                                <input type="text" class="addInfo-text color" value="{{this.color}}" placeholder="{{this.color}}">
+                                                                            </td>
+                                                                            <td class="addInfo-table-cell">
+                                                                                <input type="text" class="addInfo-text stock" value="{{this.stock}}" placeholder="{{this.stock}}">
+                                                                            </td>
+                                                                            <td class="addInfo-table-cell">
+                                                                                <button class="del-row-btn">x</button>
+                                                                            </td>
+                                                                        </tr>
+                                                                        {{/each}}
+                                                                    </tbody>
+                                                                </table>    
+                                                                <div class="addInfo-add-row">
+                                                                    <span class="add-row-btn text-center">+</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                   </td>
-                                                   </td>
-                                                </tr>
-                                                {{/each}}
-                                            </tbody>
-                                        </table>
+                                                       </td>
+                                                       </td>
+                                                    </tr>
+                                                    {{/each}}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <input type="hidden" id="sizeDataInput" name="sizeData">
-                            <h5 class="card-title mb-3">Product Description</h5>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <div class="form-floating">
-                                         <textarea class="form-control" placeholder="description" value="{{product.description}}"
-                                            name="description" id="description">{{product.description}}</textarea>
+                                <input type="hidden" id="sizeDataInput" name="sizeData">
+    
+                                <h5 class="card-title mb-3">Product Description</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <div class="form-floating">
+                                             <textarea class="form-control" placeholder="{{product.description}}"
+                                                name="description" id="description">{{product.description}}</textarea>
+                                        </div>
                                     </div>
+                                    <div class="alert-message fw-semibold" id="description-message"></div>
+                                </div>
+                                
+                                <h5 class="card-title mb-3 mt-5 ">Upload Image</h5>
+                                <div class="row"> 
+                                    <div class="col-12" id="file-upload">
+                                        <button class="file-upload-btn" type="button">Add Image</button>
+                                        {{#if product.images}}
+                                            {{#each product.images}}
+                                                <input type="file" name="{{@key}}" data-index="{{inc @index}}" accept="image/*" 
+                                                    class="upload" style="display: none;" value="{{this}}">
+                                            {{/each}}
+                                        {{/if}}
+                                        <div class="image-upload-wrap py-5">
+                                            <div class="drag-text"><h3>Add Images As Per Your Needed Order</h3></div>
+                                            
+                                                <div class="file-upload-content pb-5">
+                                                    {{#if product.images}}
+                                                        {{#each product.images}}
+                                                            <div class="file-upload-image-container mx-2" id="uploaded-{{inc @index}}" 
+                                                                   data-file="{{this}}">
+                                                                <i class="remove-image fas fa-times-circle" data-index="{{inc @index}}" aria-hidden="true"></i>
+                                                                <img class="file-upload-image" src="/uploads/{{this}}" data-bs-toggle="tooltip" title="{{this}}">
+                                                                <div class="text-center text-primary fw-semibold img-text">image-{{inc @index}}</div>
+                                                            </div>
+                                                        {{/each}}
+                                                    {{/if}}
+                                                </div>
+                                            <div class="limit-message" style="display:none;">Maximum limit reached (4 images)</div>
+                                        </div>   
+                                    </div>
+                                    <div class="alert-message fw-semibold" id="image-message"></div>
+                                </div>
+    
+                                <h5 class="card-title mt-5 mb-3">General Info</h5>
+                                <div class="table-responsive" id="moreInfo">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="material" name="material"
+                                                        placeholder="{{#if product.moreProductInfo.material}}{{product.moreProductInfo.material}}
+                                                        {{else}}Material{{/if}}" value="{{product.moreProductInfo.material}}">
+                                                    <div class="alert-message fw-semibold" id="material-message"></div></td>
+                                                <td><input type="text" class="form-control" id="type" name="type"
+                                                        placeholder="{{#if product.moreProductInfo.type}}{{product.moreProductInfo.type}}
+                                                        {{else}}Type{{/if}}" value="{{product.moreProductInfo.type}}">
+                                                    <div class="alert-message fw-semibold" id="type-message"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="occassion" name="occassion"
+                                                       placeholder="{{#if product.moreProductInfo.occasion}}{{product.moreProductInfo.occasion}}
+                                                       {{else}}Occassion{{/if}}" value="{{product.moreProductInfo.occasion}}">
+                                                    <div class="alert-message fw-semibold" id="occassion-message"></div></td>
+                                                <td><input type="text" class="form-control" id="pattern" name="pattern"
+                                                        placeholder="{{#if product.moreProductInfo.pattern}}{{product.moreProductInfo.pattern}}
+                                                        {{else}}Pattern{{/if}}" value="{{product.moreProductInfo.pattern}}">
+                                                    <div class="alert-message fw-semibold" id="pattern-message"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="neckline" name="neckline"
+                                                      placeholder="{{#if product.moreProductInfo.neckline}}{{product.moreProductInfo.neckline}}
+                                                      {{else}}Neckline{{/if}}" value="{{product.moreProductInfo.neckline}}">
+                                                    <div class="alert-message fw-semibold" id="neckline-message"></div></td>
+                                                <td><input type="text" class="form-control" id="sleeve" name="sleeve"
+                                                      placeholder="{{#if product.moreProductInfo.sleeve}}{{product.moreProductInfo.sleeve}}
+                                                      {{else}}Sleeve{{/if}}" value="{{product.moreProductInfo.sleeve}}">
+                                                    <div class="alert-message fw-semibold" id="sleeve-message"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="fit" name="fit"
+                                                      placeholder="{{#if product.moreProductInfo.fit}}{{product.moreProductInfo.fit}}
+                                                      {{else}}Fit{{/if}}" value="{{product.moreProductInfo.fit}}">
+                                                    <div class="alert-message fw-semibold" id="fit-message"></div></td>
+                                                <td><input type="text" class="form-control" id="closure" name="closure"
+                                                       placeholder="{{#if product.moreProductInfo.closure}}{{product.moreProductInfo.closure}}
+                                                       {{else}}Closure{{/if}}" value="{{product.moreProductInfo.closure}}">
+                                                    <div class="alert-message fw-semibold" id="closure-message"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="typeOfWork" name="typeOfWork"
+                                                       placeholder="{{#if product.moreProductInfo.typeOfWork}}{{product.moreProductInfo.typeOfWork}}
+                                                      {{else}}Type of Work{{/if}}" value="{{product.moreProductInfo.typeOfWork}}">
+                                                    <div class="alert-message fw-semibold" id="typeOfWork-message"></div></td>
+                                                <td><input type="text" class="form-control" id="legStyle" name="legStyle"
+                                                       placeholder="{{#if product.moreProductInfo.legStyle}}{{product.moreProductInfo.legStyle}}
+                                                       {{else}}Leg Style{{/if}}" value="{{product.moreProductInfo.legStyle}}">
+                                                    <div class="alert-message fw-semibold" id="legStyle-message"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="riseStyle" name="riseStyle" 
+                                                       placeholder="{{#if product.moreProductInfo.riseStyle}}{{product.moreProductInfo.riseStyle}}
+                                                      {{else}}Rise Style{{/if}}" value="{{product.moreProductInfo.riseStyle}}">
+                                                    <div class="alert-message fw-semibold" id="riseStyle-message"></div></td>
+                                                <td><input type="text" class="form-control" id="padding" name="padding"
+                                                       placeholder="{{#if product.moreProductInfo.padding}}{{product.moreProductInfo.padding}}
+                                                      {{else}}Padding{{/if}}" value="{{product.moreProductInfo.padding}}">
+                                                    <div class="alert-message fw-semibold" id="padding-message"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="coverage" name="coverage"
+                                                       placeholder="{{#if product.moreProductInfo.coverage}}{{product.moreProductInfo.coverage}}
+                                                       {{else}}Coverage{{/if}}" value="{{product.moreProductInfo.coverage}}">
+                                                    <div class="alert-message fw-semibold" id="coverage-message"></div></td>
+                                                <td><input type="text" class="form-control" id="wiring" name="wiring"
+                                                       placeholder="{{#if product.moreProductInfo.wiring}}{{product.moreProductInfo.wiring}}
+                                                       {{else}}Wiring{{/if}}" value="{{product.moreProductInfo.wiring}}">
+                                                    <div class="alert-message fw-semibold" id="wiring-message"></div></td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="form-control" id="packContains" name="packContains" 
+                                                       placeholder="{{#if product.moreProductInfo.packContains}}{{product.moreProductInfo.packContains}}
+                                                      {{else}}Pack Contains{{/if}}" value="{{product.moreProductInfo.packContains}}">
+                                                    <div class="alert-message fw-semibold" id="packContains-message"></div></td>
+                                                <td>
+                                                    <div class="form-floating">
+                                                        <textarea class="form-control" id="careInstructions" name="careInstructions" 
+                                                           id="careInstructions">{{product.moreProductInfo.careInstructions}}</textarea>
+                                                        <label for="careInstructions">Care Instructions</label>
+                                                    </div>
+                                                    <div class="alert-message fw-semibold" id="careInstructions-message"></div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <hr>
+                                <div class="form-actions mt-4">
+                                    <button type="submit" class="btn btn-success text-white"><i class="fa fa-check"></i> Save Changes</button>
+                                    <button type="button" class="btn btn-dark">Cancel</button>
                                 </div>
                             </div>
-                            <div class="row">
-                                <h5 class="card-title mb-3">Upload Image</h5>
-                                {{#if product.images}}
-                                    {{#each product.images}}
-                                        <div class="col-6 mb-3 d-md-flex">
-                                            <div class="imgSelect">
-                                                <div class="imagePreview" class="pe-5">
-                                                    <img src="/uploads/{{this}}" style="width:150px;height:auto" alt="front_image">
-                                                </div>
-                                                <div class="product-img pt-4 ps-md-5 ps-0">
-                                                    <div class="file-upload btn btn-info waves-effect waves-light text-white">
-                                                        <p><i class="fa-solid fa-upload bg-dark p-1"></i>
-                                                         <span class="fs-6"> Select a Image</span></p>
-                                                        <input type="file" class="upload" name="img-{{inc @index}}" value="{{this}}">
-                                                    </div>  
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {{/each}}
-                                {{else}}
-                                    {{#loop 4}}
-                                        <div class="col-6 mb-3 d-md-flex">
-                                            <div class="imgSelect">
-                                                <div class="imagePreview" class="pe-5"></div>
-                                                <div class="product-img pt-4 ps-md-5 ps-0">
-                                                    <div class="file-upload btn btn-info waves-effect waves-light text-white">
-                                                        <p><i class="fa-solid fa-upload bg-dark p-1"></i>
-                                                         <span class="fs-6"> Select a Image</span></p>
-                                                        <input type="file" class="upload" name="img-{{this}}">
-                                                    </div>  
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {{/loop}}
-                                {{/if}}
-                            </div>
-                            <h5 class="card-title mb-3">General Info</h5>
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="material" 
-                                                placeholder="{{#if product.moreProductInfo.material}}{{product.moreProductInfo.material}}
-                                                {{else}}Material{{/if}}" value="{{product.moreProductInfo.material}}">
-                                            </td>                                          
-                                            <td><input type="text" class="form-control" name="type" 
-                                                placeholder="{{#if product.moreProductInfo.type}}{{product.moreProductInfo.type}}
-                                                {{else}}Type{{/if}}" value="{{product.moreProductInfo.type}}">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="occassion" 
-                                                placeholder="{{#if product.moreProductInfo.occasion}}{{product.moreProductInfo.occasion}}
-                                                  {{else}}Occassion{{/if}}" value="{{product.moreProductInfo.occasion}}">
-                                            </td>
-                                            <td><input type="text" class="form-control" name="pattern" 
-                                                placeholder="{{#if product.moreProductInfo.pattern}}{{product.moreProductInfo.pattern}}
-                                                  {{else}}Pattern{{/if}}" value="{{product.moreProductInfo.pattern}}">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="neckline" 
-                                                placeholder="{{#if product.moreProductInfo.neckline}}{{product.moreProductInfo.neckline}}
-                                                  {{else}}Neckline{{/if}}" value="{{product.moreProductInfo.neckline}}">
-                                            </td>
-                                            <td><input type="text" class="form-control" name="sleeve" 
-                                                placeholder="{{#if product.moreProductInfo.sleeve}}{{product.moreProductInfo.sleeve}}
-                                                  {{else}}Sleeve{{/if}}" value="{{product.moreProductInfo.sleeve}}">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="fit" 
-                                                placeholder="{{#if product.moreProductInfo.fit}}{{product.moreProductInfo.fit}}
-                                                  {{else}}Fit{{/if}}" value="{{product.moreProductInfo.fit}}">
-                                            </td>
-                                            <td><input type="text" class="form-control" name="closure" 
-                                                placeholder="{{#if product.moreProductInfo.closure}}{{product.moreProductInfo.closure}}
-                                                  {{else}}Closure{{/if}}" value="{{product.moreProductInfo.closure}}">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="typeOfWork" 
-                                                placeholder="{{#if product.moreProductInfo.typeOfWork}}{{product.moreProductInfo.typeOfWork}}
-                                                  {{else}}Type of Work{{/if}}" value="{{product.moreProductInfo.typeOfWork}}">
-                                            </td>
-                                            <td><input type="text" class="form-control" name="legStyle" 
-                                                placeholder="{{#if product.moreProductInfo.legStyle}}{{product.moreProductInfo.legStyle}}
-                                                  {{else}}Leg Style{{/if}}" value="{{product.moreProductInfo.legStyle}}">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="riseStyle" 
-                                                placeholder="{{#if product.moreProductInfo.riseStyle}}{{product.moreProductInfo.riseStyle}}
-                                                  {{else}}Rise Style{{/if}}" value="{{product.moreProductInfo.riseStyle}}">
-                                            </td>
-                                            <td><input type="text" class="form-control" name="padding" 
-                                                placeholder="{{#if product.moreProductInfo.padding}}{{product.moreProductInfo.padding}}
-                                                  {{else}}Padding{{/if}}" value="{{product.moreProductInfo.padding}}">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="coverage" 
-                                                placeholder="{{#if product.moreProductInfo.coverage}}{{product.moreProductInfo.coverage}}
-                                                  {{else}}Coverage{{/if}}" value="{{product.moreProductInfo.coverage}}">
-                                            </td>
-                                            <td><input type="text" class="form-control" name="wiring" 
-                                                placeholder="{{#if product.moreProductInfo.wiring}}{{product.moreProductInfo.wiring}}
-                                                  {{else}}Wiring{{/if}}" value="{{product.moreProductInfo.wiring}}">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control" name="packContains" 
-                                                placeholder="{{#if product.moreProductInfo.packContains}}{{product.moreProductInfo.packContains}}
-                                                  {{else}}Pack Contains{{/if}}" value="{{product.moreProductInfo.packContains}}">
-                                            </td>
-                                            <td>
-                                                <div class="form-floating">
-                                                    <textarea class="form-control" name="careInstructions"
-                                                       id="floatingTextarea">{{product.moreProductInfo.careInstructions}}</textarea>
-                                                    <label for="floatingTextarea">Care Instructions</label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <hr>
-                            <div class="form-actions mt-4">
-                                <button type="submit" class="btn btn-success text-white"><i class="fa fa-check"></i>Save Changes</button>
-                                <button type="button" class="btn btn-dark">Cancel</button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
+                <!-- Column -->
             </div>
-            <!-- Column -->
         </div>
     </div>
-</div>
-                    
-                    
+                        
+    
