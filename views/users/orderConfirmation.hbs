@@ -1,5 +1,7 @@
 
-         <div id="orderConfirm">
+
+      
+    <div id="orderConfirm">
         <div class="thankyou-page">
             <div class="_header">
                 <div class="mb-4 text-center">
@@ -8,7 +10,7 @@
                 <h1>Thank You!</h1>
                 <h4>Your order is confirmed!</h4>
             </div>
-
+            
             <div class="_body">
                 <div class="_box pb-5">
                     <h5 class="bg-primary text-center text-white p-3">Order Summary</h5>
@@ -81,7 +83,20 @@
                                     <div class="col"> <b> Grand Total</b> </div>
                                     <div class="col d-flex justify-content-end"> <b>₹{{order.GrandTotal}}</b> </div>
                                 </div>
+
+                                <hr>
+                                <div class="row">
+                                    <div class="col"> <b> paymentMethod </b> </div>
+                                    <div class="col d-flex justify-content-end"> <b>₹{{order.paymentMethod}}</b> </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col"> <b> paymentStatus </b> </div>
+                                    <div class="col d-flex justify-content-end"> <b>₹{{order.paymentStatus}}</b> </div>
+                                </div>
                             </div>
+
+                            <hr>
+
                             <!-- End Total Section -->
                         </div>
                     </div>

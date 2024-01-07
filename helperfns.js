@@ -7,6 +7,7 @@ const sendEmail = require('./utils/sendMail');
 const User = require('./models/userModel');
 const Cart = require('./models/cartModel');
 const CartItem = require('./models/cartItemModel');
+const WishList = require('./models/wishListModel');
 const moment = require('moment');
 
 
@@ -31,6 +32,7 @@ const createUniqueSlug = async (title) => {
   } 
 }
 
+
 const otpEmailSend = async (req,userCreate,oldEmail) => {
   try{
       const otp =  otpGenerator.generate(6, {specialChars: false });
@@ -51,7 +53,6 @@ const otpEmailSend = async (req,userCreate,oldEmail) => {
       }
       await sendEmail(req.body.email, subject, text);
   }catch(error){
-      console.log("problem with sending email")
       console.log(error);
       throw Error
   }
@@ -66,19 +67,19 @@ const generateOrderId = () => {
 };
 
 const findCart = async (user) => {
-  const cart = await Cart.findOne({ user: user?._id })
-    .populate({
-        path: 'user',
-        model: 'User' 
-    })
-    .populate({
-        path: 'items.cartItem',
-        populate: {
-            path: 'product',
-            model: 'Product'
-        }
-    }).lean()
-    if(cart) return cart
+    const cart = await Cart.findOne({ user: user?._id })
+      .populate({
+          path: 'user',
+          model: 'User' 
+      })
+      .populate({
+          path: 'items.cartItem',
+          populate: {
+              path: 'product',
+              model: 'Product'
+          }
+      }).lean()
+      if(cart) return cart;
     return 0;
 }
 
@@ -86,13 +87,14 @@ const cartQty = async (user) => {
     cartDetails = await findCart(user);
     let qty = 0;
     if (cartDetails) {
-       qty = cartDetails?.items?.reduce((total, cartitem) => total + cartitem.quantity, 0);
+        qty = cartDetails?.items?.length || 0;
+       //qty = cartDetails?.items?.reduce((total, cartitem) => total + cartitem.quantity, 0);
     }
     return qty;
 }
 
 
-const selectCartItem = async( slug, req ) => {
+const selectCartItem = async( slug, req, res ) => {
     try {
         const product = await Product.findOne({ slug });
         const existingCart = await Cart.findOne({user:req.user});
@@ -109,36 +111,44 @@ const selectCartItem = async( slug, req ) => {
             }
             return false;
         });
-        if (!validOptionFound) {
-            return res.status(400).json({ message: 'Product is out of stock!' });
-        }    
-        let item = { 
-            product: product._id, 
-            size: req.query.size || selectSize, 
-            color:  req.query.color || selectColor, 
-        }
-        let cartItemExist = await CartItem.findOne(item);
-      
-        if (!cartItemExist) {
-            const newCartItem = new CartItem(item);
-            await newCartItem.save();
-            cartItemExist = newCartItem; 
-        }
-         
-        if (!existingCart) {
-            const newCart = new Cart({ user: req.user?._id, items: [{ cartItem: cartItemExist._id, quantity: req.query.qty || 1 }] });
-            await newCart.save();
+
+        if (validOptionFound) {
+            let item = { 
+                product: product?._id, 
+                size: req.query?.size || selectSize, 
+                color:  req.query?.color || selectColor, 
+            }
+            let cartItemExist = await CartItem.findOne(item);
+          
+            if (!cartItemExist) {
+                const newCartItem = new CartItem(item);
+                await newCartItem.save();
+                cartItemExist = newCartItem; 
+            }
+             
+            if (!existingCart) {
+                const newCart = new Cart({ user: req.user?._id, items: [{ cartItem: cartItemExist._id, quantity: req.query.qty || 1 }] });
+                await newCart.save();
+            } else {
+                let index;
+                let itemExist = existingCart.items.some((item,i) =>{
+                    index =  i;
+                    return item.cartItem.toString() === cartItemExist._id.toString()
+                });
+
+                if(!itemExist){
+                    existingCart.items.push({ cartItem: cartItemExist._id, quantity: req.query.qty || 1 });
+                }else {
+                    return {result:false, exist: true}
+                    //existingCart.items[index].quantity++;
+                };
+                await existingCart.save();
+            }
+            return {result:true }
         } else {
-            let index;
-            let itemExist = existingCart.items.some((item,i) =>{
-                index =  i;
-                return item.cartItem.toString() === cartItemExist._id.toString()
-            });
-            if(!itemExist){
-                existingCart.items.push({ cartItem: cartItemExist._id, quantity: req.query.qty || 1 });
-            }else existingCart.items[index].quantity++;
-            await existingCart.save();
-        }
+            return {result:false, exist: false }
+        }   
+        
     } catch (error) {
         console.log(error);
     }
@@ -147,23 +157,50 @@ const selectCartItem = async( slug, req ) => {
 
 const genderBrandFilter = async(page, filter, req, res) => {
     try {
-        let user = req?.user, totalQty = await cartQty(user);
+
+        let user = req?.user, 
+            totalQty = await cartQty(user),
+            pagination = parseInt(req?.query?.pagination) || 1,
+            pageSize = parseInt(req?.query?.pageSize) || 10,
+            skipPage = (pagination - 1) * pageSize;
+
         const Brands = await getAllBrands();  
+        const wishlist = new Set(
+            (await WishList.findOne({ user: req?.user?.id }).distinct('products').lean() || []).map((id) =>
+                id.toString()
+            )
+        );
 
         let { filters, matchStage , pageFilter, renderPage, priceStats } = 
              await filterFunction(page, filter);
 
-        const products = await Product.find(matchStage)
-            .populate('brand').populate('category').lean();     
+        const all = await Product.countDocuments(matchStage); 
+        
+        const products = await Product.find(matchStage).populate('brand')
+          .populate('category').sort({ createdAt: -1 }).skip(skipPage).limit(pageSize).lean();  
+
+        const totalPages = Math.ceil( all / pageSize);
+        const startPage = Math.max(1, (pagination+1) - Math.ceil(pageSize / 2));
+        const endPage = Math.min(totalPages, startPage + pageSize - 1);
+        const paginationLinks = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+
+        // Add a property 'isInWishlist' to each product
+        products?.forEach(product => {
+            product.isInWishlist = wishlist.has(product._id.toString());
+        });
+        
+
+        let fromOrder = skipPage + 1;
+        let toOrder = fromOrder + pageSize - 1;
+        if(toOrder > all) toOrder = all;
   
-        return res.render(renderPage,{main:pageFilter, products, user, 
-            totalQty, Brands, filters, priceStats,
-            bodycss:'css/nav_footer.css',bodyjs:'js/productCard.js',
+        return res.render(renderPage,{main:pageFilter, products, user, wishlist, 
+            totalQty, Brands, filters, fromOrder, toOrder, pageSize, priceStats,
+            paginationLinks, pagination, endPage, bodyjs:'js/productCard.js',
             maincss:'css/category_page.css',});  
     } catch (error) {
         console.log(error);
-    }
-        
+    }      
 }  
 
 
@@ -225,7 +262,7 @@ const getFieldCounts = async (fieldName, matchStage, categoryMatch) => {
                 { $group: { _id: '$gender', count: { $sum: 1 } } },
                 { $project: {_id: 0, name: `$_id`,count: 1 } },
              ]
-             console.log(await Product.aggregate(pipeline))
+             
         } else if (fieldName === 'category' || fieldName === 'brand') {
           pipeline = [
               { $match: (fieldName === 'category')?categoryMatch:matchStage },

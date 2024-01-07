@@ -151,14 +151,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });  
     });
 
-    addToCartBtn?.addEventListener('click',function(e){
+    addToCartBtn?.addEventListener('click', async function(e) {
         const url = addToCartBtn.getAttribute('href');
-        if(!addToCartBtn.getAttribute('href').includes('size=')){
-            e.preventDefault();
-            sizeAlert.innerHTML = 'select an available size'; 
+        e.preventDefault();
+        sizeAlert.innerHTML = '';
+    
+        if (!url.includes('size=')) {
+            sizeAlert.innerHTML = 'Select an available size'; 
+        } else {
+            try {
+                const updatedUrl = addQueryParam(url, `qty=${quantityInput.value}`);
+                const response = await fetch(updatedUrl, {
+                    method: 'GET', // or 'GET' or any other HTTP method
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // You can add other headers if needed
+                    },
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    Swal.fire({
+                        icon: "success",
+                        title: document.querySelector('.pro-title').innerHTML,
+                        text: "is added to Cart !",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        iconColor: '#1b812f',
+                        customClass: {
+                            title: 'swal-title-custom-class',
+                        }
+                      });
+                      document.getElementById('qnty').innerHTML = data.totalQty;
+                } else if( response.status == 400){
+                    sizeAlert.innerHTML = data.message; 
+                } else{
+                    console.log(data.message)
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error.message);
+            }
         }
-        addToCartBtn.setAttribute('href',addQueryParam(url,`qty=${quantityInput.value}`));        
     });
+    
 
     minusBtn?.addEventListener('click', function() {
         if (quantityInput.value > 1) {
@@ -196,6 +231,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function addQueryParam(url,param) {
         return url.includes('?') ? `${url}&${param}` : `${url}?${param}`;
     }
+
+
+    
   
 });
 

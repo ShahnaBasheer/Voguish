@@ -32,6 +32,7 @@
 		              	<label class="label" for="password">Password</label>
 		                <input type="password" id="pass" name="password" class="form-control" placeholder="Password" required>
 		              </div>
+									<p class="text-danger">{{message}}</p>
 		              <div class="form-group">
 		              	<button type="submit" class="form-control btn btn-primary submit px-3">Sign In</button>
 		              </div>
@@ -42,8 +43,9 @@
 								  	  <span class="checkmark"></span>
 								  		</label>
 								  	</div>
-								  	<div class="w-50 text-md-right">
-								  		<a href="#" class="text-decoration-none"><small class="text-secondary">Forgot Password</small></a>
+								  	<div class="w-50 text-md-right ms-5">
+								  		<a href="#" class="text-decoration-none" id="forgotPassword">
+												 <small class="text-primary fw-bold">Forgot Password</small></a>
 								  	</div>
 		              </div>
 		          </form>

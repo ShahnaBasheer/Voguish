@@ -1,6 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-    const editLinks = document.querySelectorAll('.edit-link');
+    const editBtn = document.querySelectorAll('.edit-btn');
     const saveBtn = document.querySelectorAll('.save-button');
     const emailText = document.getElementById('email-text');
     const phoneText = document.getElementById('phone-text');
@@ -8,39 +8,133 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteAddress = document.querySelectorAll('.delete-address');
     const messageAddress = document.getElementById('addressMessage');
     const defaultAddres =  document.querySelectorAll('.default-address');
-    const openOrderModal = document.querySelectorAll('.candidate-list-box');
-    const pageOrderSize = document.getElementById('choices-order-size');
-    const choicesOrderby = document.getElementById('choices-orderby');
     const buyagain = document.querySelectorAll('.buyagain');
     const orderFilter = document.querySelectorAll('#orderFilter input, .form-select');
+    const cancelBtn = document.querySelectorAll('.cancel-btn');
+    const submitBtn = document.getElementById('submitBtn');
+    const removeFromWishlist = document.querySelectorAll('.removeBtn');
     
 
-    /*pageOrderSize?.addEventListener('change', function(){
-        window.location.href = `/orders?pageSize=${pageOrderSize.value}&orderBy=${choicesOrderby.value}`;
+    
+    submitBtn?.addEventListener('click',async function(e){
+        e.preventDefault();
+
+        const passAlert = document.getElementById('password-message');
+        passAlert.innerHTML = '';
+        const currentPassValue = document.getElementById('currentPassword')?.value.trim();
+        const newPasswordValue = document.getElementById('newPassword')?.value.trim();
+        const confirmPasswordValue = document.getElementById('confirmPassword')?.value.trim();
+
+        // Check if any of the fields is empty
+        if (!currentPassValue || !newPasswordValue || !confirmPasswordValue) {
+            passAlert.style.display = 'block';
+            passAlert.innerHTML = 'Please fill in all the fields';
+            return false;
+        }
+
+        // Check if passwords match
+        if (newPasswordValue !== confirmPasswordValue) {
+            passAlert.style.display = 'block';
+            passAlert.innerHTML = 'New password and confirm password do not match';
+            return false;
+        }
+
+        try {
+            const response = await fetch('/change-old-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currentPassword: currentPassValue,
+                    newPassword: newPasswordValue,
+                    confirmPassword: confirmPasswordValue,
+                }),
+            });
+    
+            // Handle the response
+            const data = await response.json();
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Password Changed Successfully!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                document.getElementById('passwordChange').style.display = 'none';
+                
+            } else {
+                passAlert.style.display = 'block';
+                passAlert.innerHTML = data.error;
+            }
+        } catch (error) {
+            console.error('Error during fetch:', error);
+        }
     });
+
+
+
+    document.getElementById('currentPassword')?.addEventListener('keydown', preventSpaces);
+    document.getElementById('newPassword')?.addEventListener('keydown', preventSpaces);
+    document.getElementById('confirmPassword')?.addEventListener('keydown', preventSpaces);
+
+    // Function to prevent spaces in input fields
+    function preventSpaces(event) {
+        if (event.key === ' ' || event.code === 'Space') {
+            event.preventDefault();
+        }
+    }
+
+    document.getElementById('change-password')?.addEventListener('click', function(){
+        document.getElementById('passwordChange').style.display = 'block';      
+    });
+
+    document.getElementById('cancelChange')?.addEventListener('click', function(){
+        document.getElementById('passwordChange').style.display = 'none'; 
+    })
     
-    choicesOrderby?.addEventListener('change', function(){
-        window.location.href = `/orders?pageSize=${pageOrderSize.value}&orderBy=${choicesOrderby.value}`
-    });*/
-
-
-
-    editLinks?.forEach(editLink => {
-        editLink?.addEventListener('click', function(event) {
+    cancelBtn.forEach( function(item) {
+        item?.addEventListener('click', function(event){
+          event.preventDefault();
           const fieldName = this.getAttribute('data-field');
           const saveButton = document.querySelector(`.save-button[data-field="${fieldName}"]`);
+          const editBtn = document.querySelector(`.edit-btn[data-field="${fieldName}"]`)
+          const formField = document.querySelectorAll(`input[data-field="${fieldName}"]`);
+
+          if(formField.length > 1){
+            formField?.forEach(i => {
+               i.setAttribute('disabled', true)})
+          } else {
+             console.log(formField)
+              formField[0].setAttribute('disabled', true);
+          }
+          saveButton.style.display = 'none';
+          editBtn.style.display = 'inline';
+          this.style.display = 'none';
+        });
+    })
+
+
+
+    editBtn?.forEach(editLink => {
+        editLink?.addEventListener('click', function(event) {
+          event.preventDefault();
+          const fieldName = this.getAttribute('data-field');
+          const saveButton = document.querySelector(`.save-button[data-field="${fieldName}"]`);
+          const cancelBtn = document.querySelector(`.cancel-btn[data-field="${fieldName}"]`)
           const formField = document.querySelectorAll(`input[data-field="${fieldName}"]`);
     
-          if(formField.length > 1){
-               formField.forEach(item => {
-                console.log(item)
-                item.removeAttribute('disabled')
-        })
+          if(formField?.length > 1){
+               formField?.forEach(item => {
+                  item.removeAttribute('disabled')})
+
           }else formField[0].removeAttribute('disabled');
           saveButton.style.display = 'inline';
+          cancelBtn.style.display = 'inline';
           this.style.display = 'none';
         });
     });
+
     
     saveBtn?.forEach(saveButton => {
       saveButton.addEventListener('click', async function(event) {
@@ -49,39 +143,46 @@ document.addEventListener('DOMContentLoaded', function() {
         phoneText.innerHTML = '';
         
         try{
-            const fieldName = this.getAttribute('data-field');
-            const inputElement = document.querySelector(`input[name="${fieldName}"]`);
-            let inputValue = inputElement.value;
+            const fieldName = this?.getAttribute('data-field');
+            const inputElement = document.querySelector(`input[data-field="${fieldName}"]`);
+
+            let inputValue = inputElement?.value;
+
             if(fieldName == 'gender'){
-                inputValue = document.querySelector(`input[name="${fieldName}"]:checked`).value;
+                inputValue = document.querySelector(`input[data-field="${fieldName}"]:checked`)?.value;
             }
-            let response = await fetch('/profile/edit/', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ [fieldName]: inputValue }),
-            })
-            
-            if(response.ok) {
-                let data = await response.json();
-                if(data?.email){
-                    const oldEmailInput = document.querySelector('#oldEmail input');
-                    const newEmailInput = document.querySelector('#newEmail input');
-                    oldEmailInput.placeholder = `Enter OTP sent to ${data.oldemail}`;
-                    newEmailInput.placeholder = `Enter OTP sent to ${data.newemail}`;
-                    new bootstrap.Modal(document.getElementById('modalOtp')).show();
-                }
-                if(data?.redirect){
-                    window.location.href = data.redirect;
-                }  
-            } else if (response.status === 409) {
-                const data = await response.json();
-                if (data?.emailText) emailText.innerHTML = data.emailText;
-                if (data?.phoneText) phoneText.innerHTML = data.phoneText;
-            }else {
-                console.error('Server error:', response.status);
-            }
+            let payload = {};
+            payload[fieldName] = inputValue;
+
+            if(profileValidation(fieldName, inputValue)){
+                let response = await fetch('/profile/edit/', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                })
+                
+                if(response.ok) {
+                    let data = await response.json();
+                    if(data?.email){
+                        const oldEmailInput = document.querySelector('#oldEmail input');
+                        const newEmailInput = document.querySelector('#newEmail input');
+                        oldEmailInput.placeholder = `Enter OTP sent to ${data.oldemail}`;
+                        newEmailInput.placeholder = `Enter OTP sent to ${data.newemail}`;
+                        new bootstrap.Modal(document.getElementById('modalOtp')).show();
+                    }
+                    if(data?.redirect){
+                        window.location.href = data.redirect;
+                    }  
+                } else if (response.status === 409) {
+                    const data = await response.json();
+                    if (data?.emailText) emailText.innerHTML = data.emailText;
+                    if (data?.phoneText) phoneText.innerHTML = data.phoneText;
+                }else {
+                    console.error('Server error:', response.status);
+                } 
+            }   
         }catch(error){
             console.log("error:",error)
         }
@@ -208,12 +309,84 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
+
+    removeFromWishlist?.forEach(function(item){
+        item.addEventListener('click', async function(e){
+            e.preventDefault();
+            const url = item.getAttribute('href');
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                console.log("okkkkk")
+                Swal.fire({
+                    icon: "success",
+                    title: "Removed",
+                    text: data.message,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    iconColor: '#1b812f',
+                    customClass: {
+                        title: 'swal-title-custom-class',
+                    },
+                    didDestroy: () => {
+                        // This function will be called when the modal is destroyed
+                        window.location.href = data.redirect;
+                    }
+                  });
+
+            } else if( response.status == 400){
+
+                if(data.exist){
+                    Swal.fire({
+                        icon: "Success",
+                        title: "Already Added !",
+                        customClass: {
+                            title: 'swal-title-custom-class',
+                        }
+                    });
+                }
+            } else{ console.log(data.message) }
+            })
+        })
+
+
     
 });
 
 
 
+function profileValidation(fieldName) {
 
+    if(fieldName == 'firstname'){
+        const value = document.getElementById(fieldName).value.trim().replace(/\s{2,}/g, '');
+        const isValid = /^(\S\s*){3,}$/.test(value);
+        if (!isValid) {
+            showError(fieldName, 'First Name is required!');
+        }
+        return isValid;
 
+    } else if(fieldName == 'lastname'){
+        const value = document.getElementById(fieldName).value.trim().replace(/\s{2,}/g, '');
+        const isValid = /^(\S\s*){1,}$/.test(value);
+        if (!isValid) {
+            showError(fieldName, 'Lastname is required!');
+        };
+        return isValid;
+    }
 
-
+    function showError(elementId, message) {
+        const errorElement = document.getElementById(`${elementId}-text`);
+        if(errorElement){
+            errorElement.textContent = message;
+        }
+    }
+    return true;
+}

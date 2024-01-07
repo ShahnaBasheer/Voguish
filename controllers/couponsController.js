@@ -90,14 +90,14 @@ const applyCoupon = asyncHandler(async (req, res) => {
     // Find the coupon based on the provided code
     const coupon = await Coupon.findOne({ code: couponCode });
 
-    if (coupon?.status === 'Active') {
+    if (coupon?.status === 'Active' && coupon.endDate >= new Date() && coupon.startDate <= new Date()) {
         const discountAmount = await calculateDiscount(coupon, Number(cart?.totalPrice), res);
         if (discountAmount){
             res.status(200).json({ success: true, discAmt:discountAmount, coupon });
         } else {
             res.status(400).json({ success: false, message: 'Coupon is not applicable to this purchase.' });
         }
-    } else if (coupon?.status === 'Expired') {
+    } else if (coupon?.status === 'Expired' || coupon.endDate <= new Date()) {
         res.status(400).json({ success: false, message: 'Coupon is expired.' });
     } else {
         res.status(404).json({ success: false, message: 'Invalid or inactive coupon code.' });

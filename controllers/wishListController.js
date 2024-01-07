@@ -17,7 +17,7 @@ const getWishList = asyncHandler( async (req,res) => {
                 }
         }).lean();
  
-    res.render('users/wishList',{user,wishlist,totalQty,Brands,
+    res.render('users/wishList',{user,wishlist,totalQty,Brands,tab:"wishlist",
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
 
@@ -28,7 +28,7 @@ const addToWishList = asyncHandler( async (req,res) => {
         wishlist = await WishList.findOne({user: req?.user?._id});
 
     if (!product) {
-        return res.status(404).json({ error: 'Product not found' });
+        res.status(404).json({ error: 'Product not found' });
     }
 
     if(!wishlist){
@@ -37,9 +37,11 @@ const addToWishList = asyncHandler( async (req,res) => {
         if (!wishlist?.products?.includes(product?._id)) {
             wishlist?.products?.push(product?._id);
             await wishlist?.save();
+        } else {
+            res.status(400).json({ message: 'Already Added !' });
         }
     }
-    res.status(200).json({ message: 'Product added to wishlist successfully' });
+    res.status(200).json({ message: 'Product added to wishlist successfully' ,redirect: req.header('Referer') });
 });
 
 
@@ -58,7 +60,7 @@ const deleteWishList = asyncHandler( async (req,res) => {
         productId => productId?.toString() !== product?._id?.toString());
     await wishlist?.save();
 
-    res.status(200).json({ message: 'Product deleted from wishlist successfully' });
+    res.status(200).json({ message: 'Product deleted from wishlist successfully', redirect: req.header('Referer') });
 });
 
 

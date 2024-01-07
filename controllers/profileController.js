@@ -7,10 +7,10 @@ const { otpEmailSend, cartQty, getAllBrands } = require('../helperfns');
 
 
 const getProfilePage =  asyncHandler( async(req,res) => {
-    const user = req.user, totalQty = await cartQty(user);
+    const user = req?.user, totalQty = await cartQty(user);
     const Brands = await getAllBrands();
-    const userprofile  = await User.findById(req.user.id).lean();
-    res.render('users/profileInfo',{user,userprofile,totalQty,Brands,
+    const userprofile  = await User.findById(req?.user?.id).lean();
+    res.render('users/profileInfo',{user,userprofile,totalQty,Brands,tab:'personal',
        bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
 
@@ -19,7 +19,7 @@ const getAddressPage = asyncHandler( async(req,res) => {
     const user = req.user, totalQty = await cartQty(user);
     const Brands = await getAllBrands();
     const userprofile  = await User.findById(req.user.id).populate('addresses').populate('defaultAddress').lean();
-    res.render('users/addressInfo',{user,userprofile,totalQty,Brands,
+    res.render('users/addressInfo',{user,userprofile,totalQty,Brands,tab: 'address',
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
 
@@ -28,7 +28,7 @@ const getAddressPage = asyncHandler( async(req,res) => {
 const editProfile = asyncHandler( async (req,res) => {
     const { email, phone, firstname, lastname, gender} = req.body,
         user = await User.findById(req?.user?._id);
-      
+        
     if(firstname) user.firstname = firstname;
     if(lastname) user.lastname = lastname;
     if(gender) user.gender = gender;

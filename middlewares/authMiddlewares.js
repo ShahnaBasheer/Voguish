@@ -61,7 +61,7 @@ const isUser = asyncHandler(async (req, res, next) => {
         const { email, role, isBlocked } = req.user;
     
         if(role === 'user'){
-            if(!isBlocked) next();
+            if(!isBlocked) return next();
             else{
                 res.clearCookie("accessToken")
                 res.clearCookie("refreshToken")
@@ -71,7 +71,7 @@ const isUser = asyncHandler(async (req, res, next) => {
         else throw new Error('You are not a Regular User!!');
     }else{
         console.log("user without token")
-        next();
+        return next();
     }
     
 });
@@ -92,7 +92,25 @@ const isUserLoggedIn = asyncHandler(async (req, res, next) => {
         else next();
     }
     console.log("user without token")
-    next();
+    return next();
+});
+
+
+// check user is loggedin already
+const isNotLoginRedirct = asyncHandler(async (req, res, next) => {
+    if (req?.user) {
+        const { email, role, isBlocked } = req.user;
+        if(role === 'user'){
+            if(!isBlocked) return next();
+            else{
+                res.clearCookie("accessToken")
+                res.clearCookie("refreshToken")
+                return res.render('users/account-blocked')
+            }   
+        } 
+    }
+    console.log("user without token")
+    return res.redirect('/login')
 });
 
 
@@ -175,5 +193,5 @@ const isAdminLoggedIn = asyncHandler(async (req, res, next) => {
 
 module.exports = { 
     authMiddleware, isAdmin, isUser,
-    isUserLoggedIn, isAdminLoggedIn, adminAuth,
+    isUserLoggedIn, isAdminLoggedIn, adminAuth,isNotLoginRedirct
 };

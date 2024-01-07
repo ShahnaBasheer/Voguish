@@ -11,21 +11,23 @@
           </div>
         </div>
     </div>
-   
+
+   <input type="hidden" name="_main" value="{{main.brand}}">
+
     <div class="container-fluid">
+        <form method="GET" action="/filters" id="filterForm"> 
         <div class="row">
             <!-- Shop Sidebar Start -->
-            <div class="col-lg-2 py-3">          
-              <form method="GET" action="/filters" id="filterForm"> 
-                    <!-- FilterBox starts-->
+            <div class="col-lg-2 py-2">          
+                <!-- FilterBox starts-->
+                    
                     
                     <div id="filterBox">
-                        <input type="hidden" name="_main" value="{{main.brand}}"> 
+                         
 
                         <div class="d-flex justify-content-between align-items-center py-4 px-3">
                             <h4 class="text-center">FILTER</h4>
-                            <a href="/{{#if (isInArray main 'girls' 'boys')}}kids{{else}}{{main}}{{/if}}" 
-                              class="btn btn-sm px-2 py-0" id="reset">
+                            <a href="/brand?brand={{main.brand}}" class="btn btn-sm px-2 py-0" id="reset">
                               Reset <i class="fa-solid fa-rotate"></i>
                             </a>
                         </div>
@@ -60,6 +62,8 @@
                        
                         
                             {{#each filters as |outerValue outerKey|}}
+
+                            {{#unless (isEqualTo outerKey 'brand')}}
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingOne">
                                     <h3 class="panel-title">
@@ -95,70 +99,126 @@
                                     </div>
                                 </div>
                             </div>
+                            {{/unless}}
                             {{/each}} 
                         </div>
                     </div>
-                    <input type="hidden" name="page" value="brand"> 
+                    <input type="hidden" name="_page" value="brand"> 
                 </form>
                 <!--End Filterbox here-->
-
             </div>    
             <!-- Shop Sidebar End -->
 
             <!-- Shop Product Start -->
-            <div class="col-lg-10 mt-5">
-                <div class="row pb-1">
+            <div class="col-lg-10 ">
+                <div class="row pb-2">
                     <!-- Category Name Block-->
                  
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
                             <div>
-                                <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
+                                <button class="btn btn-sm btn-light d-lg-none d-inline-block"
+                                   id="filterToggler"><i class="fa fa-th-large"></i>
+                                </button>
+
                                 <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
+                                <span class="d-inline-block fw-bold ps-3"> ({{products.length}} items)</span>
                             </div>
                             <div class="ml-2">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">Sorting</button>
+                                    <button type="button" class="btn btn-sm btn-light dropdown-toggle"
+                                       data-bs-toggle="dropdown">Sorting</button>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#">Latest</a>
-                                        <a class="dropdown-item" href="#">Popularity</a>
-                                        <a class="dropdown-item" href="#">Best Rating</a>
+                                        <div class="dropdown-item">
+                                            <input type="radio" name="sorting" value="latest" 
+                                                id="sort-1" class="custom-radio-input" checked
+                                                {{#if (isEqualTo selectedOptions.sorting 'latest')}}
+                                                    checked
+                                                {{/if}}>
+                                            <label for="sort-1" class="ps-2">Latest</label>
+                                        </div>
+                                        <div class="dropdown-item">
+                                            <input type="radio" name="sorting" value="best_rating" 
+                                               id="sort-2" class="custom-radio-input" 
+                                               {{#if (isEqualTo selectedOptions.sorting 'best_rating')}}
+                                                    checked
+                                                {{/if}}>
+                                            <label for="sort-2" class="ps-2">Best Rating</label>
+                                        </div>
+                                        <div class="dropdown-item">
+                                            <input type="radio" name="sorting" value="price_low_to_high" 
+                                               id="sort-3" class="custom-radio-input"
+                                               {{#if (isEqualTo selectedOptions.sorting 'price_low_to_high')}}
+                                                    checked
+                                                {{/if}}>
+                                            <label for="sort-3" class="ps-2">Price Low To High</label>
+                                        </div>
+                                        <div class="dropdown-item">
+                                            <input type="radio" name="sorting" value="price_high_to_low" 
+                                               id="sort-4" class="custom-radio-input"
+                                               {{#if (isEqualTo selectedOptions.sorting 'price_high_to_low')}}
+                                                    checked
+                                                {{/if}}>
+                                            <label for="sort-4" class="ps-2">Price High To Low</label>
+                                        </div>
+                                        <div class="dropdown-item">
+                                            <input type="radio" name="sorting" value="discount_high_to_low" 
+                                               id="sort-5" class="custom-radio-input"
+                                               {{#if (isEqualTo selectedOptions.sorting 'discount_high_to_low')}}
+                                                    checked
+                                                {{/if}}>
+                                            <label for="sort-5" class="ps-2">Discount High to Low</label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="btn-group ml-2">
                                     <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">Showing</button>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="#">10</a>
-                                        <a class="dropdown-item" href="#">20</a>
-                                        <a class="dropdown-item" href="#">30</a>
+                                        <a class="dropdown-item showing" data-value="4">4</a>
+                                        <a class="dropdown-item showing" data-value="10">10</a>
+                                        <a class="dropdown-item showing" data-value="20">20</a>
+                                        <a class="dropdown-item showing" data-value="30">30</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-    
-                    {{#each products}} 
                     
-                    <div class=" col-xl-3 col-lg-4 col-sm-6 pb-1">
+                    <div id="selectedItems" class="mb-1"></div>
+                    {{#each products}} 
+                    <div class=" col-xl-3 col-lg-4 col-sm-6">
                         {{> productcard}}
                     </div>
                     {{/each}}
                   
                     <div class="col-12">
-                        <nav class="block">
-                          <ul class="pagination justify-content-center">
-                            <li class="page-item disabled"><a class="page-link" href="#">Previous</span></a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                          </ul>
+                        <nav aria-label="Page navigation example">
+                            <div class="pagination job-pagination mb-0 justify-content-center">
+                                <li class="page-item {{#if (isEqualTo @root/pagination 1)}}disabled{{/if}}">
+                                    <a class="page-link" tabindex="-1" 
+                                    href="/filters?pagination={{dec pagination}}&pageSize={{@root/pageSize}}"
+                                    data-pagination="{{dec pagination}}" data-size="{{@root/pageSize}}">
+                                    <i class="fa-solid fa-arrow-left"></i></a>
+                                </li>
+                                {{#each paginationLinks}}
+                                    <li class="page-item"><a class="page-link{{#if (isEqualTo @root/pagination this)}} active{{/if}}" 
+                                      href="/filters?pagination={{this}}&pageSize={{@root/pageSize}}"data-pagination="{{this}}" data-size="{{@root/pageSize}}">{{this}}</a>
+                                    </li>
+                                {{/each}}
+                                <li class="page-item">
+                                    <a class="page-link {{#if (isEqualTo pagination endPage)}}disabled{{/if}}"
+                                       href="/filters?pagination={{inc pagination}}&pageSize={{@root/pageSize}}" 
+                                       data-pagination="{{inc pagination}}" data-size="{{@root/pageSize}}">
+                                       <i class="fa-solid fa-arrow-right"></i></a>
+                                </li>
+                            </div>
                         </nav>
                     </div>
                 </div>
             </div>
             <!-- Shop Product End -->
         </div>
+        </form>
     </div>
     <!-- Shop End -->
 </div>

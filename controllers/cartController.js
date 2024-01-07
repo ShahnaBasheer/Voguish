@@ -1,13 +1,14 @@
 const asyncHandler = require('express-async-handler');
 const Cart = require('../models/cartModel');
-const { findCart, cartQty, selectCartItem } = require('../helperfns');
+const { findCart, cartQty, selectCartItem, getAllBrands } = require('../helperfns');
 
 
 //get Cart page
 const getCartPage = asyncHandler(async (req,res) => {
     const user = req.user,cartDetails = await findCart(user);
-    const totalQty = await cartQty(user);
-    res.render('users/cart',{user,cartDetails,totalQty,bodyjs:'/js/cart.js'});
+    const totalQty = await cartQty(user)
+    const Brands = await getAllBrands();    
+    res.render('users/cart',{user,cartDetails,Brands,totalQty,bodyjs:'/js/cart.js'});
 });
 
 //display getcart page
@@ -16,15 +17,26 @@ const getCartList = asyncHandler( async (req,res) => {
   });
 
   
-  
+
 const addToCart = asyncHandler(async (req, res) => {
-    const { slug } = req.params;
     try {
-        await selectCartItem(slug,req);
-        return res.redirect(req.header('Referer'))
+        const { slug } = req.params;
+        const isValid = await selectCartItem(slug,req);
+
+        if(isValid.result){
+            const totalQty = await cartQty(req?.user);
+            res.status(200).json({totalQty, redirect: req.header('Referer')}); 
+        }else{
+            if(isValid.exist){
+                res.status(400).json({exist: true});
+            } else {
+                res.status(400).json({exist: false});
+            }   
+        }
     } catch (error) {
-        next(error);
+        res.status(500).json({message: 'Something went wrong!'})
     }
+   
 });
 
 

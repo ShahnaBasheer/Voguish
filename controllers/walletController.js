@@ -10,7 +10,7 @@ const getWallet = asyncHandler( async(req, res, next) => {
        totalQty = await cartQty(user),
        wallet = await Wallet.findOne({ user: user?._id }).lean();
 
-    res.render('users/wallet',{user, totalQty, wallet,
+    res.render('users/wallet',{user, totalQty, wallet, tab: "wallet",
       bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});    
 });
 

@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');
-const Brand = require('../models/brandModel');
+const WishList = require('../models/wishListModel');
 const Order = require('../models/ordersModel');
 const Users = require('../models/userModel');
 const { cartQty, genderBrandFilter, getAllBrands } = require('../helperfns');
@@ -9,7 +9,8 @@ const { cartQty, genderBrandFilter, getAllBrands } = require('../helperfns');
 //Display Login page
 const getLoginPage = asyncHandler(async (req,res) => {
    const successMessage = req?.query?.success; 
-   res.render('users/signin',{bodycss:'css/login_signup.css',successMessage}); 
+   const message = req?.query?.message;
+   res.render('users/signin',{bodycss:'css/login_signup.css',successMessage, message}); 
 });
 
 //Display Signup page
@@ -23,13 +24,22 @@ const getHomePage = asyncHandler(async (req,res) => {
    let user = req?.user, totalQty = await cartQty(user);
    const Brands = await getAllBrands();
 
+   const wishlist = new Set(
+      (await WishList.findOne({ user: req?.user?.id }).distinct('products').lean() || []).map((id) =>
+          id.toString()
+      )
+   );
+
    const newarrivals = await Product.find(
       {isDeleted:false,isDeletedBy:false}).populate('brand')
       .populate('category').sort({ createdAt: -1 }).limit(5).lean();
+
+   newarrivals?.forEach(product => {
+      product.isInWishlist = wishlist.has(product._id.toString());
+   });
        
-   res.render('users/home',{user,newarrivals,totalQty,Brands,
-      bodycss:'css/nav_footer.css',maincss:'css/home.css',
-      bodyjs:'js/productCard.js'});
+   res.render('users/home',{user,newarrivals,totalQty,wishlist,
+      Brands,maincss:'css/home.css',bodyjs:'js/productCard.js'});
 });
 
 //Display Women page

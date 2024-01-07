@@ -12,6 +12,7 @@
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "crypto-js": "^4.2.0",
     "datatables.net-dt": "^1.13.6",
     "dotenv": "^16.3.1",

@@ -3,54 +3,161 @@
         <div class="row ">
                {{> profileSideBar}}
             <div class="col-md-9">
-                <div class="shadows rounded bg-white show active p-4 ms-2" id="">
+                <div class="shadows rounded bg-white show active p-4 ms-2">
                     <h4 class="font-italic mb-4">Personal information</h4>
-                    
-                    <div class="d-flex">
-                        <div class="d-flex">
-                           <input type="text" class="form-control" data-field="firstname" id="firstname" 
-                             name="firstname" placeholder="First Name" value="{{userprofile.firstname}}" required disabled>
-                            <button class="edit-link" data-field="firstname">Edit</button>
-                            <a href="/profile/edit/" class="btn btn-primary save-button" data-field="firstname">Save</a> 
+
+                    <div id="form" class="mx-auto">
+  
+                        <div class="row">
+                            <div class="col-9">
+                               <div class="form-group">
+                                 <div class="input-group mb-3">
+                                     <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                     <input type="text" value="{{userprofile.firstname}}" class="form-control" aria-label="firstname" 
+                                        placeholder="Enter Your firstname" data-field="firstname" id="firstname" required disabled>
+                                 </div>
+                               </div>
+                            </div>
+                            <div class="col-3">
+                               <button class="edit-btn btn btn-info" data-field="firstname">Edit</button>
+                               <a href="/profile/edit/" class="btn btn-primary save-button btn-md" data-field="firstname">Save</a>
+                               <button class="cancel-btn btn btn-danger btn-md" data-field="firstname">Cancel</button> 
+                            </div>
+                            <p id="firstname-text" class="text-danger"></p>
+                        </div>
+  
+  
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                        <input type="text" value="{{userprofile.lastname}}" class="form-control" aria-label="lastname" 
+                                          placeholder="Enter Your lastname" data-field="lastname" id="lastname" required disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <button class="edit-btn btn btn-info" data-field="lastname">Edit</button>
+                                <a href="/profile/edit/" class="btn btn-primary save-button btn-md" data-field="lastname">Save</a>
+                                <button class="cancel-btn btn btn-danger btn-md" data-field="lastname">Cancel</button> 
+                            </div>
+                            <p id="lastname-text" class="text-danger"></p>
+                        </div>
+  
+  
+                        <div class="row pb-3">
+                            <div class="col-9">
+                                <div class="form-group">
+                                    <label class="text-dark pe-5">Gender</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input " type="radio" name="gender" id="male" value="male" data-field="gender"
+                                           {{#if (isEqualTo userprofile.gender 'male')}}checked{{/if}} disabled>
+                                        <label class="form-check-label text-dark" for="male">Male</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="gender" id="female" value="female" data-field="gender"
+                                           {{#if (isEqualTo userprofile.gender 'female')}}checked{{/if}} disabled>
+                                        <label class="form-check-label text-dark" for="female">Female</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <button class="edit-btn btn btn-info" data-field="gender">Edit</button>
+                                <a href="/profile/edit/" class="btn btn-primary save-button btn-md" data-field="gender">Save</a>
+                                <button class="cancel-btn btn btn-danger btn-md" data-field="gender">Cancel</button> 
+                            </div>
+                            <p id="gender-text" class="text-danger"></p>
+                        </div>
+  
+  
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                        <input type="email" class="form-control" aria-label="email" pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" 
+                                            placeholder="example@email.com" value="{{userprofile.email}}" id="email" data-field="email" required disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <button class="edit-btn btn btn-info" data-field="email">Edit</button>
+                                <a href="/profile/edit/" class="btn btn-primary save-button btn-md" data-field="email">Save</a>
+                                <button class="cancel-btn btn btn-danger btn-md" data-field="email">Cancel</button> 
+                            </div>
+                            <p id="email-text" class="text-danger"></p>
+                        </div>
+  
+  
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                                        <input type="tel" class="form-control" aria-label="phone" value="{{user.phone}}" data-field="phone"
+                                          placeholder="+911234567890" id="phone" required disabled>
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class="col-3">
+                                <button class="edit-btn btn btn-info" data-field="phone">Edit</button>
+                                <a href="/profile/edit/" class="btn btn-primary save-button btn-md" data-field="phone">Save</a>
+                                <button class="cancel-btn btn btn-danger btn-md" data-field="phone">Cancel</button> 
+                            </div>
+                            <p id="phone-text" class="text-danger"></p>
                         </div>
                         
-                        <div class="d-flex">
-                           <input type="text" class="form-control" data-field="lastname" id="lastname"
-                             name="lastname" placeholder="Last Name" value="{{userprofile.lastname}}" required disabled>
-                            <button class="edit-link" data-field="lastname">Edit</button>
-                            <a href="/profile/edit/" class="btn btn-primary save-button" data-field="lastname">Save</a>
+
+                        <div class="pt-3 pb-4">
+                            <button class="btn btn-sm text-white" style="background-color:rgb(116, 116, 125);" id="change-password">Change Password</button>
+                            
+                        </div>
+
+                        <div id="passwordChange">
+
+                             <div class="row">
+                                <div class="col-9">
+                                     <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                            <input type="password" name="currentPassword" class="form-control" aria-label="currPassword" 
+                                                id="currentPassword" placeholder="Enter Your Current Password" autocomplete="new-password">
+                                        </div>
+                                   </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-9">
+                                     <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                                            <input type="password" name="newPassword" class="form-control" aria-label="password" 
+                                                id="newPassword" placeholder="Enter Your password">
+                                        </div>
+                                   </div>
+                                </div>
+                            </div>
+  
+  
+                            <div class="row">
+                                <div class="col-9"> 
+                                    <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                                            <input type="password" name="confirmPassword" class="form-control" aria-label="confirm password" 
+                                                id="confirmPassword" placeholder="Confirm Your Password">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="alert alert-danger py-1" style="display:none;" role="alert" id="password-message"></p>
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-sm">Save</button>
+                            <button type="button" class="btn btn-danger btn-sm" id="cancelChange">Cancel</button>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <span>Gender</span>
-                        <input type="radio" id="male"  name="gender"
-                           data-field="gender" value="male" required disabled 
-                           {{#if (isEqualTo userprofile.gender 'male')}}checked{{/if}}>
-                        <label for="male" class="pe-3">Male</label>
-                        <input type="radio" id="female" name="gender"
-                           data-field="gender" value="female" required disabled
-                           {{#if (isEqualTo userprofile.gender 'female')}}checked{{/if}}>
-                        <label for="female">Female</label><br>
-                        <button class="edit-link" data-field="gender">Edit</button>
-                        <a href="/profile/edit/" class="btn btn-primary save-button" data-field="gender">Save</a>
-                    </div>
-                        
-                    <div class="d-flex">
-                        <input type="email" name="email" id="email" data-field="email" 
-                           class="form-control" pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}" placeholder="example@email.com"
-                           value="{{userprofile.email}}" required disabled>
-                        <button class="edit-link" data-field="email">Edit</button>
-                        <a href="/profile/edit/" class="btn btn-primary save-button" data-field="email">Save</a>
-                    </div>
-                    <p id="email-text" class="text-danger"></p>
-                    <div class="d-flex">
-                        <input type="tel" class="form-control" id="phone" data-field="phone" name="phone" 
-                          placeholder="+1 888-999-7777" value="{{user.phone}}" required disabled>
-                        <button class="edit-link" data-field="phone">Edit</button>
-                        <a href="/profile/edit/" class="btn btn-primary save-button" data-field="phone">Save</a>
-                    </div>
-                    <p id="phone-text" class="text-danger"></p>
-				</div>
+				</div>     
             </div>
         </div>
     </div>
@@ -81,3 +188,8 @@
     </div>
   </div>
 </div>
+
+
+
+
+

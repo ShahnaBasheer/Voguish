@@ -292,3 +292,6 @@ h4.price{ color:rgb(212, 38, 32) }
 .rating-wrapper input:checked ~ label {
   color: rgb(239, 233, 65);
 }
+.swal-title-custom-class {
+  font-size: 1.5rem;
+}

@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Orders = require('../models/ordersModel');
 const Cart = require('../models/cartModel');
 const User = require('../models/userModel');
+const Product = require('../models/productModel');
 const CartItem = require('../models/cartItemModel');
 const Wallet = require('../models/walletModel');
 const Coupon = require('../models/couponModel');
@@ -11,13 +12,13 @@ const { generateOrderId, cartQty, getAllBrands,
 const CryptoJS = require('crypto-js');
 const Razorpay = require('razorpay');
 const puppeteer = require('puppeteer');
+const Order = require('../models/ordersModel');
 
 
 //Display Orders in admin side
 const getOrders = asyncHandler( async (req,res) => {
     const orders = await Orders.find().sort({ createdAt: -1 })
             .populate('shippingAddress').populate('user').lean();
-    console.log(orders)
     res.render('admin/orders',{admin:true,adminInfo:req.user,orders,__active: 'orders'});
     
 });
@@ -109,7 +110,7 @@ const getOrdersPage = asyncHandler( async(req,res) => {
     if(toOrder > orderCount) toOrder = orderCount;
        
     res.render('users/ordersInfo',{user,totalQty,myorders,paginationLinks,
-        page, Brands, endPage, totalOrders: orderCount,
+        page, Brands, endPage, totalOrders: orderCount, tab: "orders",
         fromOrder, toOrder, pageSize, orderBy, orderDate, orderStatus,
         bodycss:'/css/myprofile.css',bodyjs:'/js/myprofile.js'});
 });
@@ -166,7 +167,7 @@ const createOrders = asyncHandler(async (req, res) => {
     const wallet = await Wallet.findOne({ user: user?.id });
     const orderItems = [];
     let totalPrice = shippingCharge = couponRedeemed = 0;
-    let order, razorpayOrderData;
+    let newOrder, razorpayOrderData;
     const coupon = await Coupon.findOne({ code: req?.body?.couponcode });
         
     for (const item of cart?.items) {
@@ -227,28 +228,67 @@ const createOrders = asyncHandler(async (req, res) => {
         req.body.paymentInfo = razorpayOrderData;
     }
         
-        order = await Orders.create(req.body);
+    newOrder = await Orders.create(req.body);
+
+    const order = await Orders.findById(newOrder.id)
+        .populate('shippingAddress')
+        .populate({
+            path: 'orderItems.item',
+            model: 'CartItem',
+            populate: {
+                path: 'product',
+                model: 'Product'
+            }
+    }).lean();
+
+    
         
-    if (order) {
+    if (newOrder) {
         if (paymentMethod === 'Razorpay') {
             res.json({ razorpayOrderData });
         } else {
             req.body.paymentMethod = 'CashOnDelivery';
-            wallet.balance -= redeemAmount;
-            wallet.transactionHistory.unshift({
-                type: 'debit',
-                amount: redeemAmount,
-                method: 'purchase_debit',
-                transactionInfo: {
-                    orderId : order._id
-                },
-            });
-            await wallet?.save();
+
+            if(wallet && req?.body?.wallet){
+                wallet.balance -= redeemAmount;
+                wallet?.transactionHistory.unshift({
+                    type: 'debit',
+                    amount: redeemAmount,
+                    method: 'purchase_debit',
+                    transactionInfo: {
+                        orderId : order._id
+                    },
+                });
+                await wallet?.save();
+            }
             cart.items = [];
             await cart?.save();
-            coupon.timesUsed++;
-            await coupon?.save();
-            res.render('users/orderConfirmation', { user, totalQty });
+
+            if(req?.body?.couponcode && coupon){
+                coupon.timesUsed++;
+                await coupon?.save();
+            }
+          
+            // Update product stock here
+            for (const item of orderItems) {
+                const cartItem = await CartItem.findById(item.item);
+                const product = await Product.findById(cartItem.product);
+            
+                if (product) {
+                    const sizeInfo = product.sizes.get(cartItem.size);
+            
+                    if (sizeInfo) {
+                        const colorInfo = sizeInfo.find(entry => entry.color === cartItem.color);            
+                        if (colorInfo) {
+                            colorInfo.stock = Math.max(colorInfo.stock - item.quantity, 0);
+                        }
+                    }
+            
+                    product.totalStock -= item.quantity;
+                    await product.save();
+                }
+            }
+            res.render('users/orderConfirmation', { user, totalQty , order});
         }
     } else {
         res.status(500).json({ error: 'Failed to create order' });
@@ -261,6 +301,7 @@ const razorpayPayment = asyncHandler(async (req, res) => {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req?.body;
 
     const user = await User.findById(req?.user?._id).populate('addresses').lean();
+    const totalQty = await cartQty(user);
     const cart = await Cart.findOne({ user: req.user?._id });
     const Myorder = await Orders.findOne({ 'paymentInfo.id': razorpay_order_id});
     const order = await Orders.findOne({ 'paymentInfo.id': razorpay_order_id})
@@ -277,43 +318,72 @@ const razorpayPayment = asyncHandler(async (req, res) => {
     // Verify the payment signature
     const generatedSignature = CryptoJS.HmacSHA256(`${razorpay_order_id}|${razorpay_payment_id}`, 
         process.env.RAZOR_KEY_SECRET).toString();
+
     if (generatedSignature === razorpay_signature) {
         Myorder.paymentStatus = 'Paid';
         await Myorder.save();
+
         if (Myorder) {
+
             cart.items = [];
+            
+            if(Myorder?.couponApplied){
+                const coupon = await Coupon.findById(Myorder?.couponApplied);
 
-            const coupon = await Coupon.findById(Myorder?.couponApplied);
-            const wallet = await Wallet.findOne({ user: req?.user?.id });
-
-            if (coupon && coupon.endDate >= new Date() && coupon.status === 'Active') {
-                coupon.timesUsed++;
-                await coupon.save();
-            } else {
-                console.error('Coupon is expired or not valid.');
-                throw new Error('Coupon Expired or Cancelled!');
+                if (coupon && coupon.endDate >= new Date() && coupon.status === 'Active' && coupon.startDate <= new Date()) {
+                    coupon.timesUsed++;
+                    await coupon.save();
+                } else {
+                    console.error('Coupon is expired or not valid.');
+                    throw new Error('Coupon Expired or Cancelled!');
+                }
             }
             
+            
 
-            if(wallet){
-                wallet.balance = wallet.balance - Myorder.walletPayment;
-                wallet.transactionHistory.unshift({
-                    type: 'debit',
-                    amount: Myorder.walletPayment,
-                    method: 'purchase_debit',
-                    transactionInfo: {
-                        orderId : Myorder._id
-                    },
-                })
-                await wallet.save();
+            if(Myorder.walletPayment > 0){
+                const wallet = await Wallet.findOne({ user: req?.user?.id });
 
-            }else{
-                throw new Error('Something wrong has happened with the wallet!');
+                if(wallet){
+                    wallet.balance = wallet.balance - Myorder.walletPayment;
+                    wallet.transactionHistory.unshift({
+                        type: 'debit',
+                        amount: Myorder.walletPayment,
+                        method: 'purchase_debit',
+                        transactionInfo: {
+                            orderId : Myorder._id
+                        },
+                    })
+                    await wallet?.save();
+                } else {
+                    throw new Error('Something has Happend with the wallet');
+                }
+               
+            }
+
+            // Update product stock here
+            for (const item of Myorder.orderItems) {
+                const cartItem = await CartItem.findById(item.item);
+                const product = await Product.findById(cartItem.product);
+
+                if (product) {
+                    const sizeInfo = product.sizes.get(cartItem.size);
+
+                    if (sizeInfo) {
+                        const colorInfo = sizeInfo.find(entry => entry.color === cartItem.color);
+                        if (colorInfo) {
+                            colorInfo.stock = Math.max(colorInfo.stock - item.quantity, 0);
+                        }
+                    }
+
+                    product.totalStock -= item.quantity;
+                    await product.save();
+                }
             }
 
             await cart?.save();
 
-            res.render('users/orderConfirmation', {order, user});
+            res.render('users/orderConfirmation', {order, user, totalQty});
         } else {
             res.status(404).json({ error: 'Order not found' });
         }

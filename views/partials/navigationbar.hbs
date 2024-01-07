@@ -21,7 +21,7 @@
       <div class="d-flex justify-content-between w-100 flex-md-row flex-column">
         <div class="d-flex justify-content-between px-md-0 px-3">
           
-          <a class="navbar-brand text-white mt-lg-3 ms-md-5" href="#"><strong>VOGUISH</strong></a>
+          <a class="navbar-brand text-white mt-lg-3 ms-md-5" href="/home"><strong>VOGUISH</strong></a>
           <button class="navbar-toggler px-2" type="button" data-bs-toggle="modal" 
             data-bs-target="#ModalNavigation"><span class="navbar-toggler-icon fs-6"></span>
           </button>
@@ -29,20 +29,26 @@
         
         <!-- SEARCH BAR -->
         <div class="input-group mb-3 w-50" id="search">
-            <button class="btn dropdown-toggle text-white px-0" type="button" 
-               data-bs-toggle="dropdown" aria-expanded="false">All Categories
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Women</a></li>
-                <li><a class="dropdown-item" href="#">Men</a></li>
-                <li><a class="dropdown-item" href="#">Girls</a></li>
-                <li><a class="dropdown-item" href="#">Boys</a></li>
-            </ul>
+            <select id="selectGender" class="px-2 bg-transparent text-white border-0" style="font-size:.95rem;">
+                <option class="text-dark" value="none">Categories</option>
+                <option value="women" class="text-dark">Women</option>
+                <option value="men" class="text-dark">Men</option>
+                <option value="girls" class="text-dark">Girls</option>
+                <option value="boys" class="text-dark">Boys</option>              
+            </select>
+           
             <span class="input-group-text border-0 pe-0">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </span>
-            <input type="search" class="form-control border-0" name="x" 
-               placeholder="Search for products, brands and more...">
+
+            <div id="searchbox">
+                <input type="search" class="form-control border-0 text-white" name="search" 
+                   placeholder="Search for products and categories..." id="searchInput" autocomplete="false" aria-haspopup="true">
+            
+                <ul class="searchmenu dropdown-menu" id="searchDropdown" aria-labelledby="SearchDrop"></ul>
+            </div>
+         
+            
         </div>
 
         <ul class="navbar-nav d-md-flex d-none">
@@ -80,8 +86,8 @@
             <li class="nav-item">
               <a class="nav-link mx-2 position-relative" href="/cart">
               <i class="fa-solid fa-cart-shopping text-white"></i>
-                  <span class="position-absolute top-25 translate-middle text-white
-                    badge rounded-circle bg-danger">{{totalQty}}</span>
+              <span class="position-absolute top-25 translate-middle text-white
+                badge rounded-circle bg-danger" id="qnty">{{totalQty}}</span>
               </a>
             </li>
         </ul>
@@ -104,7 +110,7 @@
             </li>
             <li class="nav-item has-dropdown">
               <a class="nav-link mx-3" href="#">Brands</a>
-              <ul class="dropdown">
+              <ul class="dropdown" id="brandScroll">
                   {{#each Brands}}   
 										<li><a href="/brand?brand={{this}}" class="nav-link">{{this}}</a></li>
 									{{/each}}

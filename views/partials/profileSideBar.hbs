@@ -7,28 +7,29 @@
         <!-- Tabs nav -->
         <div class="nav flex-column nav-pills nav-pills-custom">
             <a class="nav-link mb-3 p-3 shadow" href="/profile">
-                <i class="fa fa-user-circle-o mr-2"></i>
-                <span class="font-weight-bold small text-uppercase">Personal information</span>
+                <i class="fa fa-user-circle-o mr-2 {{#if (isEqualTo "personal" tab )}}text-dark{{/if}}"></i>
+                <span class="fw-semibold small text-uppercase {{#if (isEqualTo "personal" tab )}}text-dark{{/if}}">Personal information</span>
+                
             </a>
             
             <a class="nav-link mb-3 p-3 shadow" href="/profile/address">
-                <i class="fa fa-calendar-minus-o mr-2"></i>
-                <span class="font-weight-bold small text-uppercase">Addresses</span>
+                <i class="fa fa-calendar-minus-o mr-2 {{#if (isEqualTo "address" tab )}}text-dark{{/if}}"></i>
+                <span class="fw-semibold small text-uppercase {{#if (isEqualTo "address" tab )}}text-dark{{/if}}">Addresses</span>
             </a>
             
             <a class="nav-link mb-3 p-3 shadow" href="/orders">
-                <i class="fa fa-check mr-2"></i>
-                <span class="font-weight-bold small text-uppercase">Orders</span>
+                <i class="fa fa-check mr-2 {{#if (isEqualTo "orders" tab )}}text-dark{{/if}}"></i>
+                <span class="fw-semibold small text-uppercase {{#if (isEqualTo "orders" tab )}}text-dark{{/if}}">Orders</span>
             </a>
 
             <a class="nav-link mb-3 p-3 shadow" href="/wallet">
-                <i class="fa fa-check mr-2"></i>
-                <span class="font-weight-bold small text-uppercase">Wallet</span>
+                <i class="fa-solid fa-wallet mr-2 {{#if (isEqualTo "wallet" tab )}}text-dark{{/if}}"></i>
+                <span class="fw-semibold small text-uppercase {{#if (isEqualTo "wallet" tab )}}text-dark{{/if}}">Wallet</span>
             </a>
     
             <a class="nav-link mb-3 p-3 shadow" href="/wishlist">
-                <i class="fa-solid fa-heart mr-2"></i>
-                <span class="font-weight-bold small text-uppercase">Wishlist</span>
+                <i class="fa-solid fa-heart mr-2 {{#if (isEqualTo "wishlist" tab )}}text-dark{{/if}}"></i>
+                <span class="fw-semibold small text-uppercase {{#if (isEqualTo "wishlist" tab )}}text-dark{{/if}}">Wishlist</span>
             </a>
             
             <!--<a class="nav-link mb-3 p-3 shadow" href="/profile/reviews">

@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const dbConnect = require('./config/dbConnect');
 const exphbs = require('express-handlebars');
 const logger = require('morgan');
-const nocache = require('nocache');
 const { notFound, errorHandler, internalError } = require('./middlewares/errorHandlers');
 const { removeGMT, isEqualTo, roleEquals, calculate, 
       inc, loop, calculateTotal, uniqueColors, contains,
@@ -57,7 +56,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 
-app.use(nocache());
 app.use('/',userRouter);
 app.use('/admin',adminRouter);
 

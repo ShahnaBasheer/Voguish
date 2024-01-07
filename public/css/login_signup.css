@@ -36,6 +36,8 @@
     font-size: 28px;
     color: #000; /* Black color */
   }
+
+  #sign .alert-message{ font-size: .9rem; }
   
   /* Wrap */
   #sign .wrap, #adminlogin .wrap {
@@ -187,4 +189,5 @@
      background-color: #000000 ;
   } 
 
-  
+  /* forgot password */
+

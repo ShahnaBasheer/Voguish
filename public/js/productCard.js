@@ -2,7 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const addToWishlistBtn = document.querySelectorAll('.addToWishlist');
     const checkboxes = document.querySelectorAll('.custom-control-input:not(.selectAll), .custom-radio-input');
     const checkedBoxes = document.querySelectorAll('input:checked');
+    const showing = document.querySelectorAll('.showing');
     const selectAll = document.querySelectorAll('.selectAll');
+    const addToCartBtn = document.querySelectorAll('.addToCartBtn');
+    const removeFromWishlist = document.querySelectorAll('.product-wishlist');
+    const pagination = document.querySelectorAll('.page-link');
     let rangeOne = document.getElementById('rangeOne'),
         rangeTwo = document.getElementById('rangeTwo'),
         outputOne = document.querySelector('.outputOne'),
@@ -10,20 +14,46 @@ document.addEventListener('DOMContentLoaded', function() {
         inclRange = document.querySelector('.incl-range'),
         selectedItems = document.getElementById('selectedItems');
 
-    addToWishlistBtn?.forEach( addTo => {
-        addTo.addEventListener('click', async (event) => {
+
+
+    addToWishlistBtn?.forEach( function(item) {
+        item.addEventListener('click', async function(event) {
             event.preventDefault()
             try {
-                const response = await fetch(addTo.getAttribute('href'), {
+                const response = await fetch(item.getAttribute('href'), {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-               
+               const data = await response.json();
                 if (response.ok) {
-                    console.log(response)
+                    
+                    Swal.fire({
+                        icon: "success",
+                        title: this.dataset.title,
+                        text: "is added To WishList !",
+                        showConfirmButton: false,
+                        iconColor: '#1b812f',
+                        timer: 1500,
+                        customClass: {
+                            title: 'swal-title-custom-class',
+                        },
+                        didDestroy: () => {
+                            // This function will be called when the modal is destroyed
+                            window.location.href = data.redirect;
+                        }
+                      });                      
                 } else {
+                    if(response.status == 400){
+                        Swal.fire({
+                            icon: "Success",
+                            title: "Already Added To WishList!",
+                            customClass: {
+                                title: 'swal-title-custom-class',
+                            }
+                        });
+                    }
                     console.error('Failed to add to wishlist');
                 }
             } catch (error) {
@@ -32,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+
     if(rangeOne && rangeTwo){
        let updateView = function () {
           // Convert values to integers
@@ -123,6 +154,24 @@ document.addEventListener('DOMContentLoaded', function() {
          }
     });
 
+    showing?.forEach( function(item){
+        item?.addEventListener('click', function(e){
+            e.preventDefault();
+            
+
+            const pageSize = item.dataset.value;
+            const form = document.getElementById('filterForm');
+    
+            const pageSizeInput = document.createElement('input');
+            pageSizeInput.type = 'hidden';
+            pageSizeInput.name = 'pageSize';
+            pageSizeInput.value = pageSize;
+            
+            form.appendChild(pageSizeInput);
+            form.submit();
+        })
+    });
+
 
     selectAll?.forEach( function(opt) {
         const key = opt.id.replace(/-all$/, '');
@@ -134,7 +183,134 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-   
+
+
+    addToCartBtn?.forEach( function(item) {
+
+        item?.addEventListener('click',async function(e){
+            e.preventDefault();
+            const url = this.getAttribute('href');
+    
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: this.dataset.title,
+                    text: "is added To Cart !",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    iconColor: '#1b812f',
+                    customClass: {
+                        title: 'swal-title-custom-class',
+                    }
+                  });
+                  document.getElementById('qnty').innerHTML = data.totalQty;
+            } else if( response.status == 400){
+
+                if(data.exist){
+                    Swal.fire({
+                        icon: "Success",
+                        title: "Already Added !",
+                        customClass: {
+                            title: 'swal-title-custom-class',
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Unfortunately",
+                        text: "we're currently out of stock on that item!",
+                        icon: "warning",
+                    });
+                }
+            } else{
+                console.log(data.message)
+            }
+        });
+    });
+    
+    removeFromWishlist?.forEach(function(item){
+        item.addEventListener('click', async function(e){
+            e.preventDefault();
+            const url = item.getAttribute('href');
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                console.log("okkkkk")
+                Swal.fire({
+                    icon: "success",
+                    title: "Removed",
+                    text: data.message,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    iconColor: '#1b812f',
+                    customClass: {
+                        title: 'swal-title-custom-class',
+                    },
+                    didDestroy: () => {
+                        // This function will be called when the modal is destroyed
+                        window.location.href = data.redirect;
+                    }
+                  });
+
+            } else if( response.status == 400){
+
+                if(data.exist){
+                    Swal.fire({
+                        icon: "Success",
+                        title: "Already Added !",
+                        customClass: {
+                            title: 'swal-title-custom-class',
+                        }
+                    });
+                }
+            } else{ console.log(data.message) }
+            })
+        })
+
+        pagination?.forEach(function (item) {
+            item?.addEventListener('click', async function (e) {
+                e.preventDefault();
+        
+                const pagination = item.dataset.pagination;
+                const pageSize = item.dataset.size;
+                const form = document.getElementById('filterForm');
+        
+                // Create hidden input fields for pagination and pageSize
+                const paginationInput = document.createElement('input');
+                paginationInput.type = 'hidden';
+                paginationInput.name = 'pagination'; 
+                paginationInput.value = pagination;
+        
+                const pageSizeInput = document.createElement('input');
+                pageSizeInput.type = 'hidden';
+                pageSizeInput.name = 'pageSize';
+                pageSizeInput.value = pageSize;
+                
+                // Append the hidden inputs to the form
+                form.appendChild(paginationInput);
+                form.appendChild(pageSizeInput);
+                form.submit();
+            });
+        });
+
+
+        
 });
 
     

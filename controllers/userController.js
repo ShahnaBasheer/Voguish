@@ -52,16 +52,16 @@ const resendOtpCode = asyncHandler(async (req, res) => {
 
 //OTP verification
 const otpVerification = asyncHandler( async (req,res) => {
-    const {txt1,txt2,txt3,txt4,txt5,txt6,email} = req.body,
-        otp = [txt1, txt2, txt3, txt4, txt5, txt6].join(''),
-        user = await User.findOne({ email, otp });
+    try {
+        const { otp, email } = req?.body,
+            user = await User.findOne({ email, otp });
 
         if (user && user?.otpTimestamp) {
             const currentTime = new Date();
             const otpTimestamp = new Date(user.otpTimestamp);
             const timeDifferenceInMinutes = (currentTime - otpTimestamp) / (1000 * 60);
             
-            if (timeDifferenceInMinutes <= 10) {
+            if (timeDifferenceInMinutes <= 2) {
                 // OTP is valid within the 10-minute window
                 const subject = "Welcome to VOGUISH";
                 const text = `Dear ${user.firstname} ${user.lastname},\n
@@ -69,16 +69,26 @@ const otpVerification = asyncHandler( async (req,res) => {
                 At VOGUISH, we offer a wide range of products,from the latest fashion trends.With our curated selection and exceptional customer service, we are committed to making your shopping experience delightful and hassle-free`;
   
                 await sendEmail(email, subject, text);
-                await User.updateOne({ email }, { $set: { isVerified: true } });
+                await User.updateOne(
+                    { email },
+                    { 
+                      $set: { isVerified: true }, // Set fields you want to keep
+                      $unset: { otpTimestamp: "", otp: "" } // Unset fields you want to remove
+                    }
+                  );;
                 const successMessage = 'You have successfully signed up! Please Login here';
-                res.redirect(`/login?success=${encodeURIComponent(successMessage)}`);
+                //res.redirect(`/login?success=${encodeURIComponent(successMessage)}`);
+                res.status(200).json({ redirect: `/login?success=${encodeURIComponent(successMessage)}` })
             } else {
-                res.render('users/otpverification', { email, bodyjs: 'js/otp.js', message: 'Expired OTP!' });
+                res.status(422).json({ message: 'Expired OTP!' });//401 Unauthorized
             }   
         } else {
-            res.render('users/otpverification', { email, bodyjs: 'js/otp.js', message: 'Invalid OTP!' });
+            res.status(401).json({ message: 'Invalid OTP!' }); //422 Unprocessable Entity
         }
-
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message: error.message});
+    }
 });
 
 //login user from login form
@@ -109,7 +119,7 @@ const loginUser = asyncHandler(async (req, res) =>{
         res.redirect('/');
     }else{
         console.log("Invalid Credentials");
-        res.redirect('/login')
+        res.redirect(302, `/login?message=${encodeURIComponent("Invalid Credentials")}`)
     }
 });
 
@@ -214,12 +224,14 @@ const emailCheck = asyncHandler( async (req,res) => {
     res.json({exists : isEmailValid});    
 });
 
+
 //phone number checking to know if already exist
 const phoneCheck = asyncHandler( async (req,res) => {
     const phone = req.query?.phone;
     const isValid = await validatePhoneNumber(phone);
     res.json({exists : isValid});    
 });
+
 
 //Display Admin Login
 const adminLogin = asyncHandler( async (req,res) => {
@@ -255,6 +267,7 @@ const adminLogin = asyncHandler( async (req,res) => {
        return res.redirect('/admin')
     }
 });
+
 
 const adminLogout = asyncHandler (async(req,res) => {
     const refreshToken = req?.cookies?.adminRefreshToken;

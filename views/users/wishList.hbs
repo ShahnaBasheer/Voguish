@@ -6,25 +6,15 @@
                 <div class="shadows rounded bg-white p-4 ms-2">
                     <h4 class="font-italic mb-4">Wishlist</h4>
                     <div class="container bootdey">
-                        <section class="panel">
-                            <div class="panel-body">
-                                <div class="pull-right">
-                                    <ul class="pagination pagination-sm pro-page-list">
-                                        <li><a href="#">1</a></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">»</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </section>
+  
                 
                         <div class="row product-list">
                             {{#each wishlist.products}}
                             <div class="col-md-4">
                                 <section class="panel">
                                     <div class="pro-img-box">
-                                        <img src="uploads/{{this.images.img-1}}" alt="" />
+                                        <a href="/wishList/delete-item/{{this.slug}}" class="removeBtn"><i class="fa-solid fa-circle-xmark"></i></a>
+                                        <img src="uploads/{{this.images.img-1}}" alt="" class="wish-img"/>
                                         <a href="/wishlist/moveToCart/{{this.slug}}" class="adtocart">
                                             <i class="fa fa-shopping-cart"></i>
                                         </a>

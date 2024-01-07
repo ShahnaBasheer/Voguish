@@ -49,6 +49,7 @@
 #search{
    margin-left: 3rem;
    border-bottom: 1px solid white;
+   position: relative;
 }
 #search input[type="search"], #search .input-group-text{
    background-color: transparent;
@@ -68,6 +69,46 @@
    background-color: white;
 }
 
+#searchbox{ position: relative; min-width: 200px; width:300px}
+
+.searchmenu {
+  position: absolute;
+  top: 43px;
+  list-style-type: none;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  white-space: nowrap; /* Use white-space instead of text-wrap */
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  max-height: 250px;
+  width: 350px;
+  padding: 10px;
+  z-index: 10000;
+  background-color: #fff;
+  display: none;
+}
+
+.searchmenu::-webkit-scrollbar {
+  background-color: #ffffff;
+  width: 5px; /* Adjust the width of the scrollbar */
+}
+
+/* Style the scrollbar thumb */
+.searchmenu::-webkit-scrollbar-thumb {
+  background-color: #c9c7c7;
+} 
+
+.searchmenu li {
+  cursor: pointer;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.searchmenu li:hover {
+  background-color: #f0f0f0;
+}
 
 /* Carusel */
 #HomeCarousel{
@@ -81,6 +122,15 @@
   }
 }
 
+#brandScroll::-webkit-scrollbar {
+  background-color: #000000;
+  width: 4px; /* Adjust the width of the scrollbar */
+}
+
+/* Style the scrollbar thumb */
+#brandScroll::-webkit-scrollbar-thumb {
+  background-color: #feadad;
+} 
 
 /* MODAL MENU BOX */
 
@@ -128,9 +178,8 @@
 }
 
 /* FOOTER */
-#footer .footer-fixed a i{
-  font-size: 1.5rem;;
-}
+#footer .footer-fixed a i{ font-size: 1.5rem; }
+
 #footer #footer-container{
    background-color: #6a6a6a;
    color: white;
@@ -145,6 +194,8 @@
    color: white;
    font-size: 0.7rem;
 }
+
+#footer li{ list-style-type: none; }
 
 /* Email Validation */
 
@@ -343,3 +394,6 @@
     margin: .5rem auto;
     font-size: 0.9rem;
 }
+
+/* cart */
+.cart-title{ text-decoration: none; color: black; font-size: .95rem;}

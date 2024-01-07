@@ -62,6 +62,12 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false, 
     },
+    resetPasswordToken: {
+        type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
     isDeleted: {
         type: Boolean,
         default: false,
@@ -78,6 +84,7 @@ userSchema.pre('save', async function(next) {
     if(this.isModified('password')){
       const salt = bcrypt.genSaltSync(10); //saltRounds 10
       this.password = await bcrypt.hash(this.password, salt);
+      console.log(this.password, "aszdfghb")
     }
   });
  

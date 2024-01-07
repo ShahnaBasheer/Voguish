@@ -1,91 +1,108 @@
-const emailInput = document.getElementById('email');
-const phoneInput = document.getElementById('phone');
-const emailError = document.getElementById('email-error');
-const phoneError = document.getElementById('phone-error');
 
 
-emailInput?.addEventListener('blur', async function(event) {
-    const email = emailInput.value;
-    if (email) {
-        const response = await fetch(`/check-email?email=${email}`);
-        const data = await response.json();
+document.addEventListener("DOMContentLoaded", function() {
+    
+    const emailInput = document.getElementById('email');
 
-        if (data.exists == "Email available!") {
-            emailError.style.color = 'green';
-        } else {
-            emailError.style.color = 'red';
+    emailInput?.addEventListener('blur', async function(event) {
+        const emailError = document.getElementById('email-message');
+        const email = emailInput.value;
+        if (email) {
+            const response = await fetch(`/check-email?email=${email}`);
+            const data = await response.json();
+    
+            if (data.exists == "Email available!") {
+                emailError.style.color = 'green';
+            } else {
+                emailError.style.color = 'red';
+            }
+            emailError.textContent = data.exists;
         }
-        emailError.textContent = data.exists;
-    }
-});
-
-phoneInput?.addEventListener('blur', async function(event) {
-    const phone = phoneInput.value;
-    if (phone) {
-        const response = await fetch(`/check-phone?phone=${phone}`);
-        const data = await response.json();
-   
-        if (data.exists == "Phone number available!") {
-            phoneError.style.color = 'green';
-        } else {
-            phoneError.style.color = 'red';
-        }
-        phoneError.textContent = data.exists;
-    }
+    });
 
     
     document.getElementById('user-form').addEventListener('submit', function(event) {
         event.preventDefault();
-
-        // Clear previous error messages
-        clearErrorMessages();
-
-        // Validation for First Name
-        const firstName = document.getElementById('firstname').value.trim();
-        if (firstName === '') {
-            displayErrorMessage('firstname', 'First Name is required.');
-            return;
+        resetErrorMessages();
+        
+        if(signupFormValidation()){
+            this.submit();
         }
-
-        // Validation for Last Name
-        const lastName = document.getElementById('lastname').value.trim();
-        if (lastName === '') {
-            displayErrorMessage('lastname', 'Last Name is required.');
-            return;
+        
+        function resetErrorMessages() {
+            const errorElements = document.querySelectorAll('.alert-message');
+            errorElements.forEach((element) => {
+                if(element){
+                    element.textContent = '';
+                    element.style.display = 'none';
+                }  
+            });
         }
-
-        // Validation for Password
-        const password = document.getElementById('password').value;
-        if (password.includes(' ')) {
-            displayErrorMessage('password', 'spaces not allowed');
-            return;
-        }
-         // Validation for Password
-         const confirmpassword = document.getElementById('confirmpassword').value;
-         if (confirmpassword.includes(' ')) {
-             displayErrorMessage('confirmpassword', 'spaces not allowed');
-             return;
-         }
-
-        if (password !== confirmpassword) {
-            displayErrorMessage('confirmpassword', 'Passwords do not match.');
-            return;
-        }
-        this.submit();
     });
 
-    function displayErrorMessage(elementId, message) {
-        const errorElement = document.getElementById(`${elementId}-error`);
-        errorElement.textContent = message;
-        errorElement.classList.add('text-danger'); // You can style this class as needed
-    }
+    function signupFormValidation() {
+        const firstname = validateFirstname('firstname', 'First Name is required!');
+        const lastname = validateLastname('lastname', 'Lastname is required!')
+        const password = validatePassword('password', 'Password is required!');
+        const confrmPassword = validateCnfrmPassword('confirmpassword');
+    
+        function validateFirstname(id, errorMessage) {
+            const value = document.getElementById(id).value.trim().replace(/\s{2,}/g, '');
+            const isValid = /^(\S\s*){3,}$/.test(value);
+            if (!isValid) {
+                showError(id, errorMessage);;
+            }else validMessage(id);
+            return isValid;
+        }
 
-    function clearErrorMessages() {
-        const errorElements = document.querySelectorAll('.error-message');
-        errorElements.forEach(element => {
-            element.textContent = '';
-            element.classList.remove('text-danger');
-        });
+        function validateLastname(id, errorMessage) {
+            const value = document.getElementById(id).value.trim().replace(/\s{2,}/g, '');
+            const isValid = /^(\S\s*){1,}$/.test(value);
+            if (!isValid) {
+                showError(id, errorMessage);;
+            }else validMessage(id);
+            return isValid;
+        }
+    
+        function validatePassword(id, errorMessage){
+            const value = document.getElementById(id).value;
+            if (value.includes(' ')) {
+                showError(id, errorMessage);
+                return false;
+            }
+            validMessage(id);
+            return true;
+        }
+        
+        function validateCnfrmPassword(id){
+            if(document.getElementById('password').value === document.getElementById(id).value){
+                validMessage(id, 'Passwords Confirmed!');
+                return true;
+            } else {showError(id, 'Passwords do not match!'); }
+
+            return false;
+        } 
+    
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(`${elementId}-message`);
+            if(errorElement){
+                errorElement.classList.remove('text-danger', 'text-success');
+                errorElement.classList.add('text-danger');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+        }
+    
+        function validMessage(elementId){
+            const element = document.getElementById(`${elementId}-message`);
+            if(element){
+                element.classList.remove('text-danger', 'text-success');
+                element.classList.add('text-success');
+                element.textContent = "Input is Valid!";
+                element.style.display = 'block';
+            }
+        }
+        return firstname && lastname && password && confrmPassword;
     }
 
 });
