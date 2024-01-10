@@ -12,7 +12,7 @@ const momentsAgo = function(dateString) {
 };
 
 const ORDdate =  function(dateString) {
-    return moment.utc(dateString).local().format('MMMM DD, YYYY h:mm A');
+    return moment(dateString, 'YYYY-MM-DD').utcOffset('+05:30').format('DD/MM/YYYY hh:mm A');;
 };
 
 const reviewFormat = function(dateString) {

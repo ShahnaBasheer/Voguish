@@ -475,7 +475,8 @@ const invoiceHtml = async(invoiceData, _idx) => {
            
                         <div class="row reciept-footer">
                             <div class="col-8">
-                               <p class="mb-1"><b>OrderDate: ${moment.utc(invoiceData?.createdAt).local().format('DD MMMM YYYY')} </b> </p>
+
+                               <p class="mb-1"><b>OrderDate: ${moment.utc(invoiceData?.createdAt, 'ddd MMM DD YYYY').format('DD/MM/YYYY')} </b> </p>
                                <h6>Thanks for shopping.!</h6>
                             </div>
                             <div class="col-4"><h5 class="sign text-right">Voguish</h5></div>
@@ -539,8 +540,7 @@ const salesReportGenerator = async(ordersData, totalGrandTotal, startDate, endDa
             <div class="mt-4">
                 <h2 class="text-center fw-bolder">Sales Report</h2>
                 <h6 class="text-center text-decoration-underline fw-bold mb-4">
-                 ${moment.utc(startDate).local().format('DD/MM/YYYY')}  -  
-                 ${moment.utc(endDate).local().format('DD/MM/YYYY')}</h6>
+                ${moment(startDate, 'YYYY-MM-DD').format('DD/MM/YYYY')} - ${moment(endDate, 'YYYY-MM-DD').format('DD/MM/YYYY')}</h6>
         
                 <div class="row">
                     <div class="col-md-7 col-6">
