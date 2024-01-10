@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const dbConnect = require('./config/dbConnect');
 const exphbs = require('express-handlebars');
 const logger = require('morgan');
-const { notFound, errorHandler, internalError } = require('./middlewares/errorHandlers');
+const { notFound, internalError } = require('./middlewares/errorHandlers');
 const { removeGMT, isEqualTo, roleEquals, calculate, 
       inc, loop, calculateTotal, uniqueColors, contains,
       isLessThan, compareIds, momentsAgo, isInArray,dec,
@@ -17,7 +17,9 @@ const cors = require('cors');
 const dotenv = require('dotenv').config();
 const PORT = process.env.PORT || 4000;
 const app = express();
+
 dbConnect();
+
 
 const adminRouter = require('./routes/adminRouter');
 const userRouter = require('./routes/userRouter');
@@ -68,3 +70,6 @@ app.use(internalError);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
 });
+
+
+/* mongodb+srv://shahnabasheer:8AvbvoI2Jqdhzh25@cluster1.uwkwusl.mongodb.net/Voguish?retryWrites=true&w=majority */ 

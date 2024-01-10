@@ -25,7 +25,7 @@ const forgotPassword = asyncHandler( async (req, res) => {
         await user.save();
 
         // Compose the reset link with the generated token
-        const resetLink = `http://localhost:7000/reset-password/${token}`;
+        const resetLink = `https://voguish.world/reset-password/${token}`;
     
         // Send the reset link via email using the sendEmail function
         const subject = 'Password Reset';
