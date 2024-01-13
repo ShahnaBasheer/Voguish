@@ -10,9 +10,9 @@
 			      		</div>
 			      	</div>
               <p class="text-primary">{{successMessage}}</p>
-							 {{#if flash.alert}}
+							 {{#if message}}
                     <div class="alert alert-warning">
-                    {{flash.alert}}
+                    {{message}}
                     </div>
                 {{/if}}
 							<form action="/admin/login" class="signin-form px-5 pb-5 pt-3" method="POST">

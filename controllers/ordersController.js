@@ -539,12 +539,44 @@ const getCheckoutPage = asyncHandler( async (req,res) => {
         bodycss:'/css/checkout.css',bodyjs:'/js/checkout.js'});      
 });
 
-const getOrderConfirmation = asyncHandler( async(req, res)=>{
-    res.render('users/orderConfirmation')
+
+const orderReturn = asyncHandler(async( req,res) => {
+    /*const { orderId, _idx } = req?.query;
+    const orderData = await Orders.findOne(
+        {orderId,user:req?.user?._id})
+        .populate('shippingAddress')
+        .populate({
+            path: 'orderItems.item',
+            populate: {
+              path: 'product',
+              model: 'Product'
+            }
+    }).lean();*/
 });
   
+
+const orderCancel = asyncHandler(async( req, res) => {
+    const { orderId, proItem } = req?.query;
+    
+    const order = await Orders.findOne({ orderId });
+    let paymentStatus = order?.paymentStatus === 'Paid' ? 'Refund' : 'Cancelled';
+
+    if(order){
+        order.status = 'Cancelled';
+        if(order.paymentStatus == "Paid"){
+            order.paymentStatus = "Refund";
+        } else if(order.paymentStatus == "Pending"){
+            order.paymentStatus = "Cancelled";
+        }
+        await order.save();
+        res.redirect(`/orders/order-details?orderId=${orderId}&proItem=${proItem}&message=${encodeURIComponent('You are not Authorized to access this page!')}`)
+    }
+     
+})
+
+
 module.exports = { getOrders, orderDetails,
      createOrders, getOrdersPage, getOrdersDetails,
      razorpayPayment, changeOrderStatus, generateInvoice,
-     getCheckoutPage,  generateSalesReport, getOrderConfirmation
+     getCheckoutPage,  generateSalesReport, orderCancel
      }

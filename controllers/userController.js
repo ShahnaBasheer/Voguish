@@ -242,7 +242,9 @@ const adminLogin = asyncHandler( async (req,res) => {
         if (findadmin && await findadmin.comparePassword(password) && findadmin.role === "admin") {
             const accessToken = generateAdminToken(findadmin?.id);
             const refreshToken = generateAdminRefreshToken(findadmin?.id);
-            await User.findByIdAndUpdate(findadmin.id, { refreshToken }, { new: true });
+            const user = await User.findByIdAndUpdate(findadmin.id, { refreshToken }, { new: true });
+
+            
 
             res.cookie("adminAccessToken", accessToken, {
                 httpOnly: true,
@@ -257,14 +259,13 @@ const adminLogin = asyncHandler( async (req,res) => {
                 maxAge: 2 * 24 * 60 * 60 * 1000,
                 sameSite: 'Lax',
             });
-            return res.redirect('dashboard'); 
+            res.redirect('dashboard'); 
         } else {
-            throw new Error("Invalid email or password!");
+            res.redirect(`/admin?message=${encodeURIComponent('Invalid email or password!')}`)
         }
     } catch (error) {
-        console.error(error);
-        req.flash('alert', 'You are not Authorized to access this page!')
-       return res.redirect('/admin')
+        console.error(error.message);
+        res.redirect(`/admin?message=${encodeURIComponent('You are not Authorized to access this page!')}`)
     }
 });
 

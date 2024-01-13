@@ -36,6 +36,7 @@
                                 <div>
                                     <a href="/orders/generate-invoice?orderId={{order.orderId}}&_idx={{order.index}}" 
                                       class="btn btn-primary">Invoice Download</a>
+                                      <!--<a href="/orders/return?orderId={{order.orderId}}&_idx={{order.index}}" class="pt-2 d-inline-block text-danger">Return</a>-->
                                 </div>
                                 {{/if}}
                             </div>
@@ -75,6 +76,9 @@
                                         {{else if (isEqualTo @root/order.status 'Cancelled')}}text-bg-danger
                                         {{/if}}"> {{@root/order.status}}
                                     </p>
+                                    {{#if (orFunction (isEqualTo @root/order.status 'Shipped') (isEqualTo @root/order.status 'Processing'))}}
+                                      <a href="/orders/cancel-order?orderId={{@root/order.orderId}}&proItem={{getitem.item.product._id}}" class="pt-2 d-inline-block text-danger">Cancel Order</a> 
+                                    {{/if}}
                                 </div>
                             </div>
                         </div>

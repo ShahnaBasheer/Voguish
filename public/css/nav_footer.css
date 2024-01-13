@@ -67,6 +67,10 @@
 }
 .navbar .navbar-toggler{
    background-color: white;
+   padding: 0px 8px;
+}
+.navbar .navbar-toggler span{
+   font-size: .85rem;
 }
 
 #searchbox{ position: relative; min-width: 200px; width:300px}

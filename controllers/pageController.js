@@ -122,12 +122,21 @@ const getDashboard = asyncHandler( async (req,res) => {
             _id: {
               year: { $year: '$createdAt' },
               month: {
+               $let: {
+                  vars: {
+                     months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                     monthIndex: { $month: '$createdAt' }
+                  },
+                  in: { $arrayElemAt: ['$$months', { $subtract: ['$$monthIndex', 1] }] }
+               }
+            },/*
+              month: { $month: '$createdAt' },
+              month: {
                $substr: [
-                 { $dateToString: { format: '%B',date: '$createdAt',timezone: '+05:30'}},
-                 0,3
-               ]
-             },
-            
+                  { $dateToString: { format: '%B',date: '$createdAt',timezone: '+05:30'}},
+                  0,3
+                ]
+              },*/
             },
             totalSales: { $sum: '$GrandTotal' },
             orderCount: { $sum: 1 }
@@ -207,8 +216,9 @@ const getDashboard = asyncHandler( async (req,res) => {
 
 
 //Display Admin Login
-const getAdminLogin = asyncHandler( async (req,res) => {
-   res.render('admin/adminLogin',{admin:true,adminlogin:true,bodycss:'/css/login_signup.css'});
+const getAdminLogin = asyncHandler( async (req,res) => { 
+   const message = req?.query?.message;
+   res.render('admin/adminLogin',{admin:true,adminlogin:true,bodycss:'/css/login_signup.css', message});
 });
 
 //display account-blocked page

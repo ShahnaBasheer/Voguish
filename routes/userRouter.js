@@ -13,8 +13,7 @@ const { getProduct }  = require('../controllers/productController');
 const { getCartPage, addToCart, checkSize, removeCartItem,
         quantityPlus, quantityMinus } = require('../controllers/cartController');
 const { createOrders, getOrdersPage, razorpayPayment,
-        getOrdersDetails, generateInvoice, getCheckoutPage,
-        getOrderConfirmation } = require('../controllers/ordersController');
+        getOrdersDetails, generateInvoice, getCheckoutPage, orderCancel } = require('../controllers/ordersController');
 const { addToWishList, getWishList, deleteWishList,
         moveToCart } = require('../controllers/wishListController');
 const { applyCoupon } = require('../controllers/couponsController');
@@ -60,7 +59,8 @@ router.post('/checkout/orders/',nocache(), authMiddleware, isNotLoginRedirct, re
 router.post('/checkout/apply-coupon',nocache(), authMiddleware , isNotLoginRedirct, applyCoupon);
 router.get('/orders',nocache(), authMiddleware, isNotLoginRedirct, getOrdersPage);
 router.get('/orders/order-details',nocache(), authMiddleware, isNotLoginRedirct, getOrdersDetails);
-router.get('/orders/generate-invoice',nocache(), authMiddleware, isNotLoginRedirct, generateInvoice)
+router.get('/orders/generate-invoice',nocache(), authMiddleware, isNotLoginRedirct, generateInvoice);
+router.get('/orders/cancel-order', nocache(), authMiddleware, isNotLoginRedirct, orderCancel);
 router.post('/razorpay/order-payment',nocache(), authMiddleware, isNotLoginRedirct, razorpayPayment);
 router.get('/contact',nocache(), authMiddleware, isUser, getContactPage);
 router.get('/profile',nocache(), authMiddleware, isNotLoginRedirct, getProfilePage);
@@ -81,7 +81,6 @@ router.get('/profile/reviews',nocache(), authMiddleware, isNotLoginRedirct, getR
 router.post('/reviews/add-review',nocache(), authMiddleware, isNotLoginRedirct, removeEmptyStrings, addNewReview );
 router.get('/brand',nocache(), authMiddleware, isUser, getBrand);
 router.get('/filters',nocache(), authMiddleware, isUser, filterProducts);
-router.get('/checkconfirm',nocache(), getOrderConfirmation);
 router.get('/select', nocache(), authMiddleware, isUser, selectMenu);
 router.get('/search', nocache(), authMiddleware, isUser, searchText);
 router.post('/forgotPassword', nocache(), authMiddleware, isUser, forgotPassword);

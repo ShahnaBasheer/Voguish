@@ -212,7 +212,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         title: 'swal-title-custom-class',
                     }
                   });
-                  document.getElementById('qnty').innerHTML = data.totalQty;
+                  document.querySelectorAll('.qnty').forEach(function(ele) {
+                    ele.innerHTML = data.totalQty;
+                 })
             } else if( response.status == 400){
 
                 if(data.exist){
