@@ -9,13 +9,15 @@ const { cartQty, genderBrandFilter, getAllBrands } = require('../helperfns');
 //Display Login page
 const getLoginPage = asyncHandler(async (req,res) => {
    const successMessage = req?.query?.success; 
+   const Brands = await getAllBrands();
    const message = req?.query?.message;
-   res.render('users/signin',{bodycss:'css/login_signup.css',successMessage, message}); 
+   res.render('users/signin',{bodycss:'css/login_signup.css',successMessage, message, Brands}); 
 });
 
 //Display Signup page
 const getSignupPage = asyncHandler( async (req,res) => {
-   res.render('users/signup',{bodycss:'css/login_signup.css',
+   const Brands = await getAllBrands();
+   res.render('users/signup',{Brands, bodycss:'css/login_signup.css',
       bodyjs:'js/signUp.js'});
 });
 

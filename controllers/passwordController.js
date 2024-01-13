@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 const forgotPassword = asyncHandler( async (req, res) => {
     const { email } = req.body;
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email, isBlocked: false, isVerified: true });
         if (!user) {
           return res.status(404).json('User not found' );
         }

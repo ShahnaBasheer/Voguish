@@ -15,7 +15,7 @@ const session = require('express-session');
 const flash = require('express-flash');
 const cors = require('cors');
 const dotenv = require('dotenv').config();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8000;
 const app = express();
 
 dbConnect();
@@ -73,3 +73,5 @@ app.listen(PORT, () => {
 
 
 /* mongodb+srv://shahnabasheer:8AvbvoI2Jqdhzh25@cluster1.uwkwusl.mongodb.net/Voguish?retryWrites=true&w=majority */ 
+
+/*  mongodb://0.0.0.0:27017/Voguish  */

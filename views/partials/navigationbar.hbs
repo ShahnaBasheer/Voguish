@@ -5,8 +5,8 @@
             <select  class="me-3 border-0 bg-light">
               <option value="en-us">EN-US</option>
             </select>
-            <span class="d-none d-lg-inline-block d-md-inline-block d-sm-inline-block d-xs-none me-3"><strong>info@somedomain.com</strong></span>
-            <span class="me-3"><i class="fa-solid fa-phone me-1 text-danger"></i> <strong>1-800-123-1234</strong></span>
+            <span class="d-none d-lg-inline-block d-md-inline-block d-sm-inline-block d-xs-none me-3"><strong>voguishworld.in@gmail.com</strong></span>
+            <!--<span class="me-3"><i class="fa-solid fa-phone me-1 text-danger"></i> <strong></strong></span>-->
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-none d-lg-block d-md-block-d-sm-block d-xs-none text-end">
             <span class="me-3"><i class="fa-solid fa-truck text-muted me-1"></i><a class="text-muted" href="#">Shipping</a></span>
@@ -53,25 +53,21 @@
 
         <ul class="navbar-nav d-md-flex d-none">
             <li class="nav-item">
-              <div class="dropdown">
-                  <a class="nav-link mx-2 text-white" href="" data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa-regular fa-user me-1 text-white"></i>
-                      <span>{{#each user}}{{this.firstname}}{{/each}}{{user.firstname}}</span>
-
-                  </a>
-                  <ul class="dropdown-menu">
-                     {{#unless user}}
-                        <li><a class="dropdown-item" href="/login">Login</a></li>
-                     {{/unless}}
-                     {{#if user}}
-                         <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-                     {{/if}}
-                     <li><a class="dropdown-item" href="/orders">Orders</a></li>
-                     {{#if user}}
-                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
-                     {{/if}}
-                  </ul>
-              </div>
+                {{#if user }}
+                    <div class="dropdown">
+                        <a class="nav-link mx-2 text-white" href="" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-regular fa-user me-1 text-white"></i>
+                            <span>{{#each user}}{{this.firstname}}{{/each}}{{user.firstname}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                            <li><a class="dropdown-item" href="/orders">Orders</a></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                {{else}}
+                    <div><a href="/login" class="nav-link mx-2 text-white"><i class="fa-regular fa-user me-1 text-white"></i> Login</a></div>
+                {{/if}}
             </li>
             <li class="nav-item">
               <a class="nav-link mx-2" href="/wishlist">
@@ -116,9 +112,10 @@
 									{{/each}}
 							</ul>
             </li>
+            <!--
             <li class="nav-item">
               <a class="nav-link mx-3" href="#">About</a>
-            </li>
+            </li>-->
             <li class="nav-item">
               <a class="nav-link mx-3" href="/contact">Contact</a>
             </li>
@@ -140,7 +137,7 @@
                     <li class="list-group-item"><a href="/men">Men</a></li>
                     <li class="list-group-item"><a href="/kids">Kids</a></li>
                     <li class="list-group-item"><a href="#">Brands</a></li>
-                    <li class="list-group-item"><a href="#">About</a></li>
+                    <!--<li class="list-group-item"><a href="#">About</a></li>-->
                     <li class="list-group-item"><a href="/contact">Contact</a></li>
                   </ul>
               </div>

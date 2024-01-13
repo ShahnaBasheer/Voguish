@@ -44,6 +44,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
                     httpOnly: true,
                     secure: true,
                     maxAge: 15 * 60 * 1000, // Set the new access token expiration time
+                    sameSite: 'Lax' 
                 });
             }
             next();
@@ -153,7 +154,7 @@ const adminAuth = asyncHandler(async (req, res, next) => {
                     httpOnly: true,
                     secure: true,
                     maxAge: 15 * 60 * 1000, // Set the new access token expiration time
-                    sameSite: 'Lax' 
+                    sameSite: 'Lax' ,
                 });
             }
             next();
