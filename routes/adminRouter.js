@@ -39,7 +39,7 @@ router.post('/add-product', nocache(), adminAuth, isAdmin, upload, processImages
 router.get('/delete-product/:id', nocache(), adminAuth, isAdmin, deleteProduct);
 router.get('/restore-product/:slug', nocache(), adminAuth, isAdmin, restoreProduct);
 router.get('/edit-product/:slug', nocache(), adminAuth, isAdmin, getEditProduct);
-router.patch('/edit-product/:slug', nocache(), adminAuth, isAdmin, upload, processImages, editProduct);
+router.patch('/edit-product', nocache(), adminAuth, isAdmin, upload, processImages, editProduct);
 router.get('/categories', nocache(), adminAuth, isAdmin, getAllCategories);
 router.get('/add-category', nocache(), adminAuth, isAdmin,  getAddCategory);
 router.post('/add-category', nocache(), adminAuth, isAdmin,  removeEmptyStrings, addCategory);

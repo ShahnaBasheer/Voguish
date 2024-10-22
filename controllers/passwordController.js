@@ -25,7 +25,7 @@ const forgotPassword = asyncHandler( async (req, res) => {
         await user.save();
 
         // Compose the reset link with the generated token
-        const resetLink = `https://voguish.world/reset-password/${token}`;
+        const resetLink = `http://localhost:7000/reset-password/${token}`;
     
         // Send the reset link via email using the sendEmail function
         const subject = 'Password Reset';
@@ -99,7 +99,38 @@ const changeOldPassword = asyncHandler( async(req,res) => {
             return res.status(400).json({ error: 'New password and Current Password are Same!' });
         }
     
-        const user = await User.findById(req?.user?.id);
+        const passWordChangeProfile = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const user = req.user; // Assuming req.user is already populated with the logged-in user's details
+
+  try {
+    if (!user || !user.password) {
+      throw new BadRequestError("User not found or password not set.");
+    }
+
+    // const isMatch = await bcrypt.compare(currentPassword, user.password);
+    // if (!isMatch) {
+    //   throw new BadRequestError("Current password is incorrect.");
+    // }
+
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    await User.findOneAndUpdate({ _id: user._id }, {
+      $set: { password: hashedNewPassword }
+    });
+
+    createSuccessResponse(200, null, "Password has been changed successfully!", res, req);
+    
+  } catch (error) {
+    console.error("Error changing password:", error);
+    if (error instanceof BadRequestError) {
+      throw error; // rethrow known errors
+    } else {
+      throw new BadRequestError("Failed to change password. Please try again.");
+    }
+  }
+});
     
         if(user){
             const isCurrentPasswordValid = await user.comparePassword(currentPassword);

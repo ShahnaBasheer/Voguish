@@ -171,7 +171,7 @@ const getDashboard = asyncHandler( async (req,res) => {
       }
    ]);
 
-   const AllUsers = await Users.find().count();
+   const AllUsers = await Users.find().countDocuments();
 
    // Create an array of days (formattedStartOfWeek, formattedStartOfWeek + 1 day, ..., today)
    const daysInRange = Array.from({ length: 7 }, (_, i) => {

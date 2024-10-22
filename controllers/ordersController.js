@@ -312,8 +312,7 @@ const razorpayPayment = asyncHandler(async (req, res) => {
             populate: {
                 path: 'product',
                 model: 'Product'
-            }
-    }).lean();
+            }}).lean();
 
     // Verify the payment signature
     const generatedSignature = CryptoJS.HmacSHA256(`${razorpay_order_id}|${razorpay_payment_id}`, 

@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
               
                     if(response.ok){
                         let options = {
-                            key: 'rzp_test_VmjxeAY1dbkR2y', // Replace with your actual key
+                            key: 'rzp_test_FmNCCXUWBBloc6', // Replace with your actual key
                             amount: result.razorpayOrderData.amount,
                             currency: result.razorpayOrderData.currency,
                             name: 'VOGUISH Fashion',

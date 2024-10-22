@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const sizeArray = sizeData[size];
         
                     // Check if sizeArray is empty
-                    if (sizeArray.length === 0) {
+                    if (sizeArray?.length === 0) {
                         showError('size-message', errorMessage);
                         return false;
                     }
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const indices = Array.from(images).map(input => parseInt(input.dataset.index)).sort((a, b) => a - b);
             
             let nonConsecutiveIndex = null;
-            for (let i = 1; i <= indices.length; i++) {
+            for (let i = 1; i <= indices?.length; i++) {
                 if (indices[i - 1] !== i) {
                     nonConsecutiveIndex = i;
                     break;
@@ -301,49 +301,55 @@ document.addEventListener("DOMContentLoaded", function() {
     if(editProductForm){
         const existingData = new FormData(editProductForm);
 
-        editProductForm?.addEventListener('submit', async function (event) {
-            event.preventDefault();
-            resetErrorMessages();
-            colorStock(); 
-
-            if (productFormValidation()){
-                let  changedData = {}
-                let slug = document.getElementById('slug').value;
-                colorStock();
-                let updatedForm = new FormData(editProductForm);
+        try {  
+            editProductForm?.addEventListener('submit', async function (event) {
+                event.preventDefault();
+                resetErrorMessages();
+                colorStock(); 
     
-                for(const pair of updatedForm.entries()){
-                    const fieldName = pair[0];
-                    const fieldValue = pair[1];
-                    const existingValue = existingData.get(fieldName);
-             
-                    if (fieldValue instanceof File) {
-                        changedData[fieldName] = fieldValue;
-                    }else{
-                        if (existingValue === undefined || fieldValue !== existingValue) {
+                if (productFormValidation()){
+                    let  changedData = {}
+                    let slug = document.getElementById('slug').value;
+                    colorStock();
+                    let updatedForm = new FormData(editProductForm);
+        
+                    for(const pair of updatedForm.entries()){
+                        const fieldName = pair[0];
+                        const fieldValue = pair[1];
+                        const existingValue = existingData.get(fieldName);
+                 
+                        if (fieldValue instanceof File) {
                             changedData[fieldName] = fieldValue;
-                        }
-                    }    
+                        }else{
+                            if (existingValue === undefined || fieldValue !== existingValue) {
+                                changedData[fieldName] = fieldValue;
+                            }
+                        }    
+                    }
+                    
+                    changedData['selectedImg'] = JSON.stringify(Array.from(document.querySelectorAll('.upload')).map((item) => item?.name));
+                    
+                    const formDataToSend = new FormData();
+                    for (const key in changedData) formDataToSend.append(key, changedData[key]);
+                    
+                    console.log(slug,"edjncnj");
+                    fetch(`/admin/edit-product?slug=${slug}`, {
+                        method: 'PATCH',
+                        body: formDataToSend,
+                        }).then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        }).then(data => { 
+                            if (data?.redirect) window.location.href = data?.redirect;    
+                        }).catch(error => { console.error('Error:', error); });  
                 }
                 
-                changedData['selectedImg'] = JSON.stringify(Array.from(document.querySelectorAll('.upload')).map((item) => item?.name));
-                
-                const formDataToSend = new FormData();
-                for (const key in changedData) formDataToSend.append(key, changedData[key]);
-                console.log(formDataToSend)
-                
-                fetch(`/admin/edit-product/${slug}`, {
-                    method: 'PATCH',
-                    body: formDataToSend,
-                    }).then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        return response.json();
-                    }).then(data => { 
-                        if (data.redirect) window.location.href = data.redirect;    
-                    }).catch(error => { console.error('Error:', error); });  
-            }
+            });
             
-        });
+        } catch (error) {
+            console.log(error.message)
+        }
+
     }
 
     editCouponButtons?.forEach(button => {
@@ -441,18 +447,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     document.querySelector('.file-upload-content')?.addEventListener('click', function (event) {
-        if (event.target.classList.contains('remove-image')) {
-          let index = event.target.getAttribute('data-index');
-          let imageContainer = document.getElementById(`uploaded-${index}`);
-          removeImage(imageContainer, index);
-          document.querySelector('.limit-message').style.display = 'none';
+        try {
+            if (event?.target?.classList?.contains('remove-image')) {
+                let index = event.target?.getAttribute('data-index');
+                let imageContainer = document.getElementById(`uploaded-${index}`);
+                removeImage(imageContainer, index);
+                document.querySelector('.limit-message').style.display = 'none';
+              }
+            
+        } catch (error) {
+            console.log(error.message,"cdfjvc")
         }
+        
     }); 
 
 
     function removeImage(imageContainer, index) {
         //let filename = imageContainer.dataset.file;
         imageContainer?.parentNode?.removeChild(imageContainer);
+
     
         if (document.querySelector('.file-upload-content').childElementCount === 0) {
             document.querySelector('.drag-text').style.display = 'block';
@@ -481,14 +494,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     document.querySelector('.file-upload-btn')?.addEventListener('click', async function () {
+
         try {
+            console.log("i am here")
             let limitMessage = document.querySelector('.limit-message');
             const imgs = Array.from(document.querySelectorAll('.upload'))
                 .map(child => parseInt(child?.name?.replace('img-', '')));
 
             const index = imgs?.length ? [1, 2, 3, 4, 5].find(value => !imgs?.includes(value)) : 1;
     
-            if(imgs.length < 4){
+            if(imgs?.length < 4){
                 document.querySelector('.drag-text').style.display = 'none';
                 limitMessage.style.display = 'none';
                 const fileInput = document.createElement('input');
@@ -538,7 +553,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const stockCells = Array.from(row.querySelectorAll('.addInfo-text.stock'));
             const sizeInfo = [];
     
-            for (let i = 0; i < colorCells.length; i++) {
+            for (let i = 0; i < colorCells?.length; i++) {
                 const color = colorCells[i].value.trim();
                 const stock = parseInt(stockCells[i].value, 10);
                 sizeInfo.push({ color, stock });

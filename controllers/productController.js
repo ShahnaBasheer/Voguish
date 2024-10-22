@@ -109,7 +109,8 @@ const getEditProduct = asyncHandler(async (req,res) => {
 const editProduct = asyncHandler(async (req,res) => {
 
     try{
-        let { slug } = req?.params;
+        let slug = req?.query.slug
+        console.log(slug,"ekndj")
         let selectedImg = JSON.parse(req?.body?.selectedImg);
 
         let existingProduct = await Product.findOne({ slug });
