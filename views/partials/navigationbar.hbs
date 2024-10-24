@@ -52,12 +52,17 @@
         </div>
 
         <ul class="navbar-nav d-md-flex d-none">
+          <li class="nav-item">
+              <a class="nav-link mx-2" href="/wishlist">
+                  <i class="fa-regular fa-heart me-1 text-white"></i>
+              </a>
+            </li>
             <li class="nav-item">
                 {{#if user }}
                     <div class="dropdown">
                         <a class="nav-link mx-2 text-white" href="" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-regular fa-user me-1 text-white"></i>
-                            <span>{{#each user}}{{this.firstname}}{{/each}}{{user.firstname}}</span>
+                            <span>{{#each user}}{{this.firstname}}{{/each}}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/profile">My Profile</a></li>
@@ -69,16 +74,12 @@
                     <div><a href="/login" class="nav-link mx-2 text-white"><i class="fa-regular fa-user me-1 text-white"></i> Login</a></div>
                 {{/if}}
             </li>
-            <li class="nav-item">
-              <a class="nav-link mx-2" href="/wishlist">
-                  <i class="fa-regular fa-heart me-1 text-white"></i>
-              </a>
-            </li>
-            <li class="nav-item">
+            
+            {{!-- <li class="nav-item">
               <a class="nav-link mx-2" href="#">
                   <i class="fa-regular fa-bell me-1 text-white"></i>
               </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
               <a class="nav-link mx-2 position-relative" href="/cart">
               <i class="fa-solid fa-cart-shopping text-white"></i>

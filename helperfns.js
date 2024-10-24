@@ -9,7 +9,7 @@ const Cart = require('./models/cartModel');
 const CartItem = require('./models/cartItemModel');
 const WishList = require('./models/wishListModel');
 const moment = require('moment');
-
+const { rgb } = require('pdf-lib'); 
 
 const getAllBrands = async () => {
     const allBrands = await Brand.find({isDeleted:false}).distinct('brand');
@@ -346,9 +346,17 @@ const calculateDiscount = async (coupon, purchaseAmnt, res) => {
     return 0;//discount.endsWith('%')
 };
 
-const pagination = async() => {
-     
-};
+
+// Helper function to draw text
+const drawText = (page, text, x, y, font, fontSize) => {
+    page.drawText(text, {
+        x,
+        y,
+        size: fontSize,
+        font,
+        color: rgb(0, 0, 0),
+    });
+}
 
 
 const invoiceHtml = async(invoiceData, _idx) => {
@@ -602,7 +610,8 @@ const salesReportGenerator = async(ordersData, totalGrandTotal, startDate, endDa
 /* <td>${order.orderItems.map(item => `${item.product}`).join(',')}</td> */
 
 
-module.exports = { createUniqueSlug, otpEmailSend, pagination,
+module.exports = { createUniqueSlug, otpEmailSend, 
        generateOrderId, findCart, cartQty, filterFunction,
        selectCartItem, genderBrandFilter, getAllBrands,
-       invoiceHtml, calculateDiscount, salesReportGenerator }
+       invoiceHtml, calculateDiscount, salesReportGenerator,
+       drawText }

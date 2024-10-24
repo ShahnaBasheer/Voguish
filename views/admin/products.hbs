@@ -31,9 +31,9 @@
                                           <th>Stock</th>
                                           <th>Created</th>
                                           <th>Updated</th>
-                                          <th style="min-width:4rem;max-width:4rem;" data-bs-toggle="tooltip"
+                                          {{!-- <th style="min-width:4rem;max-width:4rem;" data-bs-toggle="tooltip"
                                               title="isDeletedBy_Category_Brand">IsDeletedBy</th>
-                                          <th data-bs-toggle="tooltip" title="isDeleted Individually">IsDeleted</th>
+                                          <th data-bs-toggle="tooltip" title="isDeleted Individually">IsDeleted</th> --}}
                                           <th>Action</th>
                                       </tr>
                                   </thead>
@@ -104,8 +104,8 @@
                                             <td class="text-center">{{this.totalStock}}</td>
                                             <td>{{removeGMT this.createdAt}}</td>
                                             <td>{{removeGMT this.updatedAt}}</td>
-                                            <td class="text-center">{{#if this.isDeletedBy}}Yes{{else}}No{{/if}}</td>
-                                            <td class="text-center">{{this.isDeleted}}</td>
+                                            {{!-- <td class="text-center">{{#if this.isDeletedBy}}Yes{{else}}No{{/if}}</td>
+                                            <td class="text-center">{{this.isDeleted}}</td> --}}
                                             <td class="text-center">
                                                 <a href="/admin/edit-product/{{this.slug}}">
                                                     <i class="fa-solid fa-pen-to-square text-primary"></i>

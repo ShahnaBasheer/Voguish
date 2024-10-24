@@ -17,7 +17,19 @@ document.addEventListener("DOMContentLoaded", function() {
         checkbox.addEventListener('change',async function() {
             const id = this.dataset.id;
             const route = this.checked ? `block-user/${id}` : `unblock-user/${id}`;
-            await fetch(route, {method: 'GET',});
+            const action = this.checked ? 'blocked' : 'unblocked';
+            try {
+                const response = await fetch(route, { method: 'GET' });
+                const data = await response.json();
+                if (response.ok) {
+                    toastr.success(data?.message);
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            } catch (error) {
+                toastr.error(`Failed to ${action} the user`, 'Error');
+                this.checked = !this.checked;
+            }
         });
     });
 
@@ -29,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function() {
           
           if (confirmDelete) {
               window.location.href = deletebtn.getAttribute('href');
+          } else {
+            toastr.info('Deletion canceled');
           }
         });
     });
@@ -320,7 +334,7 @@ document.addEventListener("DOMContentLoaded", function() {
                  
                         if (fieldValue instanceof File) {
                             changedData[fieldName] = fieldValue;
-                        }else{
+                        } else{
                             if (existingValue === undefined || fieldValue !== existingValue) {
                                 changedData[fieldName] = fieldValue;
                             }
@@ -332,16 +346,30 @@ document.addEventListener("DOMContentLoaded", function() {
                     const formDataToSend = new FormData();
                     for (const key in changedData) formDataToSend.append(key, changedData[key]);
                     
-                    console.log(slug,"edjncnj");
-                    fetch(`/admin/edit-product?slug=${slug}`, {
-                        method: 'PATCH',
-                        body: formDataToSend,
-                        }).then(response => {
-                            if (!response.ok) throw new Error('Network response was not ok');
-                            return response.json();
-                        }).then(data => { 
-                            if (data?.redirect) window.location.href = data?.redirect;    
-                        }).catch(error => { console.error('Error:', error); });  
+                    try {
+                        const response = await fetch(`/admin/edit-product?slug=${slug}`, {
+                            method: 'PATCH',
+                            body: formDataToSend,
+                        });
+        
+                        const data = await response.json();
+        
+                        if (response.ok) {
+                            if (data?.redirect) {
+                                toastr.success(data.message); 
+                                setTimeout(() => {
+                                    window.location.href = data.redirect;
+                                }, 1500); 
+                            } else {
+                                toastr.success(data.message); 
+                            }
+                        } else {
+                            toastr.error('Error updating product: ' + data.message); 
+                        }
+                    } catch (error) {
+                        console.error('Network Error:', error);
+                        toastr.error('A network error occurred. Please try again.');
+                    }
                 }
                 
             });

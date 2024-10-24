@@ -28,7 +28,6 @@
                                         <th>Blocked</th>
                                         <th>Created</th>
                                         <th>Updated</th>
-                                        <th>isDeleted</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -68,7 +67,6 @@
                                         </td>
                                         <td>{{removeGMT this.createdAt}}</td>
                                         <td>{{removeGMT this.updatedAt}}</td>
-                                        <td>{{#if this.isDeleted}}Yes{{else}}No{{/if}}</td>
                                         <td class="text-center">
                                             {{#if this.isDeleted}}
                                                 <a  href="/admin/restore-user/{{this._id}}" data-bs-toggle="tooltip" 

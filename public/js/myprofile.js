@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneText = document.getElementById('phone-text');
     const addressForm = document.querySelectorAll('.addressForm');
     const deleteAddress = document.querySelectorAll('.delete-address');
-    const messageAddress = document.getElementById('addressMessage');
     const defaultAddres =  document.querySelectorAll('.default-address');
     const buyagain = document.querySelectorAll('.buyagain');
     const orderFilter = document.querySelectorAll('#orderFilter input, .form-select');
@@ -141,52 +140,103 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         emailText.innerHTML = '';
         phoneText.innerHTML = '';
-        
-        try{
+
+        try {
             const fieldName = this?.getAttribute('data-field');
             const inputElement = document.querySelector(`input[data-field="${fieldName}"]`);
-
+        
             let inputValue = inputElement?.value;
-
-            if(fieldName == 'gender'){
+        
+            if (fieldName == 'gender') {
                 inputValue = document.querySelector(`input[data-field="${fieldName}"]:checked`)?.value;
             }
             let payload = {};
             payload[fieldName] = inputValue;
-
-            if(profileValidation(fieldName, inputValue)){
+        
+            if (profileValidation(fieldName, inputValue)) {
                 let response = await fetch('/profile/edit/', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(payload),
-                })
-                
-                if(response.ok) {
+                });
+        
+                if (response.ok) {
                     let data = await response.json();
-                    if(data?.email){
+                    if (data?.email) {
                         const oldEmailInput = document.querySelector('#oldEmail input');
                         const newEmailInput = document.querySelector('#newEmail input');
                         oldEmailInput.placeholder = `Enter OTP sent to ${data.oldemail}`;
                         newEmailInput.placeholder = `Enter OTP sent to ${data.newemail}`;
                         new bootstrap.Modal(document.getElementById('modalOtp')).show();
                     }
-                    if(data?.redirect){
+                    if (data?.redirect) {
                         window.location.href = data.redirect;
-                    }  
+                    }
+                    toastr.success('Profile updated successfully!', 'Success');
                 } else if (response.status === 409) {
                     const data = await response.json();
+                    toastr.warning('There was a conflict with the profile information.', 'Conflict');
                     if (data?.emailText) emailText.innerHTML = data.emailText;
                     if (data?.phoneText) phoneText.innerHTML = data.phoneText;
-                }else {
+                } else {
+                    toastr.error('An error occurred while updating the profile.', 'Error');
                     console.error('Server error:', response.status);
-                } 
-            }   
-        }catch(error){
-            console.log("error:",error)
+                }
+            }
+        } catch (error) {
+            toastr.error('An unexpected error occurred.', 'Error');
+            console.log("error:", error);
         }
-      });
+    });
+        
+        
+    //     try{
+    //         const fieldName = this?.getAttribute('data-field');
+    //         const inputElement = document.querySelector(`input[data-field="${fieldName}"]`);
+
+    //         let inputValue = inputElement?.value;
+
+    //         if(fieldName == 'gender'){
+    //             inputValue = document.querySelector(`input[data-field="${fieldName}"]:checked`)?.value;
+    //         }
+    //         let payload = {};
+    //         payload[fieldName] = inputValue;
+
+    //         if(profileValidation(fieldName, inputValue)){
+    //             let response = await fetch('/profile/edit/', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                   'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify(payload),
+    //             })
+                
+    //             if(response.ok) {
+    //                 let data = await response.json();
+    //                 if(data?.email){
+    //                     const oldEmailInput = document.querySelector('#oldEmail input');
+    //                     const newEmailInput = document.querySelector('#newEmail input');
+    //                     oldEmailInput.placeholder = `Enter OTP sent to ${data.oldemail}`;
+    //                     newEmailInput.placeholder = `Enter OTP sent to ${data.newemail}`;
+    //                     new bootstrap.Modal(document.getElementById('modalOtp')).show();
+    //                 }
+    //                 if(data?.redirect){
+    //                     window.location.href = data.redirect;
+    //                 }  
+    //             } else if (response.status === 409) {
+    //                 const data = await response.json();
+    //                 if (data?.emailText) emailText.innerHTML = data.emailText;
+    //                 if (data?.phoneText) phoneText.innerHTML = data.phoneText;
+    //             }else {
+    //                 console.error('Server error:', response.status);
+    //             } 
+    //         }   
+    //     }catch(error){
+    //         console.log("error:",error)
+    //     }
+    //   });
     
     });
     
@@ -261,12 +311,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
                 if (data.success) {
                     window.location.reload();
+                    toastr.success(data?.message);
                 } else {
-                    messageAddress.innerHTML = 'Failed to delete address!'
+                    toastr.error('Failed to delete address!');
                 }
             } catch (error) {
                 console.error(error);
-                messageAddress.textContent = 'Error occurred while deleting address';
+                toastr.error('Error occurred while deleting address');
             }
         });
     });
@@ -284,13 +335,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({ addressId: addressId })
                 });
+                const data = await response.json();
+                
     
                 if (response.ok) {
-                    messageAddress.innerHTML = 'Default address updated successfully.';
+                    toastr.success(data?.message)
                 } else {
-                    console.error('Error updating default address:', response.statusText);
+                    toastr.error('Error updating default address');
+                    console.error(response.statusText);
                 }
             } catch (error) {
+                toastr.error('Error updating default address');
                 console.error('Error updating default address:', error);
             }
         });
@@ -325,7 +380,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
     
             if (response.ok) {
-                console.log("okkkkk")
                 Swal.fire({
                     icon: "success",
                     title: "Removed",

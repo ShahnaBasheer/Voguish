@@ -21,9 +21,12 @@ const addCategory = asyncHandler (async (req, res) => {
       { category: new RegExp('^' + req?.body?.category + '$', 'i')});
       
     if (existCategory) {
-        return res.status(400).json({ error: "Category already exists" });
+        req.flash("error_msg", `${req?.body?.category} already exists!`);
+        return res.redirect('add-category');
+        // return res.status(400).json({ error: "Category already exists" });
     }
     const categories = await Category.create(req?.body);
+    req.flash("success_msg", `${req?.body?.category} added successfully!`);
     res.redirect('add-category');
 });
 

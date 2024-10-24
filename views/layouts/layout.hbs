@@ -4,12 +4,20 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Document</title>
+   <style>
+        .toast {
+            box-shadow: none !important;  
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important; 
+            opacity: 1 !important;  /* Ensure opacity is 1 when shown */
+        }
+   </style>
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
    <script src="https://kit.fontawesome.com/0cfdca5d54.js" crossorigin="anonymous"></script>
    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
    <link href="https://fonts.googleapis.com/css2?family=Exo:wght@500&family=Barlow:wght@500&family=Sora:wght@600&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
-   
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+</head>
    {{#unless errorPage}}
        {{#if admin }}
          {{#unless adminlogin}}
@@ -51,8 +59,36 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{bodyjs}}" defer></script>
-
+   <script>
+     // Set Toastr options
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "0", // No fade-in duration
+            "hideDuration": "0", // No fade-out duration
+            "timeOut": "3000", // How long the notification will be visible (in milliseconds)
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "show", // Changed from "fadeIn" to "show" for no effect
+            "hideMethod": "hide" // Optionally changed from "fadeOut" to "hide"
+        };
+        // Display success message if available
+        {{#if success_msg}}
+            toastr.success("{{success_msg}}");
+        {{/if}}
+        // Display error message if available
+        {{#if error_msg}}
+            toastr.error("{{error_msg}}");
+        {{/if}}
+    </script>
     {{#unless errorPage}}
         {{#if admin}}
             {{#unless adminlogin}}   

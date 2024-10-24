@@ -76,13 +76,15 @@ const addNewAddress = asyncHandler( async (req, res) => {
     req.user.addresses.push(newAddress?._id);
     await newAddress?.save();
     await req?.user?.save();
+    req.flash("success_msg", `Address added successfully!`);
     res.redirect(req.header('Referer'));
 });
 
 const editAddress = asyncHandler(async (req, res) => {
     const { id, ...updatedFields } = req?.body;
     const address = await Address.findByIdAndUpdate(id, updatedFields, { new: true });
-    res.redirect('/profile')
+    req.flash("success_msg", `Address edited successfully!`);
+    res.redirect('/profile');
 });
 
 

@@ -78,8 +78,8 @@ const addProduct = asyncHandler(async (req,res) => {
     req.body.sizes = JSON.parse(req?.body?.sizeData)
     req.body.moreProductInfo = moreProductInfo;
     if(req?.body?.title) req.body.slug = await createUniqueSlug(req?.body?.title);
-
     await Product.create(req?.body);
+    req.flash("success_msg", "Product added successfully!");
     res.redirect('/admin/view-products');
 });
 
@@ -109,11 +109,14 @@ const getEditProduct = asyncHandler(async (req,res) => {
 const editProduct = asyncHandler(async (req,res) => {
 
     try{
-        let slug = req?.query.slug
-        console.log(slug,"ekndj")
+        let slug = req?.query.slug;
         let selectedImg = JSON.parse(req?.body?.selectedImg);
 
         let existingProduct = await Product.findOne({ slug });
+
+        if (!existingProduct) {
+            return res.status(404).json({ message: 'Product not found!' });
+        }
         if(req?.body){
             const propertiesToExtract = [
                 'material', 'type', 'occasion', 'pattern', 'neckline', 'sleeve', 'fit',
@@ -206,13 +209,12 @@ const editProduct = asyncHandler(async (req,res) => {
            const carts = await Cart.find({ 'items.cartItem': { $in: cartItemIds } });
            for (const item of carts){ await item.save();}
            
-        } 
-        res.status(200).json({ message: "Updated successfully", redirect: "/admin/view-products" });
+        }
+        res.status(200).json({ message: "Product updated successfully", redirect: "/admin/view-products" });
     } catch(error){
         console.log(error)
         res.status(400).json({ message: "Somethings has happened"});
     }
-    
 });
 
 
@@ -225,6 +227,7 @@ const deleteProduct = asyncHandler(async (req,res) => {
         return res.status(404).json({ message: 'Product not found' });
     }
     await product?.save();
+    req.flash("success_msg", "Product deleted successfully!");
     res.redirect('/admin/view-products');
 });
 
@@ -239,6 +242,7 @@ const restoreProduct = asyncHandler(async (req,res) => {
         return res.status(404).json({ message: 'Product not found' });
     }
     await product?.save();
+    req.flash("success_msg", "Product restored successfully!");
     res.redirect('/admin/view-products');
 });
 
