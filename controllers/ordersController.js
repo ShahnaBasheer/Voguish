@@ -19,8 +19,7 @@ const {
 const CryptoJS = require("crypto-js");
 const Razorpay = require("razorpay");
 const puppeteer = require("puppeteer");
-// const pdf = require('html-pdf');
-const { PDFDocument, rgb, StandardFonts } = require("pdf-lib");
+
 
 //Display Orders in admin side
 const getOrders = asyncHandler(async (req, res) => {
